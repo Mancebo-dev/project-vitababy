@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import Image from "next/image";
 
 export function Testimonials() {
   const testimonials = [
@@ -23,46 +23,49 @@ export function Testimonials() {
   ];
 
   return (
-    <section id="depoimentos" className="py-24 bg-secondary">
-      <div className="container mx-auto px-4 max-w-7xl">
-        <div className="flex flex-col items-center text-center gap-6 mb-16">
-          <span className="text-xs font-semibold text-accent tracking-widest uppercase">
+    <section id="depoimentos" className="py-[64px] md:py-[100px] bg-[#fbf9f5]">
+      <div className="container mx-auto px-6 max-w-[1200px]">
+        <div className="flex flex-col items-center text-center gap-2 mb-12">
+          <span className="text-[12px] font-semibold text-[#d19a7e] tracking-[0.6px] uppercase">
             DEPOIMENTOS
           </span>
-          <h2 className="text-4xl md:text-5xl font-heading text-secondary-foreground">
+          <h2 className="text-[32px] md:text-[40px] font-heading text-[#411f03]">
             O que as famílias dizem
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.name}
-              className="bg-white border border-border/50 rounded-[48px] p-8 shadow-sm flex flex-col justify-between"
+              className="bg-white border border-[#e4e2de] rounded-[48px] p-8 shadow-sm flex flex-col justify-between"
             >
               <div>
                 <div className="flex gap-1 mb-6">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
+                    <Image
                       key={star}
-                      className="w-5 h-5 text-accent fill-accent"
+                      src="/assets/259059d849cd8bc63982bb72948c5259a5fe0521.svg"
+                      width={15}
+                      height={15}
+                      alt="star"
                     />
                   ))}
                 </div>
-                <p className="text-foreground/80 italic leading-relaxed mb-8">
+                <p className="text-[#444840] text-[15px] italic leading-[24px] mb-8">
                   {testimonial.text}
                 </p>
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-lg">
+                <div className="w-12 h-12 rounded-full bg-[#f2ede9] text-[#411f03] flex items-center justify-center font-bold text-lg">
                   {testimonial.avatar}
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-bold text-secondary-foreground">
+                  <span className="font-bold text-[#411f03]">
                     {testimonial.name}
                   </span>
-                  <span className="text-sm text-foreground/70">
+                  <span className="text-[14px] text-[#444840]">
                     {testimonial.role}
                   </span>
                 </div>

@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 export function Services() {
-  const services = [
+  const baseServices = [
     {
       title: "Assistência Especializada",
       options: "1 opção",
@@ -16,7 +16,7 @@ export function Services() {
           alt="Ícone Assistência"
         />
       ),
-      iconBg: "bg-primary/20",
+      iconBg: "bg-[#5f6f52]/20",
     },
     {
       title: "Amamentação",
@@ -32,7 +32,7 @@ export function Services() {
           alt="Ícone Amamentação"
         />
       ),
-      iconBg: "bg-accent/30",
+      iconBg: "bg-[#d19a7e]/20",
     },
     {
       title: "Banho Humanizado",
@@ -48,54 +48,59 @@ export function Services() {
           alt="Ícone Banho Humanizado"
         />
       ),
-      iconBg: "bg-primary/20",
+      iconBg: "bg-[#5f6f52]/20",
     },
   ];
 
+  // Figma design shows 6 cards (duplicated for visual)
+  const services = [...baseServices, ...baseServices];
+
   return (
-    <section id="servicos" className="py-24 bg-background">
-      <div className="container mx-auto px-4 max-w-7xl">
-        <div className="flex flex-col items-center text-center gap-6 mb-16">
-          <span className="text-xs font-semibold text-accent tracking-widest uppercase">
+    <section id="servicos" className="py-[64px] md:py-[100px] bg-[#f5f3ef]">
+      <div className="container mx-auto px-6 max-w-[1200px]">
+        <div className="flex flex-col items-center text-center gap-2 mb-12">
+          <span className="text-[12px] font-semibold text-[#d19a7e] tracking-[0.6px] uppercase">
             O QUE OFERECEMOS
           </span>
-          <h2 className="text-4xl md:text-5xl font-heading text-secondary-foreground">
+          <h2 className="text-[32px] md:text-[40px] font-heading text-[#411f03]">
             Serviços especializados
           </h2>
-          <p className="text-foreground/80 text-lg max-w-2xl">
+          <p className="text-[#444840] text-[16px] max-w-[672px] mt-2">
             Cada família é única. Nossas assessorias são personalizadas e
             baseadas em evidências científicas.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {services.map((service) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {services.map((service, index) => (
             <div
-              key={service.title}
-              className="flex flex-col items-start bg-white border border-border/50 rounded-[48px] p-8 shadow-sm hover:shadow-md transition-shadow"
+              key={`${service.title}-${index}`}
+              className="flex flex-col items-start bg-white border border-[#e4e2de] rounded-[48px] p-8 shadow-sm hover:shadow-md transition-shadow"
             >
               <div
-                className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 ${service.iconBg}`}
+                className={`w-12 h-12 rounded-full flex items-center justify-center mb-6 ${service.iconBg}`}
               >
                 {service.icon}
               </div>
 
-              <div className="flex items-center gap-3 mb-4">
-                <h3 className="text-xl font-bold text-secondary-foreground">
+              <div className="flex items-center gap-3 mb-4 w-full">
+                <h3 className="text-[18px] font-bold text-[#411f03]">
                   {service.title}
                 </h3>
-                <span className="bg-accent/20 text-accent text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+                <span className="bg-[#d19a7e]/20 text-[#d19a7e] text-[12px] font-semibold px-3 py-1 rounded-full whitespace-nowrap ml-auto">
                   {service.options}
                 </span>
               </div>
 
-              <p className="text-foreground/80 leading-relaxed mb-8 flex-1">
+              <p className="text-[#444840] leading-[24px] text-[15px] mb-8 flex-1">
                 {service.description}
               </p>
 
               {service.price && (
-                <div className="w-full pt-6 border-t border-border/50">
-                  <span className="text-accent font-bold">{service.price}</span>
+                <div className="w-full pt-6 border-t border-[#e4e2de]">
+                  <span className="text-[#d19a7e] font-bold text-[14px]">
+                    {service.price}
+                  </span>
                 </div>
               )}
             </div>
