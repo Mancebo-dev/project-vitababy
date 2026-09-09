@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { StaggerContainer } from "@/components/ui/StaggerContainer";
+import { StaggerItem } from "@/components/ui/StaggerItem";
 
 export function Testimonials() {
   const testimonials = [
@@ -28,20 +30,24 @@ export function Testimonials() {
       className="py-[2rem] md:py-[3rem] bg-[#fbf9f5] min-h-[100vh] flex flex-col justify-center"
     >
       <div className="w-full max-w-[1440px] mx-auto px-[1.5rem] lg:px-[7.5rem]">
-        <div className="flex flex-col items-center text-center gap-[0.5rem] mb-[3rem]">
-          <span className="text-[clamp(0.75rem,1vw,1rem)] font-semibold text-[#d19a7e] tracking-[0.0375rem] uppercase">
-            DEPOIMENTOS
-          </span>
-          <h2 className="text-[clamp(2rem,3vw,3rem)] font-heading text-[#411f03]">
-            O que as famílias dizem
-          </h2>
-        </div>
+        <StaggerContainer className="flex flex-col items-start gap-[1rem] mb-[3rem]">
+          <StaggerItem>
+            <span className="uppercase tracking-widest text-[0.875rem] font-bold text-[#af4d30]">
+              Depoimentos
+            </span>
+          </StaggerItem>
+          <StaggerItem>
+            <h2 className="text-[clamp(2rem,3vw,2.5rem)] font-heading text-[#411f03] leading-[1.2]">
+              Histórias de amor e dedicação
+            </h2>
+          </StaggerItem>
+        </StaggerContainer>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[1.5rem]">
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-[1.5rem]">
           {testimonials.map((testimonial) => (
-            <div
+            <StaggerItem
               key={testimonial.name}
-              className="bg-white border border-[#e4e2de] rounded-2xl p-[2rem] shadow-sm flex flex-col justify-between"
+              className="bg-white border border-[#e4e2de] rounded-2xl p-[2rem] shadow-sm flex flex-col justify-between h-full"
             >
               <div>
                 <div className="flex gap-[0.25rem] mb-[1.5rem]">
@@ -74,9 +80,9 @@ export function Testimonials() {
                   </span>
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

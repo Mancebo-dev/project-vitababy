@@ -1,4 +1,8 @@
+import { ChevronRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { StaggerContainer } from "@/components/ui/StaggerContainer";
+import { StaggerItem } from "@/components/ui/StaggerItem";
 
 export function Services() {
   const baseServices = [
@@ -15,6 +19,7 @@ export function Services() {
           height={24}
           alt="Ícone Assistência"
           loading="lazy"
+          style={{ width: 24, height: 24 }}
         />
       ),
       iconBg: "bg-[#5f6f52]/20",
@@ -32,6 +37,7 @@ export function Services() {
           height={24}
           alt="Ícone Amamentação"
           loading="lazy"
+          style={{ width: 24, height: 24 }}
         />
       ),
       iconBg: "bg-[#d19a7e]/20",
@@ -49,6 +55,7 @@ export function Services() {
           height={24}
           alt="Ícone Banho Humanizado"
           loading="lazy"
+          style={{ width: 24, height: 24 }}
         />
       ),
       iconBg: "bg-[#5f6f52]/20",
@@ -63,22 +70,28 @@ export function Services() {
       className="py-[2rem] md:py-[3rem] bg-[#f5f3ef] min-h-[100vh] flex flex-col justify-center"
     >
       <div className="w-full max-w-[1440px] mx-auto px-[1.5rem] lg:px-[7.5rem]">
-        <div className="flex flex-col items-center text-center gap-[0.5rem] mb-[3rem]">
-          <span className="text-[clamp(0.75rem,1vw,1rem)] font-semibold text-[#d19a7e] tracking-[0.0375rem] uppercase">
-            O QUE OFERECEMOS
-          </span>
-          <h2 className="text-[clamp(2rem,3vw,3rem)] font-heading text-[#411f03]">
-            Serviços especializados
-          </h2>
-          <p className="text-[#444840] text-[clamp(1rem,1.5vw,1.25rem)] max-w-[42rem] mt-[0.5rem]">
-            Cada família é única. Nossas assessorias são personalizadas e
-            baseadas em evidências científicas.
-          </p>
-        </div>
+        <StaggerContainer className="flex flex-col items-center text-center gap-[1rem]">
+          <StaggerItem>
+            <span className="uppercase tracking-widest text-[0.875rem] font-bold text-[#af4d30]">
+              Nossos Serviços
+            </span>
+          </StaggerItem>
+          <StaggerItem>
+            <h2 className="text-[clamp(2rem,3vw,2.5rem)] font-heading text-[#411f03] leading-[1.2]">
+              Cuidado humanizado e especializado
+            </h2>
+          </StaggerItem>
+          <StaggerItem>
+            <p className="text-[1.125rem] text-[#444840] max-w-[35rem] leading-[1.6]">
+              Soluções completas e acolhedoras para tornar sua jornada materna
+              mais leve e confiante.
+            </p>
+          </StaggerItem>
+        </StaggerContainer>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1.5rem]">
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1.5rem] mt-[3rem] w-full">
           {services.map((service, index) => (
-            <div
+            <StaggerItem
               key={`${service.title}-${index}`}
               className="flex flex-col items-start bg-white border border-[#e4e2de] rounded-2xl p-[2rem] shadow-sm hover:shadow-md transition-shadow"
             >
@@ -101,16 +114,21 @@ export function Services() {
                 {service.description}
               </p>
 
-              {service.price && (
-                <div className="w-full pt-[1.5rem] border-t border-[#e4e2de]">
-                  <span className="text-[#d19a7e] font-bold text-[0.875rem]">
-                    {service.price}
-                  </span>
-                </div>
-              )}
-            </div>
+              <div className="w-full pt-[1.25rem] border-t border-[#e4e2de] flex items-center justify-between mt-auto">
+                <span className="text-[#af4d30] font-bold text-[0.9375rem]">
+                  {service.price || "Consulte opções"}
+                </span>
+                <Link
+                  href={`/agendamento?servico=${encodeURIComponent(service.title)}`}
+                  className="text-[0.8125rem] font-semibold text-[#411f03] hover:text-[#af4d30] flex items-center gap-1 transition-colors group"
+                >
+                  Agendar{" "}
+                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

@@ -131,4 +131,36 @@ html {
   html {
     @apply font-sans;
   }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #fbf9f5;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d19a7e;
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #af4d30;
+  }
+
+  /* Animação do título Hero — CSS puro, sem JS, não bloqueia LCP */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.9s cubic-bezier(0.21, 0.47, 0.32, 0.98) both;
+    animation-delay: 0.1s;
+  }
 }
