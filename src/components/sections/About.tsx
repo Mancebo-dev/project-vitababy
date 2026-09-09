@@ -1,32 +1,42 @@
+import { Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export function About() {
   return (
-    <section id="sobre" className="py-[64px] md:py-[100px] bg-[#fbf9f5]">
-      <div className="container mx-auto px-6 max-w-[1200px]">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Image/Video Placeholder */}
-          <div className="relative w-full max-w-[450px] aspect-square md:aspect-[4/5] rounded-[24px] overflow-hidden shadow-2xl bg-black border-8 border-[#f5f3ef] mx-auto lg:mx-0">
+    <section
+      id="sobre"
+      className="py-[2rem] md:py-[3rem] bg-[#fbf9f5] min-h-[100vh] flex flex-col justify-center"
+    >
+      <div className="w-full max-w-[1440px] mx-auto px-[1.5rem] lg:px-[7.5rem]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-[2.5rem] lg:gap-[4rem] items-center">
+          {/* Video Player */}
+          <div className="relative w-full max-w-[28.125rem] aspect-square md:aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-black border-[0.5rem] border-[#f5f3ef] mx-auto lg:mx-0 group cursor-pointer">
             <Image
               src="https://vitababy.com.br/images/rayane.png"
               alt="Rayane Castro"
               fill
               unoptimized
-              className="object-cover opacity-90"
+              loading="lazy"
+              className="object-cover opacity-80 group-hover:opacity-60 transition-opacity"
             />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-[4rem] h-[4rem] bg-[#d19a7e] rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Play className="w-[1.5rem] h-[1.5rem] text-white ml-[0.25rem]" />
+              </div>
+            </div>
           </div>
 
           {/* Text Content */}
-          <div className="flex flex-col items-start gap-4">
-            <span className="text-[12px] font-semibold text-[#d19a7e] tracking-[0.6px] uppercase">
+          <div className="flex flex-col items-start gap-[1rem]">
+            <span className="text-[clamp(0.75rem,1vw,1rem)] font-semibold text-[#d19a7e] tracking-[0.0375rem] uppercase">
               SOBRE MIM
             </span>
-            <h2 className="text-[32px] md:text-[40px] font-heading text-[#411f03] leading-[1.2]">
+            <h2 className="text-[clamp(2rem,3vw,3rem)] font-heading text-[#411f03] leading-[1.2]">
               Rayane Castro e a missão da Vitababy
             </h2>
 
-            <div className="flex flex-col gap-4 text-[#444840] text-[16px] md:text-[18px] leading-[28px] mt-2">
+            <div className="flex flex-col gap-[1rem] text-[#444840] text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.6] mt-[0.5rem]">
               <p>
                 Com mais de 9 anos de experiência em cuidados materno-infantis,
                 minha missão é acolher e guiar famílias em um dos momentos mais
@@ -43,7 +53,7 @@ export function About() {
 
             <Link
               href="#contato"
-              className="group flex items-center gap-2 text-[#af4d30] font-bold text-[16px] mt-6 border-b-2 border-[#af4d30] pb-1 hover:text-[#af4d30]/80 transition-colors"
+              className="group flex items-center gap-[0.5rem] text-[#af4d30] font-bold text-[1rem] mt-[1.5rem] border-b-[0.125rem] border-[#af4d30] pb-[0.25rem] hover:text-[#af4d30]/80 transition-colors"
             >
               Fale comigo
               <Image
@@ -51,6 +61,7 @@ export function About() {
                 width={16}
                 height={16}
                 alt="arrow"
+                loading="lazy"
                 className="group-hover:translate-x-1 transition-transform"
               />
             </Link>
