@@ -11,8 +11,8 @@ export function About() {
           <div className="relative w-full aspect-square md:aspect-video lg:aspect-[4/5] rounded-[48px] overflow-hidden shadow-2xl bg-black border-8 border-background">
             {/* The design specifies a black box or video placeholder. We'll add an image just in case */}
             <Image
-              src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-              alt="Mãe e bebê"
+              src="https://vitababy.com.br/images/rayane.png"
+              alt="Rayane Castro"
               fill
               unoptimized
               className="object-cover opacity-80 mix-blend-luminosity"

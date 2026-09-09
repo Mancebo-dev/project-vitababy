@@ -1,4 +1,4 @@
-import { Baby, Droplets, Heart } from "lucide-react";
+import Image from "next/image";
 
 export function Services() {
   const services = [
@@ -8,7 +8,14 @@ export function Services() {
       description:
         "Pacote de cuidados básicos, realizado de acordo com a necessidade da família.",
       price: null,
-      icon: <Heart className="w-6 h-6 text-primary" />,
+      icon: (
+        <Image
+          src="/assets/825b3088019920de508671e802e75260d01592df.svg"
+          width={24}
+          height={24}
+          alt="Ícone Assistência"
+        />
+      ),
       iconBg: "bg-primary/20",
     },
     {
@@ -17,7 +24,14 @@ export function Services() {
       description:
         "Apoio completo para estabelecer e manter o aleitamento materno com confiança e bem-estar.",
       price: "a partir de R$ 350",
-      icon: <Baby className="w-6 h-6 text-accent" />,
+      icon: (
+        <Image
+          src="/assets/46c592fdfb9c662b651317aeee2ba4b73bd5e2d7.svg"
+          width={24}
+          height={24}
+          alt="Ícone Amamentação"
+        />
+      ),
       iconBg: "bg-accent/30",
     },
     {
@@ -26,7 +40,14 @@ export function Services() {
       description:
         "Técnica de banho terapêutico que remete ao ambiente uterino, promovendo calma, vínculo e bem-estar.",
       price: "a partir de R$ 120",
-      icon: <Droplets className="w-6 h-6 text-primary" />,
+      icon: (
+        <Image
+          src="/assets/104e86cb37a567122753226d314286dead80a322.svg"
+          width={24}
+          height={24}
+          alt="Ícone Banho Humanizado"
+        />
+      ),
       iconBg: "bg-primary/20",
     },
   ];

@@ -73,7 +73,7 @@ export function Hero() {
           {/* Image Content */}
           <div className="relative w-full h-[500px] md:h-[600px] lg:h-[700px] rounded-[32px] overflow-hidden shadow-2xl">
             <Image
-              src="https://images.unsplash.com/photo-1555252333-9f8e92e65df9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              src="https://vitababy.com.br/images/rayane.png"
               alt="Rayane Castro - Profissional de Consultoria Materna"
               fill
               unoptimized
