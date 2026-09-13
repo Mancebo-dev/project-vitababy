@@ -6,6 +6,8 @@ import { Sidebar } from "@/components/portal/Sidebar";
 import { auth } from "@/infrastructure/auth/auth";
 import { prisma } from "@/infrastructure/db/prisma";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Área do Cliente | Vita Baby",
 };

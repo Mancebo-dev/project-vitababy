@@ -4,6 +4,8 @@ import { prisma } from "@/infrastructure/db/prisma";
 import { CopyLinkButton } from "./components/CopyLinkButton";
 import { DepoimentoItem } from "./components/DepoimentoItem";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Depoimentos | Vita Baby Dashboard",
 };

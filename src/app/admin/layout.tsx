@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { MobileNav } from "@/components/dashboard/MobileNav";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Admin | Vita Baby",
   description: "Painel administrativo da Vita Baby",
