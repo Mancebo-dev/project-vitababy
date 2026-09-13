@@ -19,9 +19,12 @@ const hankenGrotesk = Hanken_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Vita Baby | Consultoria Materno-Infantil",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://vitababy.com.br",
+  ),
+  title: "Vita Baby Assessoria | Cuidado e Acolhimento Materno-Infantil",
   description:
-    "Assessoria especializada em amamentação, banho humanizado, primeiros socorros para bebês e muito mais. Cuidado humanizado para você e sua família.",
+    "Assessoria especializada em amamentação, banho humanizado, primeiros socorros para crianças e muito mais. Cuidado humanizado para você e sua família.",
   keywords: [
     "amamentação",
     "banho humanizado",
@@ -32,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Vita Baby | Consultoria Materno-Infantil",
     description:
-      "Assessoria especializada em amamentação, banho humanizado e primeiros socorros para bebês.",
+      "Assessoria especializada em amamentação, banho humanizado e primeiros socorros para crianças.",
     type: "website",
     locale: "pt_BR",
     images: [
@@ -55,6 +58,7 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       className={`${libreCaslon.variable} ${hankenGrotesk.variable} scroll-smooth antialiased`}
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
         <LoadingScreen />
