@@ -59,6 +59,7 @@ export function Testimonials() {
                       height={15}
                       alt="star"
                       loading="lazy"
+                      style={{ width: "auto", height: "auto" }}
                     />
                   ))}
                 </div>

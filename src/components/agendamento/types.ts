@@ -34,14 +34,34 @@ export interface DatePreference {
 }
 
 export interface BookingFormData {
-  serviceId: string;
+  serviceIds: string[];
   professionalId: string;
   dates: DatePreference[]; // 1 to 3 date preferences
   clientName: string;
   clientEmail: string;
   clientPhone: string;
-  clientPassword: string;
-  clientPasswordConfirm: string;
+  clientCpf: string;
+  clientZipCode: string;
+  clientAddress: string;
   additionalInfo: string;
+  requiresCompanion: boolean;
   acceptTerms: boolean;
 }
+
+import type { Professional, Service } from "@prisma/client";
+
+export type ExtendedService = Service & {
+  price?: number;
+  duration?: number;
+  popular?: boolean;
+};
+
+export type ExtendedProfessional = Professional & {
+  role?: string;
+  crnOrCoren?: string | null;
+  rating?: number;
+  reviewCount?: number;
+  avatarUrl?: string | null;
+  bio?: string | null;
+  specialties?: string | string[] | null;
+};

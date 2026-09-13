@@ -1,10 +1,14 @@
+"use client";
+
 import Image from "next/image";
+import { useActionState } from "react";
+import { submitContactForm } from "@/app/actions/contact";
 import { Button } from "@/components/ui/button";
-import { CustomSelect } from "@/components/ui/CustomSelect";
 import { StaggerContainer } from "@/components/ui/StaggerContainer";
 import { StaggerItem } from "@/components/ui/StaggerItem";
 
 export function Contact() {
+  const [state, formAction, pending] = useActionState(submitContactForm, null);
   return (
     <section
       id="contato"
@@ -95,18 +99,30 @@ export function Contact() {
 
           {/* Contact Form */}
           <div className="flex flex-col w-full">
-            <form className="flex flex-col gap-[1.5rem]">
+            <form action={formAction} className="flex flex-col gap-[1.5rem]">
+              {state?.success && (
+                <div className="bg-emerald-50 text-emerald-800 p-4 rounded-lg border border-emerald-200">
+                  {state.success}
+                </div>
+              )}
+              {state?.error && (
+                <div className="bg-red-50 text-red-800 p-4 rounded-lg border border-red-200">
+                  {state.error}
+                </div>
+              )}
+
               <div className="flex flex-col gap-[0.5rem]">
                 <label
                   htmlFor="name"
                   className="text-[0.875rem] font-semibold text-[#411f03]"
                 >
-                  Nome completo
+                  Nome completo *
                 </label>
                 <input
                   type="text"
                   id="name"
                   name="name"
+                  required
                   autoComplete="name"
                   className="w-full bg-[#fbf9f5] border border-[#e4e2de] rounded-[1rem] px-[1rem] py-[0.75rem] outline-none focus:border-[#d19a7e] transition-colors text-[0.9375rem]"
                   placeholder="Seu nome"
@@ -119,12 +135,13 @@ export function Contact() {
                     htmlFor="email"
                     className="text-[0.875rem] font-semibold text-[#411f03]"
                   >
-                    E-mail
+                    E-mail *
                   </label>
                   <input
                     type="email"
                     id="email"
                     name="email"
+                    required
                     autoComplete="email"
                     className="w-full bg-[#fbf9f5] border border-[#e4e2de] rounded-lg px-[1rem] py-[0.75rem] outline-none focus:border-[#d19a7e] transition-colors text-[0.9375rem]"
                     placeholder="Seu e-mail"
@@ -135,12 +152,13 @@ export function Contact() {
                     htmlFor="phone"
                     className="text-[0.875rem] font-semibold text-[#411f03]"
                   >
-                    Telefone / WhatsApp
+                    Telefone / WhatsApp *
                   </label>
                   <input
                     type="tel"
                     id="phone"
                     name="phone"
+                    required
                     autoComplete="tel"
                     className="w-full bg-[#fbf9f5] border border-[#e4e2de] rounded-lg px-[1rem] py-[0.75rem] outline-none focus:border-[#d19a7e] transition-colors text-[0.9375rem]"
                     placeholder="(00) 00000-0000"
@@ -149,17 +167,18 @@ export function Contact() {
               </div>
 
               <div className="flex flex-col gap-[0.5rem]">
-                <span className="text-[0.875rem] font-semibold text-[#444840]">
+                <label
+                  htmlFor="service"
+                  className="text-[0.875rem] font-semibold text-[#411f03]"
+                >
                   Qual serviço você procura?
-                </span>
-                <CustomSelect
+                </label>
+                <input
+                  type="text"
                   id="service"
-                  placeholder="Selecione uma opção..."
-                  options={[
-                    { value: "amamentacao", label: "Amamentação" },
-                    { value: "banho", label: "Banho Humanizado" },
-                    { value: "socorros", label: "Primeiros Socorros" },
-                  ]}
+                  name="service"
+                  className="w-full bg-[#fbf9f5] border border-[#e4e2de] rounded-lg px-[1rem] py-[0.75rem] outline-none focus:border-[#d19a7e] transition-colors text-[0.9375rem]"
+                  placeholder="Ex: Consultoria de Sono, Amamentação..."
                 />
               </div>
 
@@ -169,11 +188,13 @@ export function Contact() {
                     htmlFor="message"
                     className="block text-[#411f03] font-semibold text-[0.875rem] mb-[0.5rem]"
                   >
-                    Como podemos te ajudar?
+                    Como podemos te ajudar? *
                   </label>
                   <textarea
                     id="message"
+                    name="message"
                     rows={4}
+                    required
                     className="w-full bg-[#fbf9f5] border border-[#e4e2de] rounded-xl px-[1rem] py-[0.75rem] text-[#444840] focus:outline-none focus:border-[#d19a7e] focus:ring-1 focus:ring-[#d19a7e] transition-all resize-none"
                     placeholder="Descreva brevemente o que você precisa..."
                   ></textarea>
@@ -204,8 +225,11 @@ export function Contact() {
                   </label>
                 </div>
 
-                <Button className="w-full rounded-xl h-[3.5rem] bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold shadow-lg text-[1rem]">
-                  Enviar Mensagem
+                <Button
+                  disabled={pending}
+                  className="w-full rounded-xl h-[3.5rem] bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold shadow-lg text-[1rem]"
+                >
+                  {pending ? "Enviando..." : "Enviar Mensagem"}
                 </Button>
               </div>
             </form>

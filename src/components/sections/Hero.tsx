@@ -61,8 +61,8 @@ export function Hero() {
           {/* Description — LCP element: renderizado visível imediatamente (sem animação inicial) */}
           <p className="text-[clamp(1rem,1.5vw,1.25rem)] text-[#444840] leading-[1.6] max-w-[32rem] mb-[1rem]">
             Assessoria especializada em amamentação, banho humanizado, primeiros
-            socorros para bebês, entre outros. Apoio especializado para você e
-            sua família nas fases mais importantes.
+            socorros para crianças, entre outros. Apoio especializado para você
+            e sua família nas fases mais importantes.
           </p>
 
           {/* Actions */}
@@ -102,7 +102,7 @@ export function Hero() {
                     height={15}
                     alt="star"
                     loading="lazy"
-                    style={{ width: 15, height: 15 }}
+                    style={{ width: "auto", height: "auto" }}
                   />
                 ))}
               </div>

@@ -1,6 +1,4 @@
-import { ChevronLeft } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 import { BookingWizard } from "@/components/agendamento/BookingWizard";
 import { Footer } from "@/components/layout/Footer";
@@ -14,45 +12,74 @@ export const metadata: Metadata = {
 
 export default function AgendamentoPage() {
   return (
-    <main className="flex min-h-screen flex-col bg-[#fbf9f5]">
-      <div className="w-full pt-[2.5rem] px-[1.5rem] lg:px-[7.5rem] max-w-[1000px] mx-auto">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-[0.5rem] text-[#411f03] hover:text-[#af4d30] font-medium text-[0.9375rem] transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Voltar para o site
-        </Link>
-      </div>
-
-      <section className="pt-[2.5rem] pb-[5rem] px-[1.5rem] lg:px-[7.5rem] w-full">
-        <div className="max-w-[1000px] mx-auto mb-[2.5rem] text-center">
-          <span className="text-[#af4d30] font-bold text-[0.875rem] uppercase tracking-widest">
-            Vitababy Assessoria
-          </span>
-          <h1 className="text-[clamp(2.25rem,4vw,3.25rem)] font-heading font-bold text-[#411f03] leading-[1.15] mt-[0.5rem] mb-[0.75rem]">
-            Agende seu Atendimento
-          </h1>
-          <p className="text-[#444840] text-[1.0625rem] max-w-[36rem] mx-auto leading-[1.6]">
-            Escolha o serviço, a profissional de sua preferência e até 3 opções
-            de datas e horários. Cuidado humanizado e acolhedor para a sua
-            família.
-          </p>
+    <main className="flex flex-col bg-[#fbf9f5]">
+      <div className="h-[100dvh] w-full flex flex-col items-center justify-center p-[1.5rem] lg:p-[4rem]">
+        <div className="w-full max-w-[1000px] flex flex-col min-h-0 max-h-full">
+          <Suspense
+            fallback={
+              <div className="w-full h-full flex items-center justify-center text-[#af4d30] font-semibold">
+                Carregando fluxo de agendamento...
+              </div>
+            }
+          >
+            <WizardDataLoader />
+          </Suspense>
         </div>
-
-        <Suspense
-          fallback={
-            <div className="w-full h-96 flex items-center justify-center text-[#af4d30] font-semibold">
-              Carregando fluxo de agendamento...
-            </div>
-          }
-        >
-          <BookingWizard />
-        </Suspense>
-      </section>
+      </div>
 
       <Footer />
       <BackToTop />
     </main>
+  );
+}
+
+// Separate component to do the async fetching so Suspense catches it
+import { prisma } from "@/infrastructure/db/prisma";
+
+async function WizardDataLoader() {
+  const [dbServices, professionals, availableSlots] = await Promise.all([
+    prisma.service.findMany({
+      where: { active: true },
+      include: {
+        packages: {
+          orderBy: { price: "asc" },
+        },
+      },
+      orderBy: { name: "asc" },
+    }),
+    prisma.professional.findMany({
+      where: { active: true },
+      orderBy: { name: "asc" },
+    }),
+    prisma.scheduleSlot.findMany({
+      where: {
+        isBooked: false,
+        date: { gte: new Date(new Date().setHours(0, 0, 0, 0)) },
+      },
+      orderBy: [{ date: "asc" }, { startTime: "asc" }],
+    }),
+  ]);
+
+  const services = dbServices.map((s) => {
+    const validPrices = s.packages
+      .map((p) => p.price)
+      .filter((p): p is number => typeof p === "number" && p > 0);
+    const validDurations = s.packages
+      .map((p) => p.duration)
+      .filter((d): d is number => typeof d === "number" && d > 0);
+
+    return {
+      ...s,
+      price: validPrices.length > 0 ? Math.min(...validPrices) : 0,
+      duration: validDurations.length > 0 ? Math.min(...validDurations) : 60,
+    };
+  });
+
+  return (
+    <BookingWizard
+      services={services}
+      professionals={professionals}
+      availableSlots={availableSlots}
+    />
   );
 }

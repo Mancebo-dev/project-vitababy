@@ -3,10 +3,8 @@
 import {
   AlertCircle,
   ChevronLeft,
-  Eye,
-  EyeOff,
-  Lock,
   Mail,
+  MapPin,
   Phone,
   User,
 } from "lucide-react";
@@ -30,8 +28,6 @@ export function StepClientInfo({
   onNext,
   onBack,
 }: StepClientInfoProps) {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   // Máscara de telefone
@@ -45,6 +41,30 @@ export function StepClientInfo({
       formatted = `(${raw.slice(0, 2)}) ${raw.slice(2, 7)}-${raw.slice(7)}`;
     }
     onChangeField("clientPhone", formatted);
+  };
+
+  const handleCpfChange = (val: string) => {
+    const raw = val.replace(/\D/g, "").slice(0, 11);
+    let formatted = raw;
+    if (raw.length > 3) {
+      formatted = `${raw.slice(0, 3)}.${raw.slice(3)}`;
+    }
+    if (raw.length > 6) {
+      formatted = `${raw.slice(0, 3)}.${raw.slice(3, 6)}.${raw.slice(6)}`;
+    }
+    if (raw.length > 9) {
+      formatted = `${raw.slice(0, 3)}.${raw.slice(3, 6)}.${raw.slice(6, 9)}-${raw.slice(9)}`;
+    }
+    onChangeField("clientCpf", formatted);
+  };
+
+  const handleZipCodeChange = (val: string) => {
+    const raw = val.replace(/\D/g, "").slice(0, 8);
+    let formatted = raw;
+    if (raw.length > 5) {
+      formatted = `${raw.slice(0, 5)}-${raw.slice(5)}`;
+    }
+    onChangeField("clientZipCode", formatted);
   };
 
   const handleValidateAndNext = () => {
@@ -66,17 +86,22 @@ export function StepClientInfo({
       return;
     }
 
-    if (!formData.clientPassword || formData.clientPassword.length < 6) {
-      setErrorMessage(
-        "A senha para a Área do Cliente deve ter no mínimo 6 caracteres.",
-      );
+    const rawCpf = formData.clientCpf.replace(/\D/g, "");
+    if (rawCpf.length !== 11) {
+      setErrorMessage("Por favor, informe um CPF válido com 11 dígitos.");
       return;
     }
 
-    if (formData.clientPassword !== formData.clientPasswordConfirm) {
-      setErrorMessage(
-        "A confirmação de senha não confere com a senha digitada.",
-      );
+    if (
+      !formData.clientZipCode ||
+      formData.clientZipCode.replace(/\D/g, "").length < 8
+    ) {
+      setErrorMessage("Por favor, informe um CEP válido.");
+      return;
+    }
+
+    if (!formData.clientAddress.trim()) {
+      setErrorMessage("Por favor, informe o seu endereço completo.");
       return;
     }
 
@@ -89,224 +114,231 @@ export function StepClientInfo({
   };
 
   return (
-    <div className="flex flex-col gap-[2rem]">
-      <div>
-        <span className="text-[#af4d30] font-semibold text-[0.875rem] uppercase tracking-wider">
-          Passo 4 de 5
-        </span>
-        <h2 className="text-[clamp(1.5rem,2.5vw,2rem)] font-heading font-bold text-[#411f03] mt-[0.25rem]">
-          Seus dados e acesso à Área do Cliente
+    <div className="flex flex-col gap-[1rem] max-h-full">
+      <div className="shrink-0 text-center md:text-left mb-2">
+        <h2 className="text-[clamp(1.25rem,2vw,1.75rem)] font-heading font-bold text-[#411f03]">
+          Seus dados e informações adicionais
         </h2>
-        <p className="text-[#444840] text-[0.9375rem] mt-[0.25rem]">
-          Informe os dados de quem receberá o atendimento. Com a sua senha, você
-          poderá acompanhar o status do agendamento, consultar contratos e
-          orientações.
-        </p>
       </div>
 
-      {errorMessage && (
-        <div className="p-[1rem] bg-[#fdf2f0] border border-[#f5c6cb] rounded-xl flex items-center gap-[0.75rem] text-[#af4d30] text-[0.875rem]">
-          <AlertCircle className="w-5 h-5 shrink-0" />
-          <span>{errorMessage}</span>
-        </div>
-      )}
-
-      <div className="bg-white border border-[#e4e2de] rounded-2xl p-[1.75rem] shadow-sm flex flex-col gap-[1.5rem]">
-        {/* Nome Completo */}
-        <div>
-          <label
-            htmlFor="clientName"
-            className="block text-[0.875rem] font-semibold text-[#411f03] mb-[0.375rem]"
-          >
-            Nome Completo da Contratante *
-          </label>
-          <div className="relative">
-            <User className="w-5 h-5 text-[#a8a5a0] absolute left-[1rem] top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              id="clientName"
-              placeholder="Ex: Mariana Silveira"
-              value={formData.clientName}
-              onChange={(e) => onChangeField("clientName", e.target.value)}
-              className="w-full pl-[2.75rem] pr-[1rem] py-[0.75rem] border border-[#e4e2de] rounded-xl text-[0.9375rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none"
-            />
+      <div className="flex-1 overflow-y-auto min-h-0 pr-2 pb-2 flex flex-col gap-[2rem]">
+        {errorMessage && (
+          <div className="p-[1rem] bg-[#fdf2f0] border border-[#f5c6cb] rounded-xl flex items-center gap-[0.75rem] text-[#af4d30] text-[0.875rem]">
+            <AlertCircle className="w-5 h-5 shrink-0" />
+            <span>{errorMessage}</span>
           </div>
-        </div>
+        )}
 
-        {/* E-mail e WhatsApp em grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-[1.25rem]">
+        <div className="bg-white border border-[#e4e2de] rounded-2xl p-[1.75rem] shadow-sm flex flex-col gap-[1.5rem]">
+          {/* Nome Completo */}
           <div>
             <label
-              htmlFor="clientEmail"
+              htmlFor="clientName"
               className="block text-[0.875rem] font-semibold text-[#411f03] mb-[0.375rem]"
             >
-              E-mail *
+              Nome Completo da Contratante *
             </label>
             <div className="relative">
-              <Mail className="w-5 h-5 text-[#a8a5a0] absolute left-[1rem] top-1/2 -translate-y-1/2" />
+              <User className="w-5 h-5 text-[#a8a5a0] absolute left-[1rem] top-1/2 -translate-y-1/2" />
               <input
-                type="email"
-                id="clientEmail"
-                placeholder="seu.email@exemplo.com"
-                value={formData.clientEmail}
-                onChange={(e) => onChangeField("clientEmail", e.target.value)}
+                type="text"
+                id="clientName"
+                placeholder="Ex: Mariana Silveira"
+                value={formData.clientName}
+                onChange={(e) => onChangeField("clientName", e.target.value)}
                 className="w-full pl-[2.75rem] pr-[1rem] py-[0.75rem] border border-[#e4e2de] rounded-xl text-[0.9375rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none"
               />
             </div>
-            <span className="text-[0.75rem] text-[#7d7a75] mt-1 block">
-              Para onde enviaremos o resumo e confirmação
-            </span>
           </div>
 
-          <div>
-            <label
-              htmlFor="clientPhone"
-              className="block text-[0.875rem] font-semibold text-[#411f03] mb-[0.375rem]"
-            >
-              WhatsApp / Telefone *
-            </label>
-            <div className="relative">
-              <Phone className="w-5 h-5 text-[#a8a5a0] absolute left-[1rem] top-1/2 -translate-y-1/2" />
-              <input
-                type="tel"
-                id="clientPhone"
-                placeholder="(61) 99999-9999"
-                value={formData.clientPhone}
-                onChange={(e) => handlePhoneChange(e.target.value)}
-                className="w-full pl-[2.75rem] pr-[1rem] py-[0.75rem] border border-[#e4e2de] rounded-xl text-[0.9375rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none"
-              />
-            </div>
-            <span className="text-[0.75rem] text-[#7d7a75] mt-1 block">
-              Contato rápido para confirmação com a especialista
-            </span>
-          </div>
-        </div>
-
-        {/* Senha e Confirmação de Senha */}
-        <div className="p-[1.25rem] bg-[#fbf9f5] border border-[#f0eee9] rounded-xl flex flex-col gap-[1rem]">
-          <div className="flex items-center gap-[0.5rem] text-[#411f03]">
-            <Lock className="w-4 h-4 text-[#af4d30]" />
-            <span className="font-heading font-bold text-[0.9375rem]">
-              Crie uma Senha para sua Área do Cliente
-            </span>
-          </div>
-
+          {/* E-mail e WhatsApp em grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-[1.25rem]">
             <div>
               <label
-                htmlFor="clientPassword"
-                className="block text-[0.8125rem] font-semibold text-[#411f03] mb-[0.375rem]"
+                htmlFor="clientEmail"
+                className="block text-[0.875rem] font-semibold text-[#411f03] mb-[0.375rem]"
               >
-                Senha de Acesso *
+                E-mail *
               </label>
               <div className="relative">
+                <Mail className="w-5 h-5 text-[#a8a5a0] absolute left-[1rem] top-1/2 -translate-y-1/2" />
                 <input
-                  type={showPassword ? "text" : "password"}
-                  id="clientPassword"
-                  placeholder="Mínimo 6 caracteres"
-                  value={formData.clientPassword}
-                  onChange={(e) =>
-                    onChangeField("clientPassword", e.target.value)
-                  }
-                  className="w-full pl-[1rem] pr-[2.75rem] py-[0.625rem] border border-[#e4e2de] rounded-xl text-[0.875rem] bg-white focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none"
+                  type="email"
+                  id="clientEmail"
+                  placeholder="seu.email@exemplo.com"
+                  value={formData.clientEmail}
+                  onChange={(e) => onChangeField("clientEmail", e.target.value)}
+                  className="w-full pl-[2.75rem] pr-[1rem] py-[0.75rem] border border-[#e4e2de] rounded-xl text-[0.9375rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-[0.875rem] top-1/2 -translate-y-1/2 text-[#7d7a75] hover:text-[#411f03]"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </button>
               </div>
+              <span className="text-[0.75rem] text-[#7d7a75] mt-1 block">
+                Para onde enviaremos o resumo e confirmação
+              </span>
             </div>
 
             <div>
               <label
-                htmlFor="clientPasswordConfirm"
-                className="block text-[0.8125rem] font-semibold text-[#411f03] mb-[0.375rem]"
+                htmlFor="clientPhone"
+                className="block text-[0.875rem] font-semibold text-[#411f03] mb-[0.375rem]"
               >
-                Confirme a Senha *
+                WhatsApp / Telefone *
               </label>
               <div className="relative">
+                <Phone className="w-5 h-5 text-[#a8a5a0] absolute left-[1rem] top-1/2 -translate-y-1/2" />
                 <input
-                  type={showPasswordConfirm ? "text" : "password"}
-                  id="clientPasswordConfirm"
-                  placeholder="Repita a senha criada"
-                  value={formData.clientPasswordConfirm}
-                  onChange={(e) =>
-                    onChangeField("clientPasswordConfirm", e.target.value)
-                  }
-                  className="w-full pl-[1rem] pr-[2.75rem] py-[0.625rem] border border-[#e4e2de] rounded-xl text-[0.875rem] bg-white focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none"
+                  type="tel"
+                  id="clientPhone"
+                  placeholder="(61) 99999-9999"
+                  value={formData.clientPhone}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
+                  className="w-full pl-[2.75rem] pr-[1rem] py-[0.75rem] border border-[#e4e2de] rounded-xl text-[0.9375rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
-                  className="absolute right-[0.875rem] top-1/2 -translate-y-1/2 text-[#7d7a75] hover:text-[#411f03]"
-                >
-                  {showPasswordConfirm ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </button>
+              </div>
+              <span className="text-[0.75rem] text-[#7d7a75] mt-1 block">
+                Contato rápido para confirmação
+              </span>
+            </div>
+
+            <div>
+              <label
+                htmlFor="clientCpf"
+                className="block text-[0.875rem] font-semibold text-[#411f03] mb-[0.375rem]"
+              >
+                CPF *
+              </label>
+              <div className="relative">
+                <User className="w-5 h-5 text-[#a8a5a0] absolute left-[1rem] top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  id="clientCpf"
+                  placeholder="000.000.000-00"
+                  value={formData.clientCpf}
+                  onChange={(e) => handleCpfChange(e.target.value)}
+                  className="w-full pl-[2.75rem] pr-[1rem] py-[0.75rem] border border-[#e4e2de] rounded-xl text-[0.9375rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none"
+                />
+              </div>
+              <span className="text-[0.75rem] text-[#7d7a75] mt-1 block">
+                Será utilizado como sua senha de acesso à Área do Cliente
+              </span>
+            </div>
+          </div>
+
+          {/* Endereço */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[1.25rem]">
+            <div className="md:col-span-1">
+              <label
+                htmlFor="clientZipCode"
+                className="block text-[0.875rem] font-semibold text-[#411f03] mb-[0.375rem]"
+              >
+                CEP *
+              </label>
+              <div className="relative">
+                <MapPin className="w-5 h-5 text-[#a8a5a0] absolute left-[1rem] top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  id="clientZipCode"
+                  placeholder="00000-000"
+                  value={formData.clientZipCode}
+                  onChange={(e) => handleZipCodeChange(e.target.value)}
+                  className="w-full pl-[2.75rem] pr-[1rem] py-[0.75rem] border border-[#e4e2de] rounded-xl text-[0.9375rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="md:col-span-2">
+              <label
+                htmlFor="clientAddress"
+                className="block text-[0.875rem] font-semibold text-[#411f03] mb-[0.375rem]"
+              >
+                Endereço Completo *
+              </label>
+              <div className="relative">
+                <MapPin className="w-5 h-5 text-[#a8a5a0] absolute left-[1rem] top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  id="clientAddress"
+                  placeholder="Rua, Número, Bairro, Complemento"
+                  value={formData.clientAddress}
+                  onChange={(e) =>
+                    onChangeField("clientAddress", e.target.value)
+                  }
+                  className="w-full pl-[2.75rem] pr-[1rem] py-[0.75rem] border border-[#e4e2de] rounded-xl text-[0.9375rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none"
+                />
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Caixa de Texto para Informações Adicionais */}
-        <div>
-          <label
-            htmlFor="additionalInfo"
-            className="block text-[0.875rem] font-semibold text-[#411f03] mb-[0.375rem]"
-          >
-            Informações Adicionais ou Observações (Opcional)
+          {/* Caixa de Texto para Informações Adicionais */}
+          <div>
+            <label
+              htmlFor="additionalInfo"
+              className="block text-[0.875rem] font-semibold text-[#411f03] mb-[0.375rem]"
+            >
+              Informações Adicionais ou Observações (Opcional)
+            </label>
+            <textarea
+              id="additionalInfo"
+              rows={4}
+              placeholder="Conte-nos o que for relevante para o atendimento: idade ou data prevista de nascimento do bebê, se já nasceu, principais dificuldades na amamentação, alergias ou dúvidas específicas..."
+              value={formData.additionalInfo}
+              onChange={(e) => onChangeField("additionalInfo", e.target.value)}
+              className="w-full p-[1rem] border border-[#e4e2de] rounded-xl text-[0.875rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none resize-y"
+            />
+          </div>
+
+          {/* Checkbox para Acompanhante */}
+          <label className="flex items-start gap-[0.625rem] cursor-pointer pt-[0.5rem] border-t border-[#f0eee9]">
+            <input
+              type="checkbox"
+              checked={formData.requiresCompanion}
+              onChange={(e) =>
+                onChangeField("requiresCompanion", e.target.checked)
+              }
+              className="mt-1 w-4 h-4 text-[#af4d30] rounded border-[#e4e2de] focus:ring-[#af4d30]"
+            />
+            <div className="flex flex-col">
+              <span className="text-[0.875rem] font-semibold text-[#411f03]">
+                Solicitar Acompanhante
+              </span>
+              <span className="text-[0.8125rem] text-[#444840] leading-[1.5]">
+                Marque esta opção se desejar a presença de um acompanhante
+                durante o atendimento (presencial ou domiciliar).
+              </span>
+            </div>
           </label>
-          <textarea
-            id="additionalInfo"
-            rows={4}
-            placeholder="Conte-nos o que for relevante para o atendimento: idade ou data prevista de nascimento do bebê, se já nasceu, principais dificuldades na amamentação, alergias ou dúvidas específicas..."
-            value={formData.additionalInfo}
-            onChange={(e) => onChangeField("additionalInfo", e.target.value)}
-            className="w-full p-[1rem] border border-[#e4e2de] rounded-xl text-[0.875rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none resize-y"
-          />
-        </div>
 
-        {/* Aceite de termos */}
-        <label className="flex items-start gap-[0.625rem] cursor-pointer pt-[0.5rem]">
-          <input
-            type="checkbox"
-            checked={formData.acceptTerms}
-            onChange={(e) => onChangeField("acceptTerms", e.target.checked)}
-            className="mt-1 w-4 h-4 text-[#af4d30] rounded border-[#e4e2de] focus:ring-[#af4d30]"
-          />
-          <span className="text-[0.8125rem] text-[#444840] leading-[1.5]">
-            Concordo com os{" "}
-            <Link
-              href="/termos-de-uso"
-              target="_blank"
-              className="text-[#af4d30] underline font-medium hover:text-[#411f03]"
-            >
-              Termos de Uso
-            </Link>{" "}
-            e a{" "}
-            <Link
-              href="/politica-de-privacidade"
-              target="_blank"
-              className="text-[#af4d30] underline font-medium hover:text-[#411f03]"
-            >
-              Política de Privacidade
-            </Link>{" "}
-            da Vitababy.
-          </span>
-        </label>
+          {/* Aceite de termos */}
+          <label className="flex items-start gap-[0.625rem] cursor-pointer pt-[0.5rem]">
+            <input
+              type="checkbox"
+              checked={formData.acceptTerms}
+              onChange={(e) => onChangeField("acceptTerms", e.target.checked)}
+              className="mt-1 w-4 h-4 text-[#af4d30] rounded border-[#e4e2de] focus:ring-[#af4d30]"
+            />
+            <span className="text-[0.8125rem] text-[#444840] leading-[1.5]">
+              Concordo com os{" "}
+              <Link
+                href="/termos-de-uso"
+                target="_blank"
+                className="text-[#af4d30] underline font-medium hover:text-[#411f03]"
+              >
+                Termos de Uso
+              </Link>{" "}
+              e a{" "}
+              <Link
+                href="/politica-de-privacidade"
+                target="_blank"
+                className="text-[#af4d30] underline font-medium hover:text-[#411f03]"
+              >
+                Política de Privacidade
+              </Link>{" "}
+              da Vitababy.
+            </span>
+          </label>
+        </div>
       </div>
 
-      <div className="flex items-center justify-between mt-[1rem]">
+      <div className="flex items-center justify-between pt-[1.5rem] shrink-0 border-t border-[#e4e2de] mt-[1rem]">
         <button
           type="button"
           onClick={onBack}

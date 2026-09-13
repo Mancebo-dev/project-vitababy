@@ -1,12 +1,15 @@
 "use client";
 
+import type { ScheduleSlot } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { PROFESSIONALS, SERVICES } from "./data";
-import type { BookingFormData } from "./types";
+import type {
+  BookingFormData,
+  ExtendedProfessional,
+  ExtendedService,
+} from "./types";
 
 const StepService = dynamic(() =>
   import("./StepService").then((mod) => mod.StepService),
@@ -32,15 +35,23 @@ const STEPS = [
   { id: 5, label: "Confirmação" },
 ];
 
-export function BookingWizard() {
+export function BookingWizard({
+  services,
+  professionals,
+  availableSlots,
+}: {
+  services: ExtendedService[];
+  professionals: ExtendedProfessional[];
+  availableSlots: ScheduleSlot[];
+}) {
   const searchParams = useSearchParams();
   const serviceParam = searchParams.get("servico");
 
   // Initial form state
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<BookingFormData>({
-    serviceId: SERVICES[0]?.id || "",
-    professionalId: PROFESSIONALS[0]?.id || "",
+    serviceIds: [services[0]?.id || ""].filter(Boolean),
+    professionalId: professionals[0]?.id || "",
     dates: [
       {
         date: "",
@@ -50,25 +61,27 @@ export function BookingWizard() {
     clientName: "",
     clientEmail: "",
     clientPhone: "",
-    clientPassword: "",
-    clientPasswordConfirm: "",
+    clientCpf: "",
+    clientZipCode: "",
+    clientAddress: "",
     additionalInfo: "",
+    requiresCompanion: false,
     acceptTerms: true,
   });
 
   // Pre-select service from URL query param if present
   useEffect(() => {
     if (serviceParam) {
-      const match = SERVICES.find(
+      const match = services.find(
         (s) =>
           s.id.toLowerCase() === serviceParam.toLowerCase() ||
-          s.title.toLowerCase().includes(serviceParam.toLowerCase()),
+          s.name.toLowerCase().includes(serviceParam.toLowerCase()),
       );
       if (match) {
-        setFormData((prev) => ({ ...prev, serviceId: match.id }));
+        setFormData((prev) => ({ ...prev, serviceIds: [match.id] }));
       }
     }
-  }, [serviceParam]);
+  }, [serviceParam, services]);
 
   const handleFieldChange = useCallback(
     <K extends keyof BookingFormData>(field: K, value: BookingFormData[K]) => {
@@ -80,136 +93,124 @@ export function BookingWizard() {
   const handleReset = useCallback(() => {
     setCurrentStep(1);
     setFormData({
-      serviceId: SERVICES[0]?.id || "",
-      professionalId: PROFESSIONALS[0]?.id || "",
+      serviceIds: [services[0]?.id || ""].filter(Boolean),
+      professionalId: professionals[0]?.id || "",
       dates: [{ date: "", time: "" }],
       clientName: "",
       clientEmail: "",
       clientPhone: "",
-      clientPassword: "",
-      clientPasswordConfirm: "",
+      clientCpf: "",
+      clientZipCode: "",
+      clientAddress: "",
       additionalInfo: "",
+      requiresCompanion: false,
       acceptTerms: true,
     });
-  }, []);
+  }, [services, professionals]);
 
   return (
     <div className="w-full max-w-[1000px] mx-auto">
       {/* Stepper Header */}
-      <div className="mb-[3rem]">
-        <div className="flex items-center justify-between relative">
-          {/* Background progress bar line */}
-          <div className="absolute top-1/2 left-0 w-full h-[2px] bg-[#e4e2de] -translate-y-1/2 z-0" />
-          <div
-            className="absolute top-1/2 left-0 h-[2px] bg-[#af4d30] -translate-y-1/2 z-0 transition-all duration-300"
-            style={{
-              width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%`,
-            }}
-          />
-
+      <div className="mb-[1.5rem] shrink-0 w-full">
+        <div className="flex gap-[0.5rem] w-full mb-[0.75rem]">
           {STEPS.map((step) => {
             const isCompleted = currentStep > step.id;
             const isCurrent = currentStep === step.id;
 
             return (
-              <div
+              <button
                 key={step.id}
-                className="relative z-10 flex flex-col items-center"
+                type="button"
+                disabled={!isCompleted && !isCurrent}
+                onClick={() => {
+                  if (isCompleted) setCurrentStep(step.id);
+                }}
+                className={`h-[6px] rounded-full flex-1 overflow-hidden transition-colors ${
+                  isCompleted ? "cursor-pointer" : "cursor-default"
+                } ${isCompleted || isCurrent ? "bg-[#af4d30]/20" : "bg-[#e4e2de]"}`}
               >
-                <button
-                  type="button"
-                  disabled={!isCompleted && !isCurrent}
-                  onClick={() => {
-                    if (isCompleted) setCurrentStep(step.id);
-                  }}
-                  className={`w-9 h-9 md:w-11 md:h-11 rounded-full flex items-center justify-center font-bold text-[0.875rem] md:text-[1rem] transition-all shadow-sm ${
-                    isCompleted
-                      ? "bg-[#af4d30] text-white cursor-pointer hover:bg-[#99473b]"
-                      : isCurrent
-                        ? "bg-[#411f03] text-white ring-4 ring-[#af4d30]/20 scale-105"
-                        : "bg-white border-2 border-[#e4e2de] text-[#a8a5a0] cursor-not-allowed"
-                  }`}
-                >
-                  {isCompleted ? (
-                    <Check className="w-4 h-4 md:w-5 md:h-5 stroke-[2.5]" />
-                  ) : (
-                    step.id
-                  )}
-                </button>
-
-                <span
-                  className={`text-[0.6875rem] md:text-[0.8125rem] font-semibold mt-2 hidden sm:block whitespace-nowrap ${
-                    isCurrent
-                      ? "text-[#411f03] font-bold"
-                      : isCompleted
-                        ? "text-[#af4d30]"
-                        : "text-[#a8a5a0]"
-                  }`}
-                >
-                  {step.label}
-                </span>
-              </div>
+                <div
+                  className="h-full bg-[#af4d30] transition-all duration-500 ease-out"
+                  style={{ width: isCompleted || isCurrent ? "100%" : "0%" }}
+                />
+              </button>
             );
           })}
+        </div>
+        <div className="flex justify-between items-center px-1">
+          <span className="text-[#af4d30] font-bold text-[0.8125rem] uppercase tracking-wider">
+            Passo {currentStep} de {STEPS.length}
+          </span>
+          <span className="text-[#411f03] font-bold text-[0.9375rem]">
+            {STEPS.find((s) => s.id === currentStep)?.label}
+          </span>
         </div>
       </div>
 
       {/* Step Content with Animated Transitions */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentStep}
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -15 }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
-        >
-          {currentStep === 1 && (
-            <StepService
-              selectedServiceId={formData.serviceId}
-              onSelectService={(id) => handleFieldChange("serviceId", id)}
-              onNext={() => setCurrentStep(2)}
-            />
-          )}
+      <div className="flex flex-col min-h-0 relative max-h-full">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="w-full max-h-full flex flex-col min-h-0"
+          >
+            {currentStep === 1 && (
+              <StepService
+                services={services}
+                selectedServiceIds={formData.serviceIds}
+                onSelectService={(ids) => handleFieldChange("serviceIds", ids)}
+                onNext={() => setCurrentStep(2)}
+              />
+            )}
 
-          {currentStep === 2 && (
-            <StepProfessional
-              selectedProfessionalId={formData.professionalId}
-              onSelectProfessional={(id) =>
-                handleFieldChange("professionalId", id)
-              }
-              onNext={() => setCurrentStep(3)}
-              onBack={() => setCurrentStep(1)}
-            />
-          )}
+            {currentStep === 2 && (
+              <StepProfessional
+                professionals={professionals}
+                selectedProfessionalId={formData.professionalId}
+                onSelectProfessional={(id) =>
+                  handleFieldChange("professionalId", id)
+                }
+                onNext={() => setCurrentStep(3)}
+                onBack={() => setCurrentStep(1)}
+              />
+            )}
 
-          {currentStep === 3 && (
-            <StepDateTime
-              professionalId={formData.professionalId}
-              dates={formData.dates}
-              onChangeDates={(dates) => handleFieldChange("dates", dates)}
-              onNext={() => setCurrentStep(4)}
-              onBack={() => setCurrentStep(2)}
-            />
-          )}
+            {currentStep === 3 && (
+              <StepDateTime
+                availableSlots={availableSlots}
+                professionalId={formData.professionalId}
+                dates={formData.dates}
+                onChangeDates={(dates) => handleFieldChange("dates", dates)}
+                onNext={() => setCurrentStep(4)}
+                onBack={() => setCurrentStep(2)}
+              />
+            )}
 
-          {currentStep === 4 && (
-            <StepClientInfo
-              formData={formData}
-              onChangeField={handleFieldChange}
-              onNext={() => setCurrentStep(5)}
-              onBack={() => setCurrentStep(3)}
-            />
-          )}
+            {currentStep === 4 && (
+              <StepClientInfo
+                formData={formData}
+                onChangeField={handleFieldChange}
+                onNext={() => setCurrentStep(5)}
+                onBack={() => setCurrentStep(3)}
+              />
+            )}
 
-          {currentStep === 5 && (
-            <StepConfirmation
-              formData={formData}
-              onBack={() => setCurrentStep(4)}
-              onReset={handleReset}
-            />
-          )}
-        </motion.div>
-      </AnimatePresence>
+            {currentStep === 5 && (
+              <StepConfirmation
+                services={services}
+                professionals={professionals}
+                formData={formData}
+                onBack={() => setCurrentStep(4)}
+                onReset={handleReset}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
