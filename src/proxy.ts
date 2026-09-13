@@ -6,7 +6,9 @@ export function proxy(request: NextRequest) {
 
   // Rota administrativa: exige login (verificaremos a session de forma simples)
   if (pathname.startsWith("/admin")) {
-    const sessionToken = request.cookies.get("better-auth.session_token");
+    const sessionToken =
+      request.cookies.get("__Secure-better-auth.session_token")?.value ||
+      request.cookies.get("better-auth.session_token")?.value;
 
     if (!sessionToken) {
       const loginUrl = new URL("/login", request.url);
