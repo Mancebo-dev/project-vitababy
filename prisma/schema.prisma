@@ -1,0 +1,328 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+
+  // Custom fields
+  role       String?
+  banned     Boolean?
+  banReason  String?
+  banExpires DateTime?
+  whatsapp   String?
+
+  sessions            Session[]
+  accounts            Account[]
+  clientProfile       Client?
+  professionalProfile Professional?
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id             String   @id
+  expiresAt      DateTime
+  token          String
+  createdAt      DateTime
+  updatedAt      DateTime
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy String?
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model Client {
+  id           String             @id @default(cuid())
+  userId       String?            @unique
+  user         User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  email        String?            @unique
+  phone        String
+  cpf          String?            @unique
+  zipCode      String?
+  street       String?
+  number       String?
+  neighborhood String?
+  city         String?
+  state        String?
+  complement   String?
+  address      String? // Keeping legacy address field just in case
+  bookings     Booking[]
+  reviews      Review[]
+  notes        ConsultationNote[]
+  files        ClientFile[]
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  @@map("client")
+}
+
+model Professional {
+  id            String             @id @default(cuid())
+  userId        String?            @unique
+  user          User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  name          String
+  email         String?            @unique
+  phone         String?
+  specialty     String?
+  specialties   String?
+  crnOrCoren    String?
+  experience    String?
+  bio           String?
+  avatarUrl     String?
+  pixKey        String?
+  city          String?
+  active        Boolean            @default(true)
+  color         String?            @default("#ae4d30")
+  scheduleSlots ScheduleSlot[]
+  bookings      Booking[]
+  notes         ConsultationNote[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@map("professional")
+}
+
+model Service {
+  id          String           @id @default(cuid())
+  name        String
+  description String?
+  active      Boolean          @default(true)
+  packages    ServicePackage[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@map("service")
+}
+
+model ServicePackage {
+  id          String    @id @default(cuid())
+  serviceId   String
+  name        String // Básico, Essencial, Premium
+  description String?
+  price       Float?
+  duration    Int? // em minutos
+  service     Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  bookings    Booking[]
+
+  @@map("service_package")
+}
+
+model ScheduleSlot {
+  id             String       @id @default(cuid())
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id])
+  date           DateTime // Exact date
+  startTime      String // "09:00"
+  endTime        String // "10:00"
+  isBooked       Boolean      @default(false)
+  booking        Booking?
+
+  @@map("schedule_slot")
+}
+
+model Booking {
+  id       String           @id @default(cuid())
+  packages ServicePackage[]
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
+
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id])
+
+  scheduleSlotId String       @unique
+  scheduleSlot   ScheduleSlot @relation(fields: [scheduleSlotId], references: [id])
+
+  additionalInfo String?
+  status         String  @default("PENDING") // PENDING, CONFIRMED, CANCELLED, COMPLETED
+  cancelReason   String?
+  transportFee   Float?
+
+  contract Contract?
+  payments Payment[]
+  notes    ConsultationNote[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("booking")
+}
+
+model Contract {
+  id             String  @id @default(cuid())
+  bookingId      String  @unique
+  booking        Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  content        String
+  signedByClient Boolean @default(false)
+  signedByProf   Boolean @default(false)
+
+  // New signature fields
+  pdfUrl   String?
+  clientIp String?
+  signedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contract")
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  bookingId   String?
+  booking     Booking? @relation(fields: [bookingId], references: [id])
+  amount      Float
+  description String?
+  date        DateTime @default(now())
+  status      String   @default("PENDING") // PENDING, PAID, CANCELLED
+  method      String? // PIX, CREDIT, DEBIT, MONEY
+  type        String   @default("INCOME") // INCOME, EXPENSE
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("payment")
+}
+
+model Review {
+  id            String   @id @default(cuid())
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  serviceId     String?
+  rating        Int
+  comment       String
+  isHighlighted Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("review")
+}
+
+model ContractTemplate {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contract_template")
+}
+
+model ConsultationNote {
+  id String @id @default(cuid())
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id])
+
+  bookingId String?
+  booking   Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+
+  date        DateTime @default(now())
+  title       String
+  content     String
+  sombraNotes String? // Observações caso tenha Sombra
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("consultation_note")
+}
+
+model PlannerItem {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  type        String // EVENT, REMINDER, NOTE
+  date        DateTime // For the day it occurs
+  startTime   String? // "09:00" - nullable for all-day notes
+  endTime     String? // "10:00" - nullable
+  color       String?
+  notifyAt    DateTime?
+  isCompleted Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("planner_item")
+}
+
+model ClientFile {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  fileUrl     String
+  fileType    String
+  uploadedBy  String // "CLIENT" or "PROFESSIONAL"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("client_file")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String
+  service   String?
+  message   String
+  status    String   @default("UNREAD") // UNREAD, READ, REPLIED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contact_message")
+}
