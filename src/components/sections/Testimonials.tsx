@@ -43,7 +43,7 @@ export function Testimonials() {
           </StaggerItem>
         </StaggerContainer>
 
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-[1.5rem]">
+        <StaggerContainer className="grid grid-cols-1 lg:grid-cols-3 gap-[1.5rem]">
           {testimonials.map((testimonial) => (
             <StaggerItem
               key={testimonial.name}

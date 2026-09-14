@@ -42,7 +42,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-[2.5rem]">
+          <nav className="hidden lg:flex items-center gap-[2.5rem]">
             <Link
               href="#home"
               className="text-[1rem] font-medium text-[#444840] hover:text-[#af4d30] transition-colors"
@@ -76,7 +76,7 @@ export function Navbar() {
           </nav>
 
           {/* CTA Button */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <Link href="/agendamento">
               <Button className="rounded-full px-[1.5rem] h-[3rem] bg-[#af4d30] text-white hover:bg-[#af4d30]/90 font-semibold shadow-md text-[0.875rem]">
                 Agendar Consultoria
@@ -88,7 +88,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-[0.5rem] text-[#411f03] hover:text-[#af4d30] transition-colors z-50"
+            className="lg:hidden p-[0.5rem] text-[#411f03] hover:text-[#af4d30] transition-colors z-50"
           >
             {isOpen ? (
               <X className="w-[2rem] h-[2rem]" />
@@ -104,14 +104,14 @@ export function Navbar() {
         <button
           type="button"
           aria-label="Fechar menu"
-          className="md:hidden fixed inset-0 bg-[#411f03]/20 backdrop-blur-sm z-40 transition-opacity border-none cursor-default"
+          className="lg:hidden fixed inset-0 bg-[#411f03]/20 backdrop-blur-sm z-40 transition-opacity border-none cursor-default"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Mobile Nav Menu */}
       <div
-        className={`md:hidden fixed top-0 right-0 bottom-0 w-[280px] bg-white z-40 transform transition-transform duration-300 ease-in-out flex flex-col shadow-2xl ${
+        className={`lg:hidden fixed top-0 right-0 bottom-0 w-[280px] bg-white z-40 transform transition-transform duration-300 ease-in-out flex flex-col shadow-2xl ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
