@@ -68,8 +68,8 @@ export function Hero() {
           {/* Actions */}
           <StaggerItem className="w-full">
             <div className="flex flex-col sm:flex-row items-center gap-[1rem] w-full mt-[1.5rem]">
-              <Link href="/agendamento">
-                <Button className="rounded-xl px-[2rem] h-[3.5rem] bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold shadow-lg text-[1rem] flex items-center gap-[0.5rem]">
+              <Link href="/agendamento" className="w-full sm:w-auto">
+                <Button className="w-full rounded-xl px-[2rem] h-[3.5rem] bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold shadow-lg text-[1rem] flex items-center gap-[0.5rem]">
                   Agendar Consultoria
                   <Image
                     src="/assets/fadd198d26aadd8b0ee816378d8a8139f72021b1.svg"
@@ -79,10 +79,10 @@ export function Hero() {
                   />
                 </Button>
               </Link>
-              <Link href="#servicos">
+              <Link href="#servicos" className="w-full sm:w-auto">
                 <Button
                   variant="outline"
-                  className="rounded-xl px-[2rem] h-[3.5rem] border-[0.125rem] border-[#411f03] text-[#411f03] font-semibold hover:bg-[#411f03]/10 bg-transparent text-[1rem]"
+                  className="w-full rounded-xl px-[2rem] h-[3.5rem] border-[0.125rem] border-[#411f03] text-[#411f03] font-semibold hover:bg-[#411f03]/10 bg-transparent text-[1rem]"
                 >
                   Ver Serviços
                 </Button>
