@@ -24,7 +24,7 @@ export function MobileNav() {
 
   return (
     <>
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-[#e4e2de]">
+      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-[#e4e2de] fixed top-0 w-full z-40 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-[#af4d30] flex items-center justify-center text-white font-bold">
             VB

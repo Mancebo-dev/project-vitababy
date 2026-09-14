@@ -35,9 +35,9 @@ export function Footer() {
   return (
     <footer className="bg-[#f5f3ef] pt-[5rem] pb-[2rem] border-t border-[#e4e2de]">
       <div className="w-full max-w-[1440px] mx-auto px-[1.5rem] lg:px-[7.5rem]">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[3rem] mb-[4rem]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-[3rem] mb-[4rem]">
           {/* Brand */}
-          <div className="flex flex-col gap-[1rem]">
+          <div className="flex flex-col gap-[1rem] lg:col-span-2">
             <Link href="/" className="inline-block">
               <Image
                 src="/assets/logo-vita-baby.png"
@@ -99,6 +99,31 @@ export function Footer() {
                   className="hover:text-[#af4d30] transition-colors"
                 >
                   Depoimentos
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Acessos */}
+          <div className="flex flex-col gap-[1rem]">
+            <h4 className="font-heading text-[1.125rem] font-bold text-[#411f03]">
+              Acessos
+            </h4>
+            <ul className="flex flex-col gap-[0.5rem] text-[#444840] text-[0.875rem]">
+              <li>
+                <Link
+                  href="/portal"
+                  className="hover:text-[#af4d30] transition-colors"
+                >
+                  Área do Cliente
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/admin"
+                  className="hover:text-[#af4d30] transition-colors"
+                >
+                  Área do Profissional
                 </Link>
               </li>
             </ul>
