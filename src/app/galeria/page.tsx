@@ -13,10 +13,18 @@ export const metadata: Metadata = {
 export const revalidate = 60; // revalidate at most every minute
 
 export default async function PublicGaleriaPage() {
-  const images = await prisma.publicGallery.findMany({
-    where: { active: true },
-    orderBy: { order: "asc" },
-  });
+  let images: any[] = [];
+  try {
+    images = await prisma.publicGallery.findMany({
+      where: { active: true },
+      orderBy: { order: "asc" },
+    });
+  } catch (error) {
+    console.error(
+      "⚠️ Erro ao buscar galeria (tabela pode não existir ainda no build):",
+      error,
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-[#fbf9f5]">

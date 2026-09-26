@@ -33,24 +33,34 @@ const BackToTop = dynamic(() =>
 );
 
 export default async function Home() {
-  const services = await prisma.service.findMany({
-    where: { active: true },
-    include: {
-      packages: {
-        orderBy: { price: "asc" },
-      },
-    },
-    orderBy: { createdAt: "asc" },
-  });
+  let services: any[] = [];
+  let reviews: any[] = [];
 
-  const reviews = await prisma.review.findMany({
-    where: { isHighlighted: true },
-    include: {
-      client: true,
-    },
-    orderBy: { createdAt: "desc" },
-    take: 6,
-  });
+  try {
+    services = await prisma.service.findMany({
+      where: { active: true },
+      include: {
+        packages: {
+          orderBy: { price: "asc" },
+        },
+      },
+      orderBy: { createdAt: "asc" },
+    });
+
+    reviews = await prisma.review.findMany({
+      where: { isHighlighted: true },
+      include: {
+        client: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+    });
+  } catch (error) {
+    console.error(
+      "⚠️ Erro ao buscar dados (tabela pode não existir ainda no build):",
+      error,
+    );
+  }
 
   return (
     <main className="flex min-h-screen flex-col">
