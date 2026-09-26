@@ -44,31 +44,37 @@ export function Navbar() {
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-[1rem] lg:gap-[2.5rem]">
             <Link
-              href="#home"
+              href="/"
               className="text-[1rem] font-medium text-[#444840] hover:text-[#af4d30] transition-colors"
             >
               Home
             </Link>
             <Link
-              href="#sobre"
+              href="/#sobre"
               className="text-[1rem] font-medium text-[#444840] hover:text-[#af4d30] transition-colors"
             >
               Sobre
             </Link>
             <Link
-              href="#servicos"
+              href="/#servicos"
               className="text-[1rem] font-medium text-[#444840] hover:text-[#af4d30] transition-colors"
             >
               Serviços
             </Link>
             <Link
-              href="#depoimentos"
+              href="/galeria"
+              className="text-[1rem] font-medium text-[#444840] hover:text-[#af4d30] transition-colors"
+            >
+              Galeria
+            </Link>
+            <Link
+              href="/#depoimentos"
               className="text-[1rem] font-medium text-[#444840] hover:text-[#af4d30] transition-colors"
             >
               Depoimentos
             </Link>
             <Link
-              href="#contato"
+              href="/#contato"
               className="text-[1rem] font-medium text-[#444840] hover:text-[#af4d30] transition-colors"
             >
               Contato
@@ -123,35 +129,42 @@ export function Navbar() {
 
         <nav className="flex-1 overflow-y-auto p-[1.5rem] flex flex-col gap-[0.5rem]">
           <Link
-            href="#home"
+            href="/"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-[0.75rem] px-[1.25rem] py-[1rem] rounded-xl text-[0.9375rem] font-medium transition-colors text-[#444840] hover:bg-[#fbf9f5] hover:text-[#af4d30]"
           >
             Home
           </Link>
           <Link
-            href="#sobre"
+            href="/#sobre"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-[0.75rem] px-[1.25rem] py-[1rem] rounded-xl text-[0.9375rem] font-medium transition-colors text-[#444840] hover:bg-[#fbf9f5] hover:text-[#af4d30]"
           >
             Sobre
           </Link>
           <Link
-            href="#servicos"
+            href="/#servicos"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-[0.75rem] px-[1.25rem] py-[1rem] rounded-xl text-[0.9375rem] font-medium transition-colors text-[#444840] hover:bg-[#fbf9f5] hover:text-[#af4d30]"
           >
             Serviços
           </Link>
           <Link
-            href="#depoimentos"
+            href="/galeria"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-[0.75rem] px-[1.25rem] py-[1rem] rounded-xl text-[0.9375rem] font-medium transition-colors text-[#444840] hover:bg-[#fbf9f5] hover:text-[#af4d30]"
+          >
+            Galeria
+          </Link>
+          <Link
+            href="/#depoimentos"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-[0.75rem] px-[1.25rem] py-[1rem] rounded-xl text-[0.9375rem] font-medium transition-colors text-[#444840] hover:bg-[#fbf9f5] hover:text-[#af4d30]"
           >
             Depoimentos
           </Link>
           <Link
-            href="#contato"
+            href="/#contato"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-[0.75rem] px-[1.25rem] py-[1rem] rounded-xl text-[0.9375rem] font-medium transition-colors text-[#444840] hover:bg-[#fbf9f5] hover:text-[#af4d30]"
           >

@@ -63,7 +63,7 @@ export function Footer() {
             <ul className="flex flex-col gap-[0.5rem] text-[#444840] text-[0.875rem]">
               <li>
                 <Link
-                  href="#home"
+                  href="/"
                   className="hover:text-[#af4d30] transition-colors"
                 >
                   Início
@@ -71,7 +71,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#sobre"
+                  href="/#sobre"
                   className="hover:text-[#af4d30] transition-colors"
                 >
                   Sobre Nós
@@ -79,7 +79,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#servicos"
+                  href="/#servicos"
                   className="hover:text-[#af4d30] transition-colors"
                 >
                   Serviços
@@ -87,7 +87,15 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#como-funciona"
+                  href="/galeria"
+                  className="hover:text-[#af4d30] transition-colors"
+                >
+                  Galeria
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/#como-funciona"
                   className="hover:text-[#af4d30] transition-colors"
                 >
                   Como Funciona
@@ -95,7 +103,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#depoimentos"
+                  href="/#depoimentos"
                   className="hover:text-[#af4d30] transition-colors"
                 >
                   Depoimentos
