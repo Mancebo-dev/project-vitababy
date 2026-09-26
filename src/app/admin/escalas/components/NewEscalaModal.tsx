@@ -27,9 +27,14 @@ export function NewEscalaModal({
   const [clientId, setClientId] = useState("");
   const [month, setMonth] = useState("");
   const [title, setTitle] = useState("");
-  
+
   const [shifts, setShifts] = useState<
-    { date: string; startTime: string; endTime: string; professionalId: string }[]
+    {
+      date: string;
+      startTime: string;
+      endTime: string;
+      professionalId: string;
+    }[]
   >([]);
 
   const handleAddShift = () => {
@@ -61,7 +66,11 @@ export function NewEscalaModal({
       return;
     }
 
-    if (shifts.some((s) => !s.date || !s.startTime || !s.endTime || !s.professionalId)) {
+    if (
+      shifts.some(
+        (s) => !s.date || !s.startTime || !s.endTime || !s.professionalId,
+      )
+    ) {
       alert("Preencha todos os campos dos plantões.");
       return;
     }
@@ -96,11 +105,9 @@ export function NewEscalaModal({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-[#ae4d30] text-white hover:bg-[#ae4d30]/90 font-bold rounded-lg px-4 flex items-center gap-2">
-          <Plus className="w-5 h-5" />
-          Nova Escala Mensal
-        </Button>
+      <DialogTrigger className="inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-padding transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 bg-[#ae4d30] text-white hover:bg-[#ae4d30]/90 font-bold rounded-lg px-4 py-2 flex gap-2 h-10 text-sm">
+        <Plus className="w-5 h-5" />
+        Nova Escala Mensal
       </DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col bg-slate-50">
         <DialogHeader className="shrink-0 bg-white p-6 border-b border-slate-200">
@@ -148,27 +155,45 @@ export function NewEscalaModal({
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-semibold">Plantões / Visitas</Label>
-                <Button type="button" variant="outline" size="sm" onClick={handleAddShift}>
+                <Label className="text-base font-semibold">
+                  Plantões / Visitas
+                </Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddShift}
+                >
                   <Plus className="w-4 h-4 mr-2" /> Adicionar Visita
                 </Button>
               </div>
 
               {shifts.length === 0 ? (
                 <div className="p-8 text-center border-2 border-dashed border-slate-200 rounded-xl bg-white text-slate-500">
-                  Nenhum plantão adicionado. Clique no botão acima para adicionar.
+                  Nenhum plantão adicionado. Clique no botão acima para
+                  adicionar.
                 </div>
               ) : (
                 <div className="space-y-3">
                   {shifts.map((shift, index) => (
-                    <div key={shift.date + shift.startTime + shift.professionalId + Math.random().toString()} className="flex flex-wrap md:flex-nowrap items-end gap-3 p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                    <div
+                      key={
+                        shift.date +
+                        shift.startTime +
+                        shift.professionalId +
+                        Math.random().toString()
+                      }
+                      className="flex flex-wrap md:flex-nowrap items-end gap-3 p-4 bg-white border border-slate-200 rounded-xl shadow-sm"
+                    >
                       <div className="space-y-2 flex-1 min-w-[140px]">
                         <Label className="text-xs text-slate-500">Data</Label>
                         <Input
                           type="date"
                           required
                           value={shift.date}
-                          onChange={(e) => handleShiftChange(index, "date", e.target.value)}
+                          onChange={(e) =>
+                            handleShiftChange(index, "date", e.target.value)
+                          }
                         />
                       </div>
                       <div className="space-y-2 w-24">
@@ -177,7 +202,13 @@ export function NewEscalaModal({
                           type="time"
                           required
                           value={shift.startTime}
-                          onChange={(e) => handleShiftChange(index, "startTime", e.target.value)}
+                          onChange={(e) =>
+                            handleShiftChange(
+                              index,
+                              "startTime",
+                              e.target.value,
+                            )
+                          }
                         />
                       </div>
                       <div className="space-y-2 w-24">
@@ -186,16 +217,26 @@ export function NewEscalaModal({
                           type="time"
                           required
                           value={shift.endTime}
-                          onChange={(e) => handleShiftChange(index, "endTime", e.target.value)}
+                          onChange={(e) =>
+                            handleShiftChange(index, "endTime", e.target.value)
+                          }
                         />
                       </div>
                       <div className="space-y-2 flex-[2] min-w-[180px]">
-                        <Label className="text-xs text-slate-500">Assessora</Label>
+                        <Label className="text-xs text-slate-500">
+                          Assessora
+                        </Label>
                         <select
                           required
                           className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
                           value={shift.professionalId}
-                          onChange={(e) => handleShiftChange(index, "professionalId", e.target.value)}
+                          onChange={(e) =>
+                            handleShiftChange(
+                              index,
+                              "professionalId",
+                              e.target.value,
+                            )
+                          }
                         >
                           {professionals.map((p) => (
                             <option key={p.id} value={p.id}>
@@ -221,7 +262,11 @@ export function NewEscalaModal({
           </form>
         </div>
         <div className="shrink-0 bg-white p-6 border-t border-slate-200 flex justify-end gap-3">
-          <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setOpen(false)}
+          >
             Cancelar
           </Button>
           <Button
