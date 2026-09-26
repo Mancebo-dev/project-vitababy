@@ -4,6 +4,7 @@ import {
   Building2,
   Calendar,
   CalendarDays,
+  CalendarRange,
   DollarSign,
   FileText,
   Home,
@@ -21,6 +22,7 @@ import { signOut } from "@/infrastructure/auth/client";
 export const navItems = [
   { name: "Início", href: "/admin", icon: Home },
   { name: "Agendamentos", href: "/admin/agendamentos", icon: CalendarDays },
+  { name: "Escalas", href: "/admin/escalas", icon: CalendarRange },
   { name: "Agenda", href: "/admin/agenda", icon: Calendar },
   { name: "Clientes", href: "/admin/clientes", icon: Users },
   { name: "Serviços", href: "/admin/servicos", icon: Package },

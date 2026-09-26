@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, FileText, LogOut, Upload, User } from "lucide-react";
+import { CalendarDays, CalendarRange, FileText, Image as ImageIcon, LogOut, Upload, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -8,6 +8,8 @@ import { signOut } from "@/infrastructure/auth/client";
 
 export const portalNavItems = [
   { name: "Agendamentos", href: "/portal", icon: CalendarDays },
+  { name: "Minhas Escalas", href: "/portal/escalas", icon: CalendarRange },
+  { name: "Galeria de Fotos", href: "/portal/galeria", icon: ImageIcon },
   { name: "Contratos", href: "/portal/contratos", icon: FileText },
   { name: "Exames e Arquivos", href: "/portal/exames", icon: Upload },
   { name: "Meu Perfil", href: "/portal/perfil", icon: User },

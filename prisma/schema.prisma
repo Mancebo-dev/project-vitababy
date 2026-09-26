@@ -102,6 +102,7 @@ model Client {
   reviews      Review[]
   notes        ConsultationNote[]
   files        ClientFile[]
+  schedules    ClientSchedule[]
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
 
@@ -128,6 +129,7 @@ model Professional {
   scheduleSlots ScheduleSlot[]
   bookings      Booking[]
   notes         ConsultationNote[]
+  scheduleShifts ClientScheduleShift[]
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 
@@ -326,4 +328,33 @@ model ContactMessage {
   updatedAt DateTime @updatedAt
 
   @@map("contact_message")
+}
+
+model ClientSchedule {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  month     String   // Format: "YYYY-MM"
+  title     String?  // e.g., "Escala Mensal - Setembro"
+  shifts    ClientScheduleShift[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("client_schedule")
+}
+
+model ClientScheduleShift {
+  id               String         @id @default(cuid())
+  scheduleId       String
+  schedule         ClientSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  date             DateTime
+  startTime        String
+  endTime          String
+  professionalId   String
+  professional     Professional   @relation(fields: [professionalId], references: [id])
+  status           String         @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@map("client_schedule_shift")
 }

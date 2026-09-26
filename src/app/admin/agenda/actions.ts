@@ -31,9 +31,13 @@ export async function createScheduleSlot(
 ) {
   await prisma.scheduleSlot.create({ data });
   revalidatePath("/admin/agenda");
+  revalidatePath("/admin/agendamentos");
+  revalidatePath("/agendamento");
 }
 
 export async function deleteScheduleSlot(id: string) {
   await prisma.scheduleSlot.delete({ where: { id } });
   revalidatePath("/admin/agenda");
+  revalidatePath("/admin/agendamentos");
+  revalidatePath("/agendamento");
 }
