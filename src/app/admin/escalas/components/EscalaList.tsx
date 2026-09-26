@@ -68,11 +68,19 @@ export function EscalaList({ schedules }: { schedules: ScheduleProps[] }) {
                     backgroundColor: shift.professional.color || "#ae4d30",
                   }}
                 />
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
+                <div
+                  suppressHydrationWarning
+                  className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2"
+                >
                   <CalendarIcon className="w-4 h-4 text-slate-400" />
-                  {format(new Date(shift.date), "dd 'de' MMMM, yyyy", {
-                    locale: ptBR,
-                  })}
+                  {format(
+                    new Date(
+                      new Date(shift.date).getTime() +
+                        new Date(shift.date).getTimezoneOffset() * 60000,
+                    ),
+                    "dd 'de' MMMM, yyyy",
+                    { locale: ptBR },
+                  )}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600 mb-3">
                   <Clock className="w-4 h-4 text-slate-400" />
