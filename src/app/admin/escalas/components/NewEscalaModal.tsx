@@ -30,6 +30,7 @@ export function NewEscalaModal({
 
   const [shifts, setShifts] = useState<
     {
+      id: string;
       date: string;
       startTime: string;
       endTime: string;
@@ -41,6 +42,7 @@ export function NewEscalaModal({
     setShifts([
       ...shifts,
       {
+        id: crypto.randomUUID(),
         date: "",
         startTime: "09:00",
         endTime: "10:00",
@@ -105,7 +107,11 @@ export function NewEscalaModal({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-padding transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 bg-[#ae4d30] text-white hover:bg-[#ae4d30]/90 font-bold rounded-lg px-4 py-2 flex gap-2 h-10 text-sm">
+      <DialogTrigger
+        render={
+          <Button className="bg-[#ae4d30] text-white hover:bg-[#ae4d30]/90 font-bold flex gap-2" />
+        }
+      >
         <Plus className="w-5 h-5" />
         Nova Escala Mensal
       </DialogTrigger>
@@ -177,12 +183,7 @@ export function NewEscalaModal({
                 <div className="space-y-3">
                   {shifts.map((shift, index) => (
                     <div
-                      key={
-                        shift.date +
-                        shift.startTime +
-                        shift.professionalId +
-                        Math.random().toString()
-                      }
+                      key={shift.id}
                       className="flex flex-wrap md:flex-nowrap items-end gap-3 p-4 bg-white border border-slate-200 rounded-xl shadow-sm"
                     >
                       <div className="space-y-2 flex-1 min-w-[140px]">

@@ -61,7 +61,8 @@ export default async function GaleriaPage() {
               Nenhuma foto disponível
             </h3>
             <p className="text-slate-500 max-w-sm">
-              As fotos dos seus atendimentos aparecerão aqui assim que nossa equipe fizer o upload.
+              As fotos dos seus atendimentos aparecerão aqui assim que nossa
+              equipe fizer o upload.
             </p>
           </div>
         ) : (

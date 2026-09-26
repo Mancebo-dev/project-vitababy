@@ -358,3 +358,16 @@ model ClientScheduleShift {
 
   @@map("client_schedule_shift")
 }
+
+model PublicGallery {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("public_gallery")
+}

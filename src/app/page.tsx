@@ -43,6 +43,15 @@ export default async function Home() {
     orderBy: { createdAt: "asc" },
   });
 
+  const reviews = await prisma.review.findMany({
+    where: { isHighlighted: true },
+    include: {
+      client: true,
+    },
+    orderBy: { createdAt: "desc" },
+    take: 6,
+  });
+
   return (
     <main className="flex min-h-screen flex-col">
       <Navbar />
@@ -50,7 +59,7 @@ export default async function Home() {
       <About />
       <Services initialServices={services} />
       <HowItWorks />
-      <Testimonials />
+      <Testimonials initialReviews={reviews} />
       <Contact />
       <Footer />
       <BackToTop />

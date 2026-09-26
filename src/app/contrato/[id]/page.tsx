@@ -52,22 +52,21 @@ export default async function ContratoPage({
     }
   }
 
-  // Basic mock data for template previews
+  // Basic placeholders for template previews
   const viewData: ContractData = {
-    contractNumber: id.slice(-4).toUpperCase(),
-    date: new Date().toLocaleDateString("pt-BR"),
+    contractNumber: "[NÚMERO DO CONTRATO]",
+    date: "[DATA DE GERAÇÃO]",
     content: "",
-    clientName: "Maria da Silva",
-    clientEmail: "maria.silva@email.com",
-    clientPhone: "(11) 99999-9999",
-    clientAddress:
-      "Rua Fictícia, 123, Bairro Centro, Cidade Exemplo - SP, CEP 00000-000",
-    serviceName: "Consultoria de Sono",
-    serviceDetails: "Acompanhamento personalizado para rotina de sono do bebê",
-    serviceDate: "15/10 (terça)",
-    serviceTime: "14:00",
-    serviceProfessional: "Ana Caroline",
-    serviceValue: "A combinar",
+    clientName: "[NOME DO CLIENTE]",
+    clientEmail: "[EMAIL DO CLIENTE]",
+    clientPhone: "[TELEFONE DO CLIENTE]",
+    clientAddress: "[ENDEREÇO COMPLETO DO CLIENTE]",
+    serviceName: "[NOME DO SERVIÇO/PACOTE]",
+    serviceDetails: "[DETALHES DO SERVIÇO]",
+    serviceDate: "[DATA DO ATENDIMENTO]",
+    serviceTime: "[HORÁRIO DO ATENDIMENTO]",
+    serviceProfessional: "[NOME DA PROFISSIONAL]",
+    serviceValue: "[VALOR DO SERVIÇO]",
   };
 
   let isTemplate = false;
@@ -80,7 +79,7 @@ export default async function ContratoPage({
     viewData.pdfUrl = contract.pdfUrl;
 
     viewData.content = contract.content;
-    viewData.contractNumber = `00${parseInt(contract.id.slice(-8), 16).toString().slice(-4)}`; // Mock numeric ID
+    viewData.contractNumber = contract.id.slice(-6).toUpperCase();
     viewData.date = contract.createdAt.toLocaleDateString("pt-BR");
 
     if (contract.booking.client) {

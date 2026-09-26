@@ -1,28 +1,26 @@
+import type { Client, Review } from "@prisma/client";
 import Image from "next/image";
 import { StaggerContainer } from "@/components/ui/StaggerContainer";
 import { StaggerItem } from "@/components/ui/StaggerItem";
 
-export function Testimonials() {
-  const testimonials = [
-    {
-      text: `"A consultoria de amamentação salvou nossa jornada. A Rayane foi extremamente paciente, técnica e acolhedora num momento de muita fragilidade nossa. Gratidão eterna!"`,
-      name: "Mariana Silva",
-      role: "Mãe do João (2 meses)",
-      avatar: "M",
-    },
-    {
-      text: `"O banho humanizado foi uma experiência mágica. Me sinto muito mais segura agora. Recomendo para todas as mamães."`,
-      name: "Letícia Almeida",
-      role: "Mãe da Laura (1 mês)",
-      avatar: "L",
-    },
-    {
-      text: `"A tranquilidade e a postura da educadora nos preparou para a chegada da nossa pequena de forma muito mais segura. O parto humanizado é realmente um presente."`,
-      name: "Camila Oliveira",
-      role: "Mãe da Sofia (15 dias)",
-      avatar: "C",
-    },
-  ];
+type ReviewWithClient = Review & { client: Client };
+
+export function Testimonials({
+  initialReviews = [],
+}: {
+  initialReviews?: ReviewWithClient[];
+}) {
+  if (initialReviews.length === 0) {
+    return null; // Não renderizar a seção se não houver depoimentos no banco
+  }
+
+  const testimonials = initialReviews.map((r) => ({
+    text: `"${r.comment}"`,
+    name: r.client.name,
+    role: "Cliente Vita Baby",
+    avatar: r.client.name.charAt(0).toUpperCase(),
+    rating: r.rating,
+  }));
 
   return (
     <section

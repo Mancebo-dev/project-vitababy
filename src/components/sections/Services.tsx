@@ -139,75 +139,25 @@ function formatPriceAndOptions(service: ServiceWithPackages) {
 
 export function Services({ initialServices }: ServicesProps) {
   // If database services are supplied and not empty, use them
-  const servicesToRender =
-    initialServices && initialServices.length > 0
-      ? initialServices.map((service) => {
-          const { icon, iconBg } = getServiceVisuals(service.name);
-          const { options, price } = formatPriceAndOptions(service);
-          return {
-            id: service.id,
-            title: service.name,
-            options,
-            description:
-              service.description ||
-              "Cuidado especializado e humanizado para mãe e bebê.",
-            price,
-            icon,
-            iconBg,
-          };
-        })
-      : [
-          {
-            id: "amamentacao",
-            title: "Consultoria em Amamentação",
-            options: "2 opções",
-            description:
-              "Apoio completo para estabelecer e manter o aleitamento materno com confiança, conforto e bem-estar para mãe e bebê.",
-            price: "a partir de R$ 350",
-            icon: (
-              <Image
-                src="/assets/46c592fdfb9c662b651317aeee2ba4b73bd5e2d7.svg"
-                width={24}
-                height={24}
-                alt="Ícone Amamentação"
-                loading="lazy"
-                className="w-6 h-6 object-contain"
-                style={{ width: 24, height: 24 }}
-              />
-            ),
-            iconBg: "bg-[#d19a7e]/20 text-[#ae4d30]",
-          },
-          {
-            id: "banho",
-            title: "Banho Humanizado do Bebê",
-            options: "6 opções",
-            description:
-              "Técnica de banho terapêutico que recria as sensações do ambiente intrauterino, promovendo calma, vínculo e relaxamento.",
-            price: "a partir de R$ 120",
-            icon: (
-              <Image
-                src="/assets/104e86cb37a567122753226d314286dead80a322.svg"
-                width={24}
-                height={24}
-                alt="Ícone Banho Humanizado"
-                loading="lazy"
-                className="w-6 h-6 object-contain"
-                style={{ width: 24, height: 24 }}
-              />
-            ),
-            iconBg: "bg-[#5f6f52]/20 text-[#5f6f52]",
-          },
-          {
-            id: "socorros",
-            title: "Primeiros Socorros para Bebês",
-            options: "2 opções",
-            description:
-              "Treinamento prático e teórico domiciliar para pais e cuidadores agirem com segurança e rapidez em situações de emergência.",
-            price: "a partir de R$ 200",
-            icon: <HeartPulse className="w-6 h-6 text-[#ae4d30]" />,
-            iconBg: "bg-[#ae4d30]/15 text-[#ae4d30]",
-          },
-        ];
+  const servicesToRender = (initialServices || []).map((service) => {
+    const { icon, iconBg } = getServiceVisuals(service.name);
+    const { options, price } = formatPriceAndOptions(service);
+    return {
+      id: service.id,
+      title: service.name,
+      options,
+      description:
+        service.description ||
+        "Cuidado especializado e humanizado para mãe e bebê.",
+      price,
+      icon,
+      iconBg,
+    };
+  });
+
+  if (servicesToRender.length === 0) {
+    return null;
+  }
 
   return (
     <section

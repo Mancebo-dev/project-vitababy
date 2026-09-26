@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { prisma } from "@/infrastructure/db/prisma";
 
 export const metadata: Metadata = {
   title: "Galeria | Vita Baby",
@@ -9,40 +10,14 @@ export const metadata: Metadata = {
     "Conheça um pouco do nosso trabalho através de nossa galeria de fotos.",
 };
 
-const images = [
-  {
-    id: 1,
-    url: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80",
-    alt: "Mãe segurando recém-nascido",
-  },
-  {
-    id: 2,
-    url: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&w=800&q=80",
-    alt: "Pezinho de bebê",
-  },
-  {
-    id: 3,
-    url: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80", // duplicate for placeholder
-    alt: "Consultoria em amamentação",
-  },
-  {
-    id: 4,
-    url: "https://images.unsplash.com/photo-1522771930-78848d92fa24?auto=format&fit=crop&w=800&q=80",
-    alt: "Quarto de bebê",
-  },
-  {
-    id: 5,
-    url: "https://images.unsplash.com/photo-1544126592-807ade215a0b?auto=format&fit=crop&w=800&q=80",
-    alt: "Brincando com o bebê",
-  },
-  {
-    id: 6,
-    url: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80",
-    alt: "Maternidade",
-  },
-];
+export const revalidate = 60; // revalidate at most every minute
 
-export default function PublicGaleriaPage() {
+export default async function PublicGaleriaPage() {
+  const images = await prisma.publicGallery.findMany({
+    where: { active: true },
+    orderBy: { order: "asc" },
+  });
+
   return (
     <div className="flex min-h-screen flex-col bg-[#fbf9f5]">
       <Navbar />
@@ -59,27 +34,40 @@ export default function PublicGaleriaPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {images.map((image) => (
-              <div
-                key={image.id}
-                className="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 shadow-sm border border-[#e4e2de]"
-              >
-                <Image
-                  src={image.url}
-                  alt={image.alt}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                  <span className="text-white font-medium text-lg drop-shadow-md">
-                    {image.alt}
-                  </span>
+          {images.length === 0 ? (
+            <div className="flex items-center justify-center min-h-[300px]">
+              <p className="text-lg text-slate-500">
+                Nenhuma imagem disponível no momento.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {images.map((image) => (
+                <div
+                  key={image.id}
+                  className="group relative aspect-square rounded-2xl overflow-hidden bg-slate-100 shadow-sm border border-[#e4e2de]"
+                >
+                  <Image
+                    src={image.imageUrl}
+                    alt={image.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    <span className="text-white font-medium text-lg drop-shadow-md">
+                      {image.title}
+                    </span>
+                    {image.description && (
+                      <span className="text-white/80 text-sm mt-1">
+                        {image.description}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           <div className="mt-16 text-center">
             <p className="text-[#7d7a75] mb-6">

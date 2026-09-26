@@ -47,7 +47,9 @@ export default async function MinhasEscalasPage() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="font-heading text-3xl font-bold text-[#411f03]">Minhas Escalas</h1>
+        <h1 className="font-heading text-3xl font-bold text-[#411f03]">
+          Minhas Escalas
+        </h1>
         <p className="text-[#444840] mt-2">
           Visualize seus plantões e visitas programadas para o mês.
         </p>
@@ -56,7 +58,9 @@ export default async function MinhasEscalasPage() {
       {schedules.length === 0 ? (
         <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-[#e4e2de]">
           <CalendarDays className="w-12 h-12 mx-auto text-[#e4e2de] mb-4" />
-          <h3 className="text-xl font-bold text-[#411f03] mb-2">Nenhuma escala encontrada</h3>
+          <h3 className="text-xl font-bold text-[#411f03] mb-2">
+            Nenhuma escala encontrada
+          </h3>
           <p className="text-[#7d7a75]">
             Você ainda não possui escalas mensais cadastradas.
           </p>
@@ -64,7 +68,10 @@ export default async function MinhasEscalasPage() {
       ) : (
         <div className="space-y-8">
           {schedules.map((schedule) => (
-            <div key={schedule.id} className="bg-white rounded-2xl shadow-sm border border-[#e4e2de] overflow-hidden">
+            <div
+              key={schedule.id}
+              className="bg-white rounded-2xl shadow-sm border border-[#e4e2de] overflow-hidden"
+            >
               <div className="bg-[#fbf9f5] px-6 py-4 border-b border-[#e4e2de]">
                 <h3 className="text-xl font-bold text-[#411f03]">
                   {schedule.title || `Escala Mensal: ${schedule.month}`}
@@ -79,22 +86,34 @@ export default async function MinhasEscalasPage() {
                     >
                       <div
                         className="absolute left-0 top-0 bottom-0 w-1"
-                        style={{ backgroundColor: shift.professional.color || "#af4d30" }}
+                        style={{
+                          backgroundColor:
+                            shift.professional.color || "#af4d30",
+                        }}
                       />
                       <div className="flex items-center gap-2 text-[0.9375rem] font-bold text-[#411f03] mb-2">
                         <CalendarIcon className="w-[1.125rem] h-[1.125rem] text-[#af4d30]" />
-                        {format(new Date(shift.date), "dd 'de' MMMM, yyyy", { locale: ptBR })}
+                        {format(new Date(shift.date), "dd 'de' MMMM, yyyy", {
+                          locale: ptBR,
+                        })}
                       </div>
                       <div className="flex items-center gap-2 text-[0.875rem] text-[#7d7a75] mb-4">
                         <Clock className="w-[1rem] h-[1rem]" />
                         {shift.startTime} às {shift.endTime}
                       </div>
                       <div className="mt-auto pt-3 border-t border-[#e4e2de] flex items-center justify-between">
-                        <span className="font-semibold text-[0.875rem]" style={{ color: shift.professional.color || "#af4d30" }}>
+                        <span
+                          className="font-semibold text-[0.875rem]"
+                          style={{
+                            color: shift.professional.color || "#af4d30",
+                          }}
+                        >
                           {shift.professional.name}
                         </span>
                         <span className="text-[0.625rem] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#fbf9f5] text-[#444840]">
-                          {shift.status === "SCHEDULED" ? "AGENDADO" : shift.status}
+                          {shift.status === "SCHEDULED"
+                            ? "AGENDADO"
+                            : shift.status}
                         </span>
                       </div>
                     </div>

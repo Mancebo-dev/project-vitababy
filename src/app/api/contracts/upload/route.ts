@@ -21,11 +21,11 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
 
     const { mkdir } = await import("node:fs/promises");
-    
+
     // Save to public/uploads directory
     const uploadDir = join(process.cwd(), "public/uploads");
     await mkdir(uploadDir, { recursive: true });
-    
+
     const fileName = `contrato-${contractId}.pdf`;
     const path = join(uploadDir, fileName);
 

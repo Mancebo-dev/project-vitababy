@@ -38,7 +38,10 @@ export function EscalaList({ schedules }: { schedules: ScheduleProps[] }) {
                 {schedule.title || `Escala: ${schedule.month}`}
               </h3>
               <p className="text-sm text-slate-500">
-                Cliente: <span className="font-medium text-slate-700">{schedule.client.name}</span>
+                Cliente:{" "}
+                <span className="font-medium text-slate-700">
+                  {schedule.client.name}
+                </span>
               </p>
             </div>
             <div className="flex gap-2">
@@ -61,18 +64,25 @@ export function EscalaList({ schedules }: { schedules: ScheduleProps[] }) {
               >
                 <div
                   className="absolute left-0 top-0 bottom-0 w-1"
-                  style={{ backgroundColor: shift.professional.color || "#ae4d30" }}
+                  style={{
+                    backgroundColor: shift.professional.color || "#ae4d30",
+                  }}
                 />
                 <div className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
                   <CalendarIcon className="w-4 h-4 text-slate-400" />
-                  {format(new Date(shift.date), "dd 'de' MMMM, yyyy", { locale: ptBR })}
+                  {format(new Date(shift.date), "dd 'de' MMMM, yyyy", {
+                    locale: ptBR,
+                  })}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600 mb-3">
                   <Clock className="w-4 h-4 text-slate-400" />
                   {shift.startTime} às {shift.endTime}
                 </div>
                 <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-200">
-                  <span className="text-sm font-medium" style={{ color: shift.professional.color || "#ae4d30" }}>
+                  <span
+                    className="text-sm font-medium"
+                    style={{ color: shift.professional.color || "#ae4d30" }}
+                  >
                     {shift.professional.name}
                   </span>
                   <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">
