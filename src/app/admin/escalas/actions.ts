@@ -4,31 +4,46 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/infrastructure/db/prisma";
 
 export async function getClients() {
-  return prisma.client.findMany({
-    orderBy: { name: "asc" },
-  });
+  try {
+    return await prisma.client.findMany({
+      orderBy: { name: "asc" },
+    });
+  } catch (error) {
+    console.error("Error fetching clients:", error);
+    return [];
+  }
 }
 
 export async function getProfessionals() {
-  return prisma.professional.findMany({
-    where: { active: true },
-    orderBy: { name: "asc" },
-  });
+  try {
+    return await prisma.professional.findMany({
+      where: { active: true },
+      orderBy: { name: "asc" },
+    });
+  } catch (error) {
+    console.error("Error fetching professionals:", error);
+    return [];
+  }
 }
 
 export async function getSchedules() {
-  return prisma.clientSchedule.findMany({
-    include: {
-      client: true,
-      shifts: {
-        include: {
-          professional: true,
+  try {
+    return await prisma.clientSchedule.findMany({
+      include: {
+        client: true,
+        shifts: {
+          include: {
+            professional: true,
+          },
+          orderBy: [{ date: "asc" }, { startTime: "asc" }],
         },
-        orderBy: [{ date: "asc" }, { startTime: "asc" }],
       },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.error("Error fetching schedules:", error);
+    return [];
+  }
 }
 
 export async function createSchedule(data: {
