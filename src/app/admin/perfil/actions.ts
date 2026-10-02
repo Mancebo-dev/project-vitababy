@@ -32,17 +32,10 @@ export async function uploadProfileAvatarAction(formData: FormData): Promise<{
       };
     }
 
-    const uploadDir = join(process.cwd(), "public", "uploads", "avatars");
-    await mkdir(uploadDir, { recursive: true });
-
-    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const fileName = `avatar_${session.user.id}_${Date.now()}_${safeName}`;
-    const filePath = join(uploadDir, fileName);
-
     const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(filePath, buffer);
-
-    const publicUrl = `/uploads/avatars/${fileName}`;
+    const base64Str = buffer.toString("base64");
+    const mimeType = file.type || "image/png";
+    const publicUrl = `data:${mimeType};base64,${base64Str}`;
 
     // Update user image
     await prisma.user.update({

@@ -118,17 +118,11 @@ export async function uploadProfessionalAvatarAction(
       };
     }
 
-    const uploadDir = join(process.cwd(), "public", "uploads", "profissionais");
-    await mkdir(uploadDir, { recursive: true });
-
-    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const fileName = `prof_${Date.now()}_${safeName}`;
-    const filePath = join(uploadDir, fileName);
-
     const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(filePath, buffer);
+    const base64Str = buffer.toString("base64");
+    const mimeType = file.type || "image/png";
+    const publicUrl = `data:${mimeType};base64,${base64Str}`;
 
-    const publicUrl = `/uploads/profissionais/${fileName}`;
     return { success: true, url: publicUrl };
   } catch (error) {
     console.error("Erro ao salvar foto de perfil:", error);

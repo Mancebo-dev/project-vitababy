@@ -20,17 +20,9 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const { mkdir } = await import("node:fs/promises");
-
-    // Save to public/uploads directory
-    const uploadDir = join(process.cwd(), "public/uploads");
-    await mkdir(uploadDir, { recursive: true });
-
-    const fileName = `contrato-${contractId}.pdf`;
-    const path = join(uploadDir, fileName);
-
-    await writeFile(path, buffer);
-    const pdfUrl = `/uploads/${fileName}`;
+    const base64Str = buffer.toString("base64");
+    const mimeType = file.type || "application/pdf";
+    const pdfUrl = `data:${mimeType};base64,${base64Str}`;
 
     // Update contract in database
     const updatedContract = await prisma.contract.update({

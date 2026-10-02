@@ -1,6 +1,8 @@
 "use client";
 
 import type { Client } from "@prisma/client";
+import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient, updateClient } from "../actions";
+import { createClient, deleteClient, updateClient } from "../actions";
 
 export function ClientModal({
   client,
@@ -23,6 +25,29 @@ export function ClientModal({
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    if (
+      confirm(
+        "Tem certeza que deseja excluir este cliente? Essa ação apagará todos os dados, agendamentos e prontuários vinculados a ele e não pode ser desfeita.",
+      )
+    ) {
+      setLoading(true);
+      try {
+        await deleteClient(client!.id);
+        setOpen(false);
+        router.push("/admin/clientes");
+      } catch (err) {
+        console.error(err);
+        alert(
+          "Erro ao excluir o cliente. Verifique se ele não possui pendências bloqueantes.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   const [formData, setFormData] = useState({
     name: client?.name || "",
@@ -219,21 +244,36 @@ export function ClientModal({
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-            >
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              className="bg-primary text-white hover:bg-primary/90"
-              disabled={loading}
-            >
-              {loading ? "Salvando..." : "Salvar"}
-            </Button>
+          <div className="pt-4 flex justify-between gap-2 mt-4">
+            <div>
+              {client?.id && (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={loading}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Excluir
+                </Button>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="bg-primary text-white hover:bg-primary/90"
+                disabled={loading}
+              >
+                {loading ? "Salvando..." : "Salvar"}
+              </Button>
+            </div>
           </div>
         </form>
       </DialogContent>

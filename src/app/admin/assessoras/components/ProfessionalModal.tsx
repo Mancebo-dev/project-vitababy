@@ -1,8 +1,9 @@
 "use client";
 
 import type { Professional } from "@prisma/client";
-import { Check, Loader2, Plus, Upload, X } from "lucide-react";
+import { Check, Loader2, Plus, Trash2, Upload, X } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   createProfessional,
+  deleteProfessional,
   updateProfessional,
   uploadProfessionalAvatarAction,
 } from "../actions";
@@ -64,6 +66,29 @@ export function ProfessionalModal({
   const [loading, setLoading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    if (
+      confirm(
+        "Tem certeza que deseja excluir esta assessora? A ação apagará todos os agendamentos vinculados e não pode ser desfeita.",
+      )
+    ) {
+      setLoading(true);
+      try {
+        await deleteProfessional(prof!.id);
+        setOpen(false);
+        router.push("/admin/assessoras");
+      } catch (err) {
+        console.error(err);
+        alert(
+          "Erro ao excluir a assessora. Verifique se há pendências bloqueantes.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   const [formData, setFormData] = useState({
     name: prof?.name || "",
@@ -487,21 +512,36 @@ export function ProfessionalModal({
             </div>
           )}
 
-          <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-            >
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              className="bg-primary text-white hover:bg-primary/90 min-w-[100px]"
-              disabled={loading || uploadingAvatar}
-            >
-              {loading ? "Salvando..." : "Salvar"}
-            </Button>
+          <div className="pt-4 border-t border-slate-100 flex justify-between gap-2 mt-4">
+            <div>
+              {prof?.id && (
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={loading || uploadingAvatar}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Excluir
+                </Button>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="bg-primary text-white hover:bg-primary/90 min-w-[100px]"
+                disabled={loading || uploadingAvatar}
+              >
+                {loading ? "Salvando..." : "Salvar"}
+              </Button>
+            </div>
           </div>
         </form>
       </DialogContent>

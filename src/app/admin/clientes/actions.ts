@@ -68,21 +68,9 @@ export async function uploadClientFileAction(formData: FormData) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  // Use a distinct filename to avoid overwrites
-  const fileName = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-
-  // No Vercel MVP podemos usar public/uploads
-  const uploadDir = join(process.cwd(), "public", "uploads");
-  try {
-    await mkdir(uploadDir, { recursive: true });
-  } catch (_e) {
-    // ignore
-  }
-
-  const path = join(uploadDir, fileName);
-  await writeFile(path, buffer);
-
-  const fileUrl = `/uploads/${fileName}`;
+  const base64Str = buffer.toString("base64");
+  const mimeType = file.type || "application/octet-stream";
+  const fileUrl = `data:${mimeType};base64,${base64Str}`;
 
   const clientFile = await prisma.clientFile.create({
     data: {

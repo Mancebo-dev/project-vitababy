@@ -12,7 +12,7 @@ model User {
   name          String
   email         String
   emailVerified Boolean
-  image         String?  @db.Text
+  image         String?  @db.LongText
   createdAt     DateTime
   updatedAt     DateTime
 
@@ -119,7 +119,7 @@ model Professional {
   crnOrCoren    String?
   experience    String?
   bio           String?            @db.Text
-  avatarUrl     String?            @db.Text
+  avatarUrl     String?            @db.LongText
   pixKey        String?
   city          String?
   active        Boolean            @default(true)
@@ -209,7 +209,7 @@ model Contract {
   signedByProf   Boolean @default(false)
 
   // New signature fields
-  pdfUrl   String?   @db.Text
+  pdfUrl   String?   @db.LongText
   clientIp String?
   signedAt DateTime?
 
@@ -305,7 +305,7 @@ model ClientFile {
   client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   title       String
   description String?  @db.Text
-  fileUrl     String   @db.Text
+  fileUrl     String   @db.LongText
   fileType    String
   uploadedBy  String // "CLIENT" or "PROFESSIONAL"
   createdAt   DateTime @default(now())
@@ -361,7 +361,7 @@ model PublicGallery {
   id          String   @id @default(cuid())
   title       String
   description String?  @db.Text
-  imageUrl    String   @db.Text
+  imageUrl    String   @db.LongText
   active      Boolean  @default(true)
   order       Int      @default(0)
   createdAt   DateTime @default(now())
