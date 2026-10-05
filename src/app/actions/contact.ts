@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { EmailService } from "@/domain/services/EmailService";
 import { prisma } from "@/infrastructure/db/prisma";
 
 export async function submitContactForm(
@@ -27,6 +28,15 @@ export async function submitContactForm(
         message,
       },
     });
+
+    // Send email to admin
+    await EmailService.sendNewContactMessage(
+      name,
+      email,
+      phone,
+      service,
+      message,
+    );
 
     revalidatePath("/admin/mensagens");
 

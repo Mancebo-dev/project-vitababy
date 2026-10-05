@@ -103,4 +103,21 @@ export class EmailService {
       PasswordUpdatedTemplate({ clientName }),
     );
   }
+
+  static async sendNewContactMessage(
+    name: string,
+    email: string,
+    phone: string,
+    service: string,
+    message: string,
+  ) {
+    const { NewContactMessageTemplate } = await import(
+      "@/components/emails/NewContactMessageTemplate"
+    );
+    return EmailService.send(
+      "contato@vitababy.com.br", // O email da Rayane/VitaBaby para receber contatos
+      `Nova mensagem no site de: ${name}`,
+      NewContactMessageTemplate({ name, email, phone, service, message }),
+    );
+  }
 }
