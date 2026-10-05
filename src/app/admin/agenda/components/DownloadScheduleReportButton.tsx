@@ -93,14 +93,9 @@ export function DownloadScheduleReportButton({
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="gap-2 text-slate-700 h-10 px-4 rounded-full"
-        >
-          <Download className="w-4 h-4" />
-          Baixar Agenda (PDF)
-        </Button>
+      <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 text-slate-700 h-10 px-4 rounded-full border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 transition-colors shadow-sm text-sm font-medium">
+        <Download className="w-4 h-4" />
+        Baixar Agenda (PDF)
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleDownload()}>
