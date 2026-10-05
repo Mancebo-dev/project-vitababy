@@ -85,13 +85,19 @@ export async function submitBookingAction(data: BookingFormData) {
     const dateObj = new Date(pref.date);
 
     // Find existing slot
-    const slot = await prisma.scheduleSlot.findFirst({
+    const allSlots = await prisma.scheduleSlot.findMany({
       where: {
         professionalId: realProfessionalId,
-        date: dateObj,
         startTime: pref.time,
         isBooked: false,
       },
+    });
+
+    const slot = allSlots.find((s) => {
+      const d = new Date(s.date);
+      const localFormat = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      const utcFormat = d.toISOString().split("T")[0];
+      return localFormat === pref.date || utcFormat === pref.date;
     });
 
     if (!slot) {
