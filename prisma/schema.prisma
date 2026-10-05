@@ -162,7 +162,7 @@ model ServicePackage {
 model ScheduleSlot {
   id             String       @id @default(cuid())
   professionalId String
-  professional   Professional @relation(fields: [professionalId], references: [id])
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
   date           DateTime // Exact date
   startTime      String // "09:00"
   endTime        String // "10:00"
@@ -177,13 +177,13 @@ model Booking {
   packages ServicePackage[]
 
   clientId String
-  client   Client @relation(fields: [clientId], references: [id])
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   professionalId String
-  professional   Professional @relation(fields: [professionalId], references: [id])
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
 
   scheduleSlotId String       @unique
-  scheduleSlot   ScheduleSlot @relation(fields: [scheduleSlotId], references: [id])
+  scheduleSlot   ScheduleSlot @relation(fields: [scheduleSlotId], references: [id], onDelete: Cascade)
 
   additionalInfo String? @db.Text
   status         String  @default("PENDING") // PENDING, CONFIRMED, CANCELLED, COMPLETED
@@ -222,7 +222,7 @@ model Contract {
 model Payment {
   id          String   @id @default(cuid())
   bookingId   String?
-  booking     Booking? @relation(fields: [bookingId], references: [id])
+  booking     Booking? @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   amount      Float
   description String?  @db.Text
   date        DateTime @default(now())
@@ -266,7 +266,7 @@ model ConsultationNote {
   client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   professionalId String
-  professional   Professional @relation(fields: [professionalId], references: [id])
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
 
   bookingId String?
   booking   Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
@@ -349,7 +349,7 @@ model ClientScheduleShift {
   startTime        String
   endTime          String
   professionalId   String
-  professional     Professional   @relation(fields: [professionalId], references: [id])
+  professional     Professional   @relation(fields: [professionalId], references: [id], onDelete: Cascade)
   status           String         @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
