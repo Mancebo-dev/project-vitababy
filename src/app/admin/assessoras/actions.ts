@@ -3,6 +3,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/infrastructure/auth/auth";
 import { prisma } from "@/infrastructure/db/prisma";
 
 export async function createProfessional(data: {
@@ -20,7 +21,34 @@ export async function createProfessional(data: {
   color?: string | null;
   active?: boolean;
   userId?: string | null;
+  password?: string | null;
 }) {
+  let createdUserId = data.userId;
+
+  if (!createdUserId && data.email && data.password) {
+    try {
+      const res = await auth.api.signUpEmail({
+        body: {
+          email: data.email,
+          password: data.password,
+          name: data.name,
+        },
+      });
+      if (res?.user?.id) {
+        createdUserId = res.user.id;
+        await prisma.user.update({
+          where: { id: createdUserId },
+          data: { role: "PROFESSIONAL" },
+        });
+      }
+    } catch (err) {
+      console.error("Erro ao criar usuário da assessora:", err);
+      throw new Error(
+        "Erro ao criar conta de usuário. Verifique se o e-mail já existe.",
+      );
+    }
+  }
+
   await prisma.professional.create({
     data: {
       name: data.name,
@@ -36,7 +64,7 @@ export async function createProfessional(data: {
       city: data.city || null,
       color: data.color || "#ae4d30",
       active: data.active ?? true,
-      userId: data.userId || null,
+      userId: createdUserId || null,
     },
   });
   revalidatePath("/admin/assessoras");

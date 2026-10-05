@@ -4,6 +4,7 @@ import { Bell } from "lucide-react";
 import type { Metadata } from "next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { prisma } from "@/infrastructure/db/prisma";
+import { DownloadScheduleReportButton } from "./components/DownloadScheduleReportButton";
 import { Planner } from "./components/Planner";
 import { ScheduleManager } from "./components/ScheduleManager";
 
@@ -58,6 +59,7 @@ export default async function AgendaPage() {
       startTime: b.scheduleSlot.startTime,
       endTime: b.scheduleSlot.endTime,
       color: b.professional.color || "#ae4d30",
+      professionalId: b.professionalId,
     })),
   ];
 
@@ -86,20 +88,27 @@ export default async function AgendaPage() {
           </p>
         </div>
 
-        {/* Notifications Bell */}
-        <div className="relative">
-          <button
-            type="button"
-            className="p-3 bg-white border border-slate-200 rounded-full text-slate-600 hover:bg-slate-50 transition-colors shadow-sm"
-          >
-            <Bell className="w-5 h-5" />
-          </button>
-          {hasNotifications && (
-            <span className="absolute top-0 right-0 flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-            </span>
-          )}
+        {/* Notifications Bell and Download */}
+        <div className="relative flex items-center gap-3">
+          <DownloadScheduleReportButton
+            professionals={professionals}
+            events={allEvents as any}
+          />
+
+          <div className="relative">
+            <button
+              type="button"
+              className="p-3 bg-white border border-slate-200 rounded-full text-slate-600 hover:bg-slate-50 transition-colors shadow-sm"
+            >
+              <Bell className="w-5 h-5" />
+            </button>
+            {hasNotifications && (
+              <span className="absolute top-0 right-0 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+              </span>
+            )}
+          </div>
         </div>
       </div>
 

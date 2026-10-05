@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/infrastructure/db/prisma";
 import { DeleteButton } from "./components/DeleteButton";
+import { DownloadFinanceReportButton } from "./components/DownloadFinanceReportButton";
 import { TransactionChart } from "./components/TransactionChart";
 import { TransactionModal } from "./components/TransactionModal";
 
@@ -92,14 +93,20 @@ export default async function FinanceiroPage(props: Props) {
           </p>
         </div>
 
-        <TransactionModal
-          trigger={
-            <Button className="bg-[#af4d30] hover:bg-[#af4d30]/90 text-white gap-2 rounded-full h-10 px-6">
-              <Plus className="w-4 h-4" />
-              Nova Movimentação
-            </Button>
-          }
-        />
+        <div className="flex gap-2">
+          <DownloadFinanceReportButton
+            transactions={transactions}
+            currentDate={currentDate}
+          />
+          <TransactionModal
+            trigger={
+              <Button className="bg-[#af4d30] hover:bg-[#af4d30]/90 text-white gap-2 rounded-full h-10 px-6">
+                <Plus className="w-4 h-4" />
+                Nova Movimentação
+              </Button>
+            }
+          />
+        </div>
       </div>
 
       {/* Month Navigation */}

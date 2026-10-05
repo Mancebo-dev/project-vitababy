@@ -109,6 +109,7 @@ export function ProfessionalModal({
     city: prof?.city || "",
     color: prof?.color || "#ae4d30",
     active: prof ? prof.active : true,
+    password: "",
   });
 
   const [customSpecialtyInput, setCustomSpecialtyInput] = useState("");
@@ -179,6 +180,7 @@ export function ProfessionalModal({
         city: formData.city || null,
         color: formData.color,
         active: formData.active,
+        password: formData.password || null,
       };
 
       if (prof?.id) {
@@ -294,6 +296,7 @@ export function ProfessionalModal({
               <Input
                 id="prof-email"
                 type="email"
+                required={!prof}
                 placeholder="assessora@vitababy.com.br"
                 value={formData.email}
                 onChange={(e) =>
@@ -301,6 +304,22 @@ export function ProfessionalModal({
                 }
               />
             </div>
+
+            {!prof && (
+              <div className="space-y-1.5">
+                <Label htmlFor="prof-password">Senha de Acesso *</Label>
+                <Input
+                  id="prof-password"
+                  type="password"
+                  required
+                  placeholder="Senha da conta"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                />
+              </div>
+            )}
 
             <div className="space-y-1.5">
               <Label htmlFor="prof-phone">Telefone / WhatsApp</Label>
