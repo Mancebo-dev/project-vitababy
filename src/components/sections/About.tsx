@@ -12,21 +12,16 @@ export function About() {
     >
       <div className="w-full max-w-[1440px] mx-auto px-[1.5rem] lg:px-[7.5rem]">
         <StaggerContainer className="grid grid-cols-1 lg:grid-cols-2 gap-[2.5rem] lg:gap-[4rem] items-center">
-          {/* Video Player */}
-          <StaggerItem className="relative w-full max-w-[28.125rem] aspect-square md:aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-black border-[0.5rem] border-[#f5f3ef] mx-auto lg:mx-0 group cursor-pointer">
+          {/* Image */}
+          <StaggerItem className="relative w-full max-w-[28.125rem] aspect-square md:aspect-[3/4] mx-auto lg:mx-0">
             <Image
               src="/assets/rayane-about.png"
               alt="Rayane Castro"
               fill
               unoptimized
               loading="lazy"
-              className="object-cover opacity-80 group-hover:opacity-60 transition-opacity"
+              className="object-contain object-bottom"
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-[4rem] h-[4rem] bg-[#d19a7e] rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <Play className="w-[1.5rem] h-[1.5rem] text-white ml-[0.25rem]" />
-              </div>
-            </div>
           </StaggerItem>
 
           {/* Text Content */}
