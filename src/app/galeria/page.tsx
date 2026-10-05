@@ -5,14 +5,22 @@ import { Navbar } from "@/components/layout/Navbar";
 import { prisma } from "@/infrastructure/db/prisma";
 
 export const metadata: Metadata = {
-  title: "Galeria | Vita Baby",
+  title: "Nossa Galeria de Histórias | Fotos e Momentos",
   description:
-    "Conheça um pouco do nosso trabalho através de nossa galeria de fotos.",
+    "Explore a galeria de fotos da Vita Baby Assessoria Materno-Infantil. Veja momentos reais de cuidados com amamentação, banho humanizado e acolhimento.",
+  keywords: [
+    "galeria vitababy",
+    "fotos recém nascido",
+    "fotos banho humanizado",
+    "depoimentos de mães",
+    "cuidados materno infantil",
+  ],
 };
 
 export const revalidate = 60; // revalidate at most every minute
 
 export default async function PublicGaleriaPage() {
+  // biome-ignore lint/suspicious/noExplicitAny: Temporary fallback while schema stabilizes
   let images: any[] = [];
   try {
     images = await prisma.publicGallery.findMany({
