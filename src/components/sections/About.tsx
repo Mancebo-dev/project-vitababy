@@ -8,24 +8,24 @@ export function About() {
   return (
     <section
       id="sobre"
-      className="py-[2rem] md:py-[3rem] bg-[#fbf9f5] min-h-[100vh] flex flex-col justify-center scroll-mt-[5rem]"
+      className="bg-[#fbf9f5] min-h-[100vh] flex flex-col scroll-mt-[5rem] overflow-hidden relative"
     >
-      <div className="w-full max-w-[1440px] mx-auto px-[1.5rem] lg:px-[7.5rem]">
-        <StaggerContainer className="grid grid-cols-1 lg:grid-cols-2 gap-[2.5rem] lg:gap-[4rem] items-center">
+      <div className="w-full max-w-[1440px] mx-auto px-[1.5rem] lg:px-[7.5rem] flex-1 flex flex-col">
+        <StaggerContainer className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-[2.5rem] lg:gap-[4rem]">
           {/* Image */}
-          <StaggerItem className="relative w-full max-w-[28.125rem] aspect-square md:aspect-[3/4] mx-auto lg:mx-0">
+          <StaggerItem className="relative w-full min-h-[400px] sm:min-h-[450px] lg:min-h-[500px] xl:min-h-full mx-auto lg:mx-0 order-2 lg:order-1 flex items-end">
             <Image
               src="/assets/rayane-about.png"
               alt="Rayane Castro"
               fill
               unoptimized
               loading="lazy"
-              className="object-contain object-bottom"
+              className="object-contain object-bottom scale-[0.9] lg:scale-100 translate-y-[1rem] lg:translate-y-[2rem] origin-bottom"
             />
           </StaggerItem>
 
           {/* Text Content */}
-          <div className="flex flex-col items-start gap-[1rem]">
+          <div className="flex flex-col justify-center items-start gap-[1rem] order-1 lg:order-2 pt-[4rem] lg:py-[4rem]">
             <StaggerItem>
               <span className="text-[clamp(0.75rem,1vw,1rem)] font-semibold text-[#d19a7e] tracking-[0.0375rem] uppercase">
                 SOBRE MIM

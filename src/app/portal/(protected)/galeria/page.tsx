@@ -8,6 +8,8 @@ import { redirect } from "next/navigation";
 import { auth } from "@/infrastructure/auth/auth";
 import { prisma } from "@/infrastructure/db/prisma";
 
+import { GalleryUploadForm } from "./GalleryUploadForm";
+
 export const metadata: Metadata = {
   title: "Galeria de Fotos | Portal Vita Baby",
 };
@@ -44,13 +46,16 @@ export default async function GaleriaPage() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-heading font-bold tracking-tight text-[#411f03]">
-          Galeria de Fotos
-        </h1>
-        <p className="text-slate-500 mt-2">
-          Momentos especiais registrados durante seus atendimentos.
-        </p>
+      <div className="flex justify-between items-start md:items-center flex-col md:flex-row gap-4">
+        <div>
+          <h1 className="text-3xl font-heading font-bold tracking-tight text-[#411f03]">
+            Galeria de Fotos
+          </h1>
+          <p className="text-slate-500 mt-2">
+            Momentos especiais registrados durante seus atendimentos.
+          </p>
+        </div>
+        <GalleryUploadForm clientId={client.id} />
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-[#e4e2de] overflow-hidden min-h-[400px]">

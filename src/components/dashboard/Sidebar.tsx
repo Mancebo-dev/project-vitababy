@@ -8,6 +8,7 @@ import {
   DollarSign,
   FileText,
   Home,
+  ImageIcon,
   LogOut,
   MessageSquare,
   Package,
@@ -30,6 +31,7 @@ export const navItems = [
   { name: "Mensagens", href: "/admin/mensagens", icon: MessageSquare },
   { name: "Financeiro", href: "/admin/financeiro", icon: DollarSign },
   { name: "Depoimentos", href: "/admin/depoimentos", icon: MessageSquare },
+  { name: "Galeria", href: "/admin/galeria", icon: ImageIcon },
   { name: "Assessoras", href: "/admin/assessoras", icon: Building2 },
   { name: "Meu Perfil", href: "/admin/perfil", icon: User },
 ];
