@@ -54,11 +54,13 @@ export function GalleryUploadForm({ clientId }: { clientId: string }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-[#af4d30] hover:bg-[#af4d30]/90 text-white rounded-xl shadow-sm px-6 h-11">
-          <Upload className="w-4 h-4 mr-2" />
-          Enviar Foto
-        </Button>
+      <DialogTrigger
+        render={
+          <Button className="bg-[#af4d30] hover:bg-[#af4d30]/90 text-white rounded-xl shadow-sm px-6 h-11" />
+        }
+      >
+        <Upload className="w-4 h-4 mr-2" />
+        Enviar Foto
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

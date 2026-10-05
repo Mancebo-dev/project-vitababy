@@ -95,11 +95,13 @@ export function GalleryManager({
             Imagens Públicas ({publicImages.length})
           </h3>
           <Dialog open={openUpload} onOpenChange={setOpenUpload}>
-            <DialogTrigger asChild>
-              <Button className="bg-[#af4d30] hover:bg-[#8c3d26] text-white">
-                <Plus className="w-4 h-4 mr-2" />
-                Nova Foto no Site
-              </Button>
+            <DialogTrigger
+              render={
+                <Button className="bg-[#af4d30] hover:bg-[#8c3d26] text-white" />
+              }
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Nova Foto no Site
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
