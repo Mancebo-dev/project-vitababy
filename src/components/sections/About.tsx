@@ -15,7 +15,7 @@ export function About() {
           {/* Video Player */}
           <StaggerItem className="relative w-full max-w-[28.125rem] aspect-square md:aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-black border-[0.5rem] border-[#f5f3ef] mx-auto lg:mx-0 group cursor-pointer">
             <Image
-              src="https://vitababy.com.br/images/rayane.png"
+              src="/assets/rayane-about.png"
               alt="Rayane Castro"
               fill
               unoptimized
