@@ -90,9 +90,9 @@ export function Pricing({ initialServices }: PricingProps) {
                           {pkg.features
                             .split("\n")
                             .filter((f) => f.trim())
-                            .map((feature, i) => (
+                            .map((feature) => (
                               <li
-                                key={i}
+                                key={feature}
                                 className="flex items-start gap-2 text-sm text-[#444840]"
                               >
                                 <Check className="w-4 h-4 text-[#af4d30] shrink-0 mt-0.5" />

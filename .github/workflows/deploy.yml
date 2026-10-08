@@ -54,6 +54,7 @@ jobs:
             tar -xzf deploy.tar.gz
             npm ci --omit=dev
             npx prisma generate
+            npx prisma db push --skip-generate
             rm deploy.tar.gz
             pm2 restart vitababy || pm2 start npm --name "vitababy" -- run start
             pm2 save
