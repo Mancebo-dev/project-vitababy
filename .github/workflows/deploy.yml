@@ -49,19 +49,20 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
+            set -e
             export PATH=$PATH:/www/server/nodejs/v24.21.0/bin
             cd /www/wwwroot/vitababy
             tar -xzf deploy.tar.gz
-            npm ci --omit=dev
-            npx prisma generate
-            npx prisma db push --skip-generate
+            npm ci
+            npx --yes prisma generate
+            npx --yes prisma db push --skip-generate
             rm deploy.tar.gz
             
             # Remove o processo antigo do pm2 para ele aceitar o novo comando de inicialização
             pm2 delete vitababy || true
             
             # Garante que a porta 3000 está livre
-            npx kill-port 3000 || fuser -k 3000/tcp || true
+            npx --yes kill-port 3000 || fuser -k 3000/tcp || true
             
             # Inicia o next diretamente pelo pm2 para evitar processos órfãos do npm
             pm2 start node_modules/next/dist/bin/next --name "vitababy" -- start
