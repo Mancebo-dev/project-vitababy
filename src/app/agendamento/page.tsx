@@ -3,12 +3,17 @@ import { Suspense } from "react";
 import { BookingWizard } from "@/components/agendamento/BookingWizard";
 import { Footer } from "@/components/layout/Footer";
 import { BackToTop } from "@/components/ui/BackToTop";
+import { prisma } from "@/infrastructure/db/prisma";
 
 export const metadata: Metadata = {
   title: "Agendamento de Consultoria | Vita Baby",
   description:
     "Agende sua consultoria em amamentação, banho humanizado ou assistência pós-parto com as especialistas da Vita Baby.",
 };
+
+// Horários disponíveis mudam a todo momento: renderizar a cada requisição
+// (também evita acesso ao banco durante o build no CI).
+export const dynamic = "force-dynamic";
 
 export default function AgendamentoPage() {
   return (
@@ -34,7 +39,6 @@ export default function AgendamentoPage() {
 }
 
 // Separate component to do the async fetching so Suspense catches it
-import { prisma } from "@/infrastructure/db/prisma";
 
 async function WizardDataLoader() {
   const [dbServices, professionals, availableSlots] = await Promise.all([
