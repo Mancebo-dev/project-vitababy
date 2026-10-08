@@ -56,5 +56,10 @@ jobs:
             npx prisma generate
             npx prisma db push --skip-generate
             rm deploy.tar.gz
-            pm2 restart vitababy || pm2 start npm --name "vitababy" -- run start
+            
+            # Garante que a porta 3000 está livre antes de iniciar
+            npx kill-port 3000 || true
+            
+            # Inicia o next diretamente pelo pm2 para evitar processos órfãos do npm
+            pm2 restart vitababy || pm2 start node_modules/next/dist/bin/next --name "vitababy" -- start
             pm2 save
