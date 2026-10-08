@@ -13,6 +13,8 @@ export const auth = betterAuth({
     "https://*.vercel.app",
     "http://localhost:3000",
     "http://localhost:3001",
+    "https://vitababy.com.br",
+    "https://www.vitababy.com.br",
     process.env.NEXT_PUBLIC_APP_URL || "",
     process.env.BETTER_AUTH_URL || "",
   ].filter(Boolean),

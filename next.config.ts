@@ -4,6 +4,12 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       bodySizeLimit: "20mb",
+      allowedOrigins: [
+        "vitababy.com.br",
+        "www.vitababy.com.br",
+        "*.vercel.app",
+        "localhost:3000",
+      ],
     },
   },
   images: {

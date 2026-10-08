@@ -8,4 +8,5 @@ export const resend = new Resend(
 
 // In development/testing, Resend requires using this specific sender address
 // unless you have verified your own domain.
-export const DEFAULT_SENDER = "onboarding@resend.dev";
+export const DEFAULT_SENDER =
+  process.env.EMAIL_SENDER || "onboarding@resend.dev";
