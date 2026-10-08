@@ -1,5 +1,3 @@
-import { writeFile } from "node:fs/promises";
-import { join } from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/infrastructure/db/prisma";
 

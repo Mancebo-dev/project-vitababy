@@ -17,7 +17,9 @@ export function Testimonials({
   const testimonials = initialReviews.map((r) => ({
     text: `"${r.comment}"`,
     name: r.client.name,
-    role: "Cliente Vita Baby",
+    role: r.client.childName
+      ? `Mãe/Pai do(a) ${r.client.childName}`
+      : "Cliente Vita Baby",
     avatar: r.client.name.charAt(0).toUpperCase(),
     rating: r.rating,
   }));
@@ -48,7 +50,7 @@ export function Testimonials({
               className="bg-white border border-[#e4e2de] rounded-2xl p-[2rem] shadow-sm flex flex-col justify-between h-full"
             >
               <div>
-                <div className="flex gap-[0.25rem] mb-[1.5rem]">
+                <div className="flex gap-[0.25rem] mb-[1.5rem] flex-wrap">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <Image
                       key={star}
@@ -57,7 +59,7 @@ export function Testimonials({
                       height={15}
                       alt="star"
                       loading="lazy"
-                      style={{ width: "auto", height: "auto" }}
+                      className="w-[15px] h-[15px] object-contain shrink-0"
                     />
                   ))}
                 </div>

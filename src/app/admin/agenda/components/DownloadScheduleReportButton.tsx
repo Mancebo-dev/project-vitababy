@@ -6,7 +6,6 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Download } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,7 +40,7 @@ export function DownloadScheduleReportButton({
   const handleDownload = (profId?: string, profName?: string) => {
     const doc = new jsPDF();
     const currentDate = new Date();
-    const monthName = format(currentDate, "MMMM 'de' yyyy", { locale: ptBR });
+    const _monthName = format(currentDate, "MMMM 'de' yyyy", { locale: ptBR });
 
     doc.setFontSize(18);
     const title = profName

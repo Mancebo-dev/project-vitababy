@@ -85,6 +85,7 @@ model Client {
   userId       String?            @unique
   user         User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
   name         String
+  childName    String?
   email        String?            @unique
   phone        String
   cpf          String?            @unique
@@ -147,14 +148,17 @@ model Service {
 }
 
 model ServicePackage {
-  id          String    @id @default(cuid())
-  serviceId   String
-  name        String // Básico, Essencial, Premium
-  description String?   @db.Text
-  price       Float?
-  duration    Int? // em minutos
-  service     Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  bookings    Booking[]
+  id            String    @id @default(cuid())
+  serviceId     String
+  name          String // Básico, Essencial, Premium
+  description   String?   @db.Text
+  price         Float?
+  duration      Int? // em minutos
+  isHighlighted Boolean   @default(false)
+  features      String?   @db.Text // JSON array or simple text
+  billingCycle  String?   @default("ONETIME") // ONETIME, MONTHLY, QUARTERLY, YEARLY
+  service       Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  bookings      Booking[]
 
   @@map("service_package")
 }
@@ -368,4 +372,17 @@ model PublicGallery {
   updatedAt   DateTime @updatedAt
 
   @@map("public_gallery")
+}
+
+model Partner {
+  id        String   @id @default(cuid())
+  name      String
+  logoUrl   String   @db.LongText
+  link      String?  @db.Text
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("partner")
 }

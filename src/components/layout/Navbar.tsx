@@ -85,7 +85,7 @@ export function Navbar() {
           <div className="hidden md:block">
             <Link href="/agendamento">
               <Button className="rounded-full px-[1.5rem] h-[3rem] bg-[#af4d30] text-white hover:bg-[#af4d30]/90 font-semibold shadow-md text-[0.875rem]">
-                Agendar Consultoria
+                Agendar Assessoria
               </Button>
             </Link>
           </div>
@@ -175,7 +175,7 @@ export function Navbar() {
         <div className="p-[1.5rem] border-t border-[#e4e2de]">
           <Link href="/agendamento" onClick={() => setIsOpen(false)}>
             <Button className="w-full rounded-xl h-[3.5rem] bg-[#af4d30] text-white hover:bg-[#af4d30]/90 font-semibold shadow-md text-[0.9375rem]">
-              Agendar Consultoria
+              Agendar Assessoria
             </Button>
           </Link>
         </div>

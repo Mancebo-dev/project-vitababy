@@ -49,6 +49,9 @@ const packageSchema = z.object({
     (val) => (val === "" || val === undefined ? undefined : Number(val)),
     z.number().optional(),
   ),
+  isHighlighted: z.boolean().optional().default(false),
+  billingCycle: z.string().optional().default("ONETIME"),
+  features: z.string().optional(),
 });
 
 export function CreateServiceDialog() {
@@ -132,6 +135,9 @@ export function CreatePackageDialog({ serviceId }: { serviceId: string }) {
       description: "",
       price: undefined,
       duration: undefined,
+      isHighlighted: false,
+      billingCycle: "ONETIME",
+      features: "",
     },
   });
 
@@ -211,14 +217,74 @@ export function CreatePackageDialog({ serviceId }: { serviceId: string }) {
             />
             <FormField
               control={form.control as any}
+              name="billingCycle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Ciclo de Cobrança</FormLabel>
+                  <FormControl>
+                    <select
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      {...field}
+                    >
+                      <option value="ONETIME">Pagamento Único</option>
+                      <option value="MONTHLY">Mensal</option>
+                      <option value="QUARTERLY">Trimestral</option>
+                      <option value="YEARLY">Anual</option>
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control as any}
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descrição (Opcional)</FormLabel>
+                  <FormLabel>Descrição Curta</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Detalhes do pacote..." {...field} />
+                    <Textarea placeholder="Detalhes curtos..." {...field} />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control as any}
+              name="features"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Benefícios / Checklists (um por linha)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Suporte WhatsApp&#10;Consultoria de 2h&#10;Retorno em 15 dias"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control as any}
+              name="isHighlighted"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <input
+                      type="checkbox"
+                      checked={field.value}
+                      onChange={field.onChange}
+                      className="w-4 h-4 text-primary rounded"
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Destacar este plano</FormLabel>
+                    <p className="text-sm text-muted-foreground">
+                      Planos destacados ganham uma cor ou banner diferente no
+                      site.
+                    </p>
+                  </div>
                 </FormItem>
               )}
             />

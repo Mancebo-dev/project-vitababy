@@ -1,4 +1,3 @@
-import { Play } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { StaggerContainer } from "@/components/ui/StaggerContainer";
@@ -33,22 +32,23 @@ export function About() {
             </StaggerItem>
             <StaggerItem>
               <h2 className="text-[clamp(2rem,3vw,3rem)] font-heading text-[#411f03] leading-[1.2]">
-                Rayane Castro e a missão da Vitababy
+                Rayane Castro cuidado com ciência, conhecimento, experiência e
+                profissionalismo.
               </h2>
             </StaggerItem>
 
             <StaggerItem className="flex flex-col gap-[1rem] text-[#444840] text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.6] mt-[0.5rem]">
               <p>
-                Com mais de 9 anos de experiência em cuidados materno-infantis,
-                minha missão é acolher e guiar famílias em um dos momentos mais
-                transformadores da vida.
+                Na enfermagem, com mais de 9 anos de experiência, sou
+                especializada em cuidados humanizados para bebês e famílias.
+                Ofereço assessoria em amamentação, banho humanizado, capacitação
+                em primeiros socorros para bebês, entre outros.
               </p>
               <p>
-                Na Vitababy, acreditamos que a informação baseada em evidências,
-                aliada à empatia e ao respeito pela individualidade de cada
-                família, é a chave para uma parentalidade mais leve e segura.
-                Nossos serviços são desenhados para proporcionar conforto,
-                confiança e suporte em cada etapa dessa jornada.
+                Minha missão é proporcionar segurança, vínculo e bem-estar para
+                cada família, com um olhar técnico e um cuidado acolhedor que
+                transforma a experiência da maternidade, paternidade e rede de
+                apoio.
               </p>
             </StaggerItem>
 

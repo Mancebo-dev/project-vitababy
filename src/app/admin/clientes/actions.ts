@@ -51,9 +51,6 @@ export async function createConsultationNote(data: {
   return note;
 }
 
-import { mkdir, writeFile } from "node:fs/promises";
-import { join } from "node:path";
-
 export async function uploadClientFileAction(formData: FormData) {
   const file = formData.get("file") as File;
   const clientId = formData.get("clientId") as string;

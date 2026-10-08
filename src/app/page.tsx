@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { Hero } from "@/components/sections/Hero";
+import { Partners } from "@/components/sections/Partners";
 import { prisma } from "@/infrastructure/db/prisma";
 
 export const revalidate = 0;
@@ -13,6 +14,11 @@ const About = dynamic(() =>
 const Services = dynamic(() =>
   import("@/components/sections/Services").then((m) => ({
     default: m.Services,
+  })),
+);
+const Pricing = dynamic(() =>
+  import("@/components/sections/Pricing").then((m) => ({
+    default: m.Pricing,
   })),
 );
 const HowItWorks = dynamic(() =>
@@ -66,8 +72,10 @@ export default async function Home() {
     <main className="flex min-h-screen flex-col">
       <Navbar />
       <Hero />
+      <Partners />
       <About />
       <Services initialServices={services} />
+      <Pricing initialServices={services} />
       <HowItWorks />
       <Testimonials initialReviews={reviews} />
       <Contact />

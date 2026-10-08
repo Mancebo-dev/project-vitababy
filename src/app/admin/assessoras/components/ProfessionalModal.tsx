@@ -76,7 +76,7 @@ export function ProfessionalModal({
     ) {
       setLoading(true);
       try {
-        await deleteProfessional(prof!.id);
+        await deleteProfessional(prof?.id);
         setOpen(false);
         router.push("/admin/assessoras");
       } catch (err) {

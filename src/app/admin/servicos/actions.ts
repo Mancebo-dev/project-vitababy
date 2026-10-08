@@ -43,6 +43,9 @@ export async function createServicePackage(data: {
   description?: string;
   price?: number;
   duration?: number;
+  isHighlighted?: boolean;
+  features?: string;
+  billingCycle?: string;
 }) {
   await prisma.servicePackage.create({
     data,
@@ -59,6 +62,9 @@ export async function updateServicePackage(
     description?: string;
     price?: number;
     duration?: number;
+    isHighlighted?: boolean;
+    features?: string;
+    billingCycle?: string;
   },
 ) {
   await prisma.servicePackage.update({

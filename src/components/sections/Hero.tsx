@@ -45,7 +45,7 @@ export function Hero() {
                 style={{ width: 12, height: 12 }}
               />
               <span className="text-[0.75rem] font-semibold text-[#444840] tracking-[0.0375rem] uppercase">
-                +300 Famílias Atendidas
+                +800 Famílias Atendidas
               </span>
             </div>
           </StaggerItem>
@@ -70,7 +70,7 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row items-center gap-[1rem] w-full mt-[1.5rem]">
               <Link href="/agendamento" className="w-full sm:w-auto">
                 <Button className="w-full rounded-xl px-[2rem] h-[3.5rem] bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold shadow-lg text-[1rem] flex items-center gap-[0.5rem]">
-                  Agendar Consultoria
+                  Agendar Assessoria
                   <Image
                     src="/assets/fadd198d26aadd8b0ee816378d8a8139f72021b1.svg"
                     width={9}

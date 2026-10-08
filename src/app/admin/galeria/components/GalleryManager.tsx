@@ -18,7 +18,6 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   addImageToPublicGallery,
   deletePublicGalleryImage,
-  updatePublicGalleryImage,
   uploadPublicGalleryImageAction,
 } from "../actions";
 

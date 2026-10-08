@@ -35,7 +35,7 @@ export function ClientModal({
     ) {
       setLoading(true);
       try {
-        await deleteClient(client!.id);
+        await deleteClient(client?.id);
         setOpen(false);
         router.push("/admin/clientes");
       } catch (err) {

@@ -1,6 +1,3 @@
-import { Plus } from "lucide-react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { prisma } from "@/infrastructure/db/prisma";
 import { GalleryManager } from "./components/GalleryManager";
 
