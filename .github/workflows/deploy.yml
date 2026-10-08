@@ -53,7 +53,7 @@ jobs:
             export PATH=$PATH:/www/server/nodejs/v24.21.0/bin
             cd /www/wwwroot/vitababy
             tar -xzf deploy.tar.gz
-            npm ci
+            npm ci --ignore-scripts
             npx --yes prisma generate
             npx --yes prisma db push --skip-generate
             rm deploy.tar.gz
