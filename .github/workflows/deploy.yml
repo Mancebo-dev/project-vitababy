@@ -57,9 +57,12 @@ jobs:
             npx prisma db push --skip-generate
             rm deploy.tar.gz
             
-            # Garante que a porta 3000 está livre antes de iniciar
-            npx kill-port 3000 || true
+            # Remove o processo antigo do pm2 para ele aceitar o novo comando de inicialização
+            pm2 delete vitababy || true
+            
+            # Garante que a porta 3000 está livre
+            npx kill-port 3000 || fuser -k 3000/tcp || true
             
             # Inicia o next diretamente pelo pm2 para evitar processos órfãos do npm
-            pm2 restart vitababy || pm2 start node_modules/next/dist/bin/next --name "vitababy" -- start
+            pm2 start node_modules/next/dist/bin/next --name "vitababy" -- start
             pm2 save
