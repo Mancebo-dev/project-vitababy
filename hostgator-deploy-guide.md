@@ -1,139 +1,74 @@
-# Guia de Hospedagem na HostGator (VPS)
+# Guia de Hospedagem na HostGator (VPS com aaPanel)
 
-Para hospedar o sistema Vita Baby (que utiliza Next.js, Node.js e PostgreSQL) na HostGator, o plano ideal é um **Servidor VPS (Linux - Ubuntu 22.04)**. Planos de hospedagem compartilhada (cPanel) não são recomendados para aplicações Next.js/Node.js, pois geralmente não oferecem o nível de acesso e suporte a processos contínuos que a aplicação exige.
+Para hospedar o sistema Vita Baby (Next.js + PostgreSQL + E-mail) de forma econômica, utilizamos um **Servidor VPS com Ubuntu 22.04 LTS** gerenciado através do **aaPanel** (uma alternativa gratuita ao cPanel).
 
-## Passos para o Deploy
+## 1. Instalação do aaPanel (Acesso Root)
 
-### 1. Preparação do Servidor (Acesso SSH)
-
-Acesse seu servidor HostGator via SSH:
+Acesse o servidor via SSH:
 ```bash
 ssh root@SEU_IP_DO_VPS
 ```
 
-Atualize os pacotes do servidor:
+Execute o script oficial de instalação do aaPanel:
 ```bash
-sudo apt update && sudo apt upgrade -y
+wget -O install.sh http://www.aapanel.com/script/install-ubuntu_6.0_en.sh && sudo bash install.sh aapanel
 ```
+Anote as credenciais de acesso ao painel (URL, Username, Password) que aparecerão no final do script.
 
-### 2. Instalação de Dependências
+## 2. Configuração do aaPanel
 
-Instale o Node.js (versão LTS recomendada, 20.x):
-```bash
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt-get install -y nodejs
-```
+Acesse a URL do aaPanel pelo navegador. O painel solicitará a instalação do pacote padrão de servidor (LNMP). Escolha:
+- **Nginx** (Recomendado)
+- **PostgreSQL** (Em App Store > PostgreSQL)
+- **PM2 Manager** (Para Node.js)
+- **Mail Server** (Para os E-mails)
+- **Redis** (Opcional, se houver necessidades de cache no futuro)
 
-Instale o gerenciador de processos PM2 globalmente:
-```bash
-sudo npm install -g pm2
-```
+## 3. Configurando o Servidor de E-mail
 
-Instale o PostgreSQL:
-```bash
-sudo apt install -y postgresql postgresql-contrib
-```
+1. Acesse a aba **App Store** e certifique-se de que o **Mail Server** está instalado.
+2. Na aba **Mail Server**, adicione o domínio `vitababy.com.br`.
+3. O painel fornecerá os registros DNS necessários (MX, TXT para DKIM e SPF). Você precisará configurar esses registros no Registro.br ou Cloudflare.
+4. Crie as contas de e-mail (ex: `contato@vitababy.com.br`).
+5. Anote as credenciais SMTP para colocar no arquivo `.env` da aplicação.
 
-### 3. Configuração do Banco de Dados
+## 4. Configurando o Banco de Dados (PostgreSQL)
 
-Acesse o PostgreSQL:
-```bash
-sudo -u postgres psql
-```
+1. No aaPanel, vá em **Databases > PostgreSQL**.
+2. Clique em **Add database**.
+3. Nome: `vitababy_db`, Usuário: `vitababy`, e gere uma senha segura.
+4. O aaPanel já criará o banco e o usuário com as permissões corretas.
+5. Monte a URL de conexão: `postgresql://vitababy:SENHA@127.0.0.1:5432/vitababy_db?schema=public`
 
-Crie o banco de dados e usuário:
-```sql
-CREATE DATABASE vitababy_db;
-CREATE USER vitababy_user WITH PASSWORD 'sua_senha_forte';
-ALTER ROLE vitababy_user SET client_encoding TO 'utf8';
-ALTER ROLE vitababy_user SET default_transaction_isolation TO 'read committed';
-ALTER ROLE vitababy_user SET timezone TO 'UTC';
-GRANT ALL PRIVILEGES ON DATABASE vitababy_db TO vitababy_user;
-\q
-```
+## 5. Fazendo o Deploy da Aplicação Node (Next.js)
 
-### 4. Clonar e Configurar o Projeto
+1. Vá em **Files** no aaPanel e navegue até `/www/wwwroot/`.
+2. Crie a pasta `vitababy`.
+3. Faça o upload dos arquivos do projeto (você pode usar o terminal embutido ou enviar um `.zip` gerado do repositório).
+   *No terminal da VPS, você pode clonar o projeto:*
+   ```bash
+   cd /www/wwwroot/vitababy
+   git clone <url-do-repositorio> .
+   npm install
+   ```
+4. Crie o arquivo `.env` dentro da pasta raiz da aplicação com as variáveis de produção.
+5. Faça o build do projeto:
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   npm run build
+   ```
 
-Clone seu repositório:
-```bash
-git clone URL_DO_SEU_REPOSITORIO /var/www/vitababy
-cd /var/www/vitababy
-```
+## 6. Configurando o PM2 e o Nginx (Proxy)
 
-Instale as dependências:
-```bash
-npm install
-```
+1. No aaPanel, abra o **PM2 Manager** (App Store > PM2).
+2. Clique em **Add project**.
+3. **Project directory**: `/www/wwwroot/vitababy`
+4. **Start command**: `npm start`
+5. O PM2 manterá o Next.js rodando na porta 3000 (ou a porta configurada).
+6. Vá em **Website > Add site**.
+7. Domínio: `vitababy.com.br` e `www.vitababy.com.br`.
+8. Na configuração do site, crie um **Reverse Proxy** apontando para `http://127.0.0.1:3000`.
+9. Ative o **SSL (HTTPS)** na mesma aba do site usando Let's Encrypt (1 clique).
 
-Crie o arquivo `.env` baseado no `.env.example` e atualize a variável `DATABASE_URL`:
-```env
-DATABASE_URL="postgresql://vitababy_user:sua_senha_forte@localhost:5432/vitababy_db?schema=public"
-NEXT_PUBLIC_APP_URL="https://seusite.com.br"
-# Adicione suas outras chaves (Resend, etc.)
-```
-
-Gere o Prisma e faça o push do banco de dados:
-```bash
-npx prisma generate
-npx prisma db push
-```
-
-Faça a build da aplicação Next.js:
-```bash
-npm run build
-```
-
-### 5. Iniciar a Aplicação com PM2
-
-Inicie o aplicativo usando o arquivo `ecosystem.config.js` que já foi configurado:
-```bash
-pm2 start ecosystem.config.js
-pm2 save
-pm2 startup
-```
-
-### 6. Configurar o Nginx (Proxy Reverso)
-
-Instale o Nginx:
-```bash
-sudo apt install -y nginx
-```
-
-Crie um arquivo de configuração para o seu domínio:
-```bash
-sudo nano /etc/nginx/sites-available/vitababy
-```
-
-Adicione o seguinte conteúdo (altere `seusite.com.br` para o seu domínio):
-```nginx
-server {
-    listen 80;
-    server_name seusite.com.br www.seusite.com.br;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-Ative o site e reinicie o Nginx:
-```bash
-sudo ln -s /etc/nginx/sites-available/vitababy /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
-```
-
-### 7. Certificado SSL (HTTPS)
-
-Instale o Certbot para obter um certificado gratuito do Let's Encrypt:
-```bash
-sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d seusite.com.br -d www.seusite.com.br
-```
-
-O Certbot irá configurar o HTTPS automaticamente no seu Nginx.
+Pronto! O sistema e os e-mails estão rodando juntos no Ubuntu 22.04 através do aaPanel.
