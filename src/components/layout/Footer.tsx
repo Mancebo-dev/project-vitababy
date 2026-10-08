@@ -168,7 +168,7 @@ export function Footer() {
               Contato
             </h4>
             <ul className="flex flex-col gap-[0.5rem] text-[#444840] text-[0.875rem]">
-              <li>WhatsApp: (11) 99999-9999</li>
+              <li>WhatsApp: (22) 99772-8581</li>
               <li>Email: contato@vitababy.com.br</li>
             </ul>
             <div className="flex gap-[1rem] mt-[0.5rem]">

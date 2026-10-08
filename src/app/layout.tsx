@@ -105,7 +105,7 @@ export default function RootLayout({
     description:
       "Assessoria especializada em amamentação, banho humanizado e cuidados materno-infantis na região de Macaé e Rio das Ostras.",
     url: "https://vitababy.com.br",
-    telephone: "+55-22-99999-9999", // Atualizar quando tiver o telefone oficial
+    telephone: "+55-22-99772-8581", // Atualizar quando tiver o telefone oficial
     address: {
       "@type": "PostalAddress",
       addressLocality: "Macaé",

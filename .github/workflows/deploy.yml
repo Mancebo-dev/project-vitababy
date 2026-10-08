@@ -1,0 +1,59 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main # O deploy será acionado automaticamente ao fazer push na branch main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Project
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXT_PUBLIC_URL: "https://vitababy.com.br"
+          # Adicione outras variáveis de ambiente necessárias para o build aqui
+
+      - name: Compress Build Files
+        run: tar -czf deploy.tar.gz .next public package.json next.config.ts prisma package-lock.json
+
+      - name: Copy files via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_PORT }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "deploy.tar.gz"
+          target: "/www/wwwroot/vitababy"
+
+      - name: Execute SSH Commands on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_PORT }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            export PATH=$PATH:/www/server/nodejs/v24.21.0/bin
+            cd /www/wwwroot/vitababy
+            tar -xzf deploy.tar.gz
+            npm ci --omit=dev
+            npx prisma generate
+            rm deploy.tar.gz
+            pm2 restart vitababy || pm2 start npm --name "vitababy" -- run start
+            pm2 save

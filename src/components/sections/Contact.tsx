@@ -52,7 +52,7 @@ export function Contact() {
                     WhatsApp
                   </span>
                   <span className="text-[#444840] text-[0.9375rem]">
-                    (73) 99999-9999
+                    (22) 99772-8581
                   </span>
                 </div>
               </StaggerItem>
@@ -72,25 +72,6 @@ export function Contact() {
                   </span>
                   <span className="text-[#444840] text-[0.9375rem]">
                     contato@vitababy.com.br
-                  </span>
-                </div>
-              </StaggerItem>
-
-              <StaggerItem className="flex items-start gap-[1.5rem]">
-                <div className="w-[3rem] h-[3rem] rounded-full bg-[#fbf9f5] flex items-center justify-center shrink-0 border border-[#e4e2de]">
-                  <Image
-                    src="/assets/e53de8f49243c0b6bf42535cff56291aa1476a6d.svg"
-                    alt="Localização"
-                    width={16}
-                    height={20}
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[1.25rem] font-semibold text-[#411f03]">
-                    Endereço
-                  </span>
-                  <span className="text-[#444840] text-[0.9375rem]">
-                    Atendimento em domicílio
                   </span>
                 </div>
               </StaggerItem>

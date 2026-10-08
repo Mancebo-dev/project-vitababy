@@ -143,7 +143,7 @@ export function StepConfirmation({
 
         <div className="flex flex-col sm:flex-row gap-[1rem] w-full pt-[0.5rem]">
           <a
-            href={`https://wa.me/5561999999999?text=${whatsappMessage}`}
+            href={`https://wa.me/5522997728581?text=${whatsappMessage}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 py-[0.875rem] px-[1.5rem] bg-[#25D366] hover:bg-[#20b859] text-white font-semibold rounded-full flex items-center justify-center gap-[0.5rem] shadow-sm transition-colors text-[0.9375rem]"
