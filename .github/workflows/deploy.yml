@@ -52,6 +52,7 @@ jobs:
             set -ex
             export PATH=$PATH:/www/server/nodejs/v24.21.0/bin
             cd /www/wwwroot/vitababy
+            rm -rf .next
             tar -xzf deploy.tar.gz
             
             # Instala apenas dependências de produção para economizar RAM
