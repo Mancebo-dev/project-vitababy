@@ -54,6 +54,11 @@ jobs:
             cd /www/wwwroot/vitababy
             tar -xzf deploy.tar.gz
             npm ci --ignore-scripts
+            
+            # Cria o arquivo .env com a string de conexão para que o Prisma e o Next.js consigam acessar o banco na VPS
+            echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > .env
+            echo "NEXT_PUBLIC_URL=\"https://vitababy.com.br\"" >> .env
+            
             npx --yes prisma generate
             npx --yes prisma db push --skip-generate
             rm deploy.tar.gz
