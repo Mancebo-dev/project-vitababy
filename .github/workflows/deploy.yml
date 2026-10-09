@@ -55,7 +55,7 @@ jobs:
             tar -xzf deploy.tar.gz
             
             # Instala apenas dependências de produção para economizar RAM
-            npm ci --omit=dev
+            npm ci --omit=dev --ignore-scripts
             # Instala o CLI do prisma manualmente ignorando os scripts do husky
             npm install prisma --no-save --ignore-scripts
             
