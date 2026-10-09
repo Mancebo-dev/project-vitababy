@@ -57,6 +57,7 @@ export async function submitBookingAction(data: BookingFormData) {
         data: {
           userId,
           name: data.clientName,
+          childName: data.clientChildName,
           phone: data.clientPhone,
           zipCode: data.clientZipCode,
           address: data.clientAddress,
@@ -67,6 +68,7 @@ export async function submitBookingAction(data: BookingFormData) {
         data: {
           userId,
           name: data.clientName,
+          childName: data.clientChildName,
           email: data.clientEmail,
           phone: data.clientPhone,
           cpf: data.clientCpf,

@@ -151,6 +151,29 @@ export function StepClientInfo({
             </div>
           </div>
 
+          {/* Nome do Bebê (Opcional) */}
+          <div>
+            <label
+              htmlFor="clientChildName"
+              className="block text-[0.875rem] font-semibold text-[#411f03] mb-[0.375rem]"
+            >
+              Nome do Bebê (Opcional)
+            </label>
+            <div className="relative">
+              <User className="w-5 h-5 text-[#a8a5a0] absolute left-[1rem] top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                id="clientChildName"
+                placeholder="Ex: Pedro"
+                value={formData.clientChildName || ""}
+                onChange={(e) =>
+                  onChangeField("clientChildName", e.target.value)
+                }
+                className="w-full pl-[2.75rem] pr-[1rem] py-[0.75rem] border border-[#e4e2de] rounded-xl text-[0.9375rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none"
+              />
+            </div>
+          </div>
+
           {/* E-mail e WhatsApp em grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-[1.25rem]">
             <div>

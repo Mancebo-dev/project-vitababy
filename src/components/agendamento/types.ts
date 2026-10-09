@@ -38,6 +38,7 @@ export interface BookingFormData {
   professionalId: string;
   dates: DatePreference[]; // 1 to 3 date preferences
   clientName: string;
+  clientChildName?: string;
   clientEmail: string;
   clientPhone: string;
   clientCpf: string;

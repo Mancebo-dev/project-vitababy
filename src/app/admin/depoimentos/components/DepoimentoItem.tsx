@@ -11,7 +11,7 @@ import { deleteReview, toggleHighlight } from "../actions";
 export function DepoimentoItem({
   review,
 }: {
-  review: Review & { client?: { name: string } };
+  review: Review & { client?: { name: string; childName?: string | null } };
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -49,8 +49,13 @@ export function DepoimentoItem({
               {review.client?.name?.charAt(0) || "C"}
             </div>
             <div>
-              <p className="font-semibold text-slate-900">
+              <p className="font-semibold text-slate-900 flex items-center gap-2">
                 {review.client?.name || "Desconhecido"}
+                {review.client?.childName && (
+                  <span className="text-xs font-normal text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                    Mãe/Pai do(a) {review.client.childName}
+                  </span>
+                )}
               </p>
               <p className="text-xs text-slate-500">
                 {format(new Date(review.createdAt), "dd 'de' MMMM, yyyy", {

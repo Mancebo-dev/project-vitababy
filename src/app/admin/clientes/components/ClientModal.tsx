@@ -52,6 +52,7 @@ export function ClientModal({
 
   const [formData, setFormData] = useState({
     name: client?.name || "",
+    childName: client?.childName || "",
     email: client?.email || "",
     phone: client?.phone || "",
     cpf: client?.cpf || "",
@@ -137,6 +138,16 @@ export function ClientModal({
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-2 col-span-2 sm:col-span-1">
+              <Label htmlFor="childName">Nome do Bebê</Label>
+              <Input
+                id="childName"
+                value={formData.childName}
+                onChange={(e) =>
+                  setFormData({ ...formData, childName: e.target.value })
                 }
               />
             </div>
