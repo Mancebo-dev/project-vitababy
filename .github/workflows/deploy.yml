@@ -21,6 +21,11 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Push Database Schema
+        run: npx prisma db push --skip-generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - name: Build Project
         run: npm run build
         env:
@@ -49,18 +54,22 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
-            set -e
+            set -ex
             export PATH=$PATH:/www/server/nodejs/v24.21.0/bin
             cd /www/wwwroot/vitababy
             tar -xzf deploy.tar.gz
-            npm ci --ignore-scripts
+            
+            # Instala apenas dependências de produção para economizar RAM
+            npm ci --omit=dev
+            # Instala o CLI do prisma manualmente ignorando os scripts do husky
+            npm install prisma --no-save --ignore-scripts
             
             # Cria o arquivo .env com a string de conexão para que o Prisma e o Next.js consigam acessar o banco na VPS
-            echo "DATABASE_URL=\"${{ secrets.DATABASE_URL }}\"" > .env
-            echo "NEXT_PUBLIC_URL=\"https://vitababy.com.br\"" >> .env
+            echo 'DATABASE_URL="${{ secrets.DATABASE_URL }}"' > .env
+            echo 'NEXT_PUBLIC_URL="https://vitababy.com.br"' >> .env
             
-            npx --yes prisma generate
-            npx --yes prisma db push --skip-generate
+            # Gera o client do Prisma compilado para a arquitetura da VPS
+            npx prisma generate
             rm deploy.tar.gz
             
             # Remove o processo antigo do pm2 para ele aceitar o novo comando de inicialização
