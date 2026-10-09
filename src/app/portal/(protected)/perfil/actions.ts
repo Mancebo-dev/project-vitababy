@@ -50,7 +50,7 @@ export async function updatePasswordAction(
 
 export async function updateClientProfile(
   clientId: string,
-  data: { phone: string; zipCode: string; address: string },
+  data: { phone: string; zipCode: string; address: string; childName?: string },
 ) {
   try {
     const headersList = await headers();
@@ -77,6 +77,7 @@ export async function updateClientProfile(
         phone: data.phone,
         zipCode: data.zipCode,
         address: data.address,
+        childName: data.childName,
       },
     });
 

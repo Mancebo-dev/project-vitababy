@@ -34,6 +34,7 @@ import { createContract } from "../actions";
 const schema = z.object({
   bookingId: z.string().min(1, "Selecione um agendamento"),
   templateId: z.string().min(1, "Selecione um modelo base"),
+  scale: z.string().optional(),
   extraNotes: z.string().optional(),
 });
 
@@ -59,6 +60,7 @@ export function CreateContractModal({
     defaultValues: {
       bookingId: "",
       templateId: "",
+      scale: "",
       extraNotes: "",
     },
   });
@@ -138,6 +140,24 @@ export function CreateContractModal({
                         </option>
                       ))}
                     </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="scale"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Escala (opcional)</FormLabel>
+                  <FormControl>
+                    <input
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="Ex: 12x36, 24x48..."
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

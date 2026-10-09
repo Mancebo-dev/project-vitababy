@@ -7,6 +7,7 @@ interface ProfileFormProps {
   client: {
     id: string;
     name: string;
+    childName: string | null;
     cpf: string | null;
     phone: string | null;
     zipCode: string | null;
@@ -30,11 +31,13 @@ export function ProfileForm({ client }: ProfileFormProps) {
     const phone = formData.get("phone") as string;
     const zipCode = formData.get("zipCode") as string;
     const address = formData.get("address") as string;
+    const childName = formData.get("childName") as string;
 
     const res = await updateClientProfile(client.id, {
       phone,
       zipCode,
       address,
+      childName,
     });
 
     setIsPending(false);
@@ -75,6 +78,22 @@ export function ProfileForm({ client }: ProfileFormProps) {
             defaultValue={client.name}
             className="w-full px-4 py-2 border border-[#e4e2de] rounded-xl bg-[#fbf9f5] focus:border-[#af4d30] outline-none"
             readOnly
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="childName"
+            className="block text-sm font-semibold text-[#411f03] mb-1"
+          >
+            Nome do Bebê
+          </label>
+          <input
+            id="childName"
+            type="text"
+            name="childName"
+            defaultValue={client.childName || ""}
+            className="w-full px-4 py-2 border border-[#e4e2de] rounded-xl bg-white focus:border-[#af4d30] outline-none"
+            placeholder="Nome do bebê (se houver)"
           />
         </div>
         <div>

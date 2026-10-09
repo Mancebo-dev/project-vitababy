@@ -56,6 +56,7 @@ export async function getPendingBookings() {
 export async function createContract(data: {
   bookingId: string;
   templateId: string;
+  scale?: string;
   extraNotes?: string;
 }) {
   const template = await prisma.contractTemplate.findUnique({
@@ -124,7 +125,8 @@ export async function createContract(data: {
       formatDate(booking.scheduleSlot.date) +
         " às " +
         booking.scheduleSlot.startTime,
-    );
+    )
+    .replace(/\{\{ESCALA\}\}/g, data.scale || "N/A");
 
   // Combine template content with extra notes
   const finalContent = `

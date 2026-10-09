@@ -62,6 +62,12 @@ export function Navbar() {
               Serviços
             </Link>
             <Link
+              href="/#planos"
+              className="text-[1rem] font-medium text-[#444840] hover:text-[#af4d30] transition-colors"
+            >
+              Planos
+            </Link>
+            <Link
               href="/galeria"
               className="text-[1rem] font-medium text-[#444840] hover:text-[#af4d30] transition-colors"
             >
@@ -148,6 +154,13 @@ export function Navbar() {
             className="flex items-center gap-[0.75rem] px-[1.25rem] py-[1rem] rounded-xl text-[0.9375rem] font-medium transition-colors text-[#444840] hover:bg-[#fbf9f5] hover:text-[#af4d30]"
           >
             Serviços
+          </Link>
+          <Link
+            href="/#planos"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-[0.75rem] px-[1.25rem] py-[1rem] rounded-xl text-[0.9375rem] font-medium transition-colors text-[#444840] hover:bg-[#fbf9f5] hover:text-[#af4d30]"
+          >
+            Planos
           </Link>
           <Link
             href="/galeria"

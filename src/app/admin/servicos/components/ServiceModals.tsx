@@ -1,11 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash2 } from "lucide-react";
+import type { Service, ServicePackage } from "@prisma/client";
+import { Edit, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -31,6 +31,8 @@ import {
   createServicePackage,
   deleteService,
   deleteServicePackage,
+  updateService,
+  updateServicePackage,
 } from "../actions";
 
 const serviceSchema = z.object({
@@ -39,18 +41,13 @@ const serviceSchema = z.object({
 });
 
 const packageSchema = z.object({
+  serviceId: z.string().min(1, "Serviço é obrigatório"),
   name: z.string().min(2, "Nome é obrigatório"),
   description: z.string().optional(),
-  price: z.preprocess(
-    (val) => (val === "" || val === undefined ? undefined : Number(val)),
-    z.number().optional(),
-  ),
-  duration: z.preprocess(
-    (val) => (val === "" || val === undefined ? undefined : Number(val)),
-    z.number().optional(),
-  ),
-  isHighlighted: z.boolean().optional().default(false),
-  billingCycle: z.string().optional().default("ONETIME"),
+  price: z.coerce.number().optional(),
+  duration: z.coerce.number().optional(),
+  isHighlighted: z.boolean().default(false),
+  billingCycle: z.string().default("ONETIME"),
   features: z.string().optional(),
 });
 
@@ -70,7 +67,7 @@ export function CreateServiceDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <div className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-medium gap-2">
+        <div className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-medium gap-2 cursor-pointer">
           <Plus className="w-4 h-4" /> Novo Serviço
         </div>
       </DialogTrigger>
@@ -83,12 +80,9 @@ export function CreateServiceDialog() {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit as any)}
-            className="space-y-4"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
@@ -101,7 +95,7 @@ export function CreateServiceDialog() {
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
@@ -126,11 +120,79 @@ export function CreateServiceDialog() {
   );
 }
 
-export function CreatePackageDialog({ serviceId }: { serviceId: string }) {
+export function EditServiceDialog({ service }: { service: Service }) {
   const [open, setOpen] = useState(false);
-  const form = useForm<z.infer<typeof packageSchema>>({
-    resolver: zodResolver(packageSchema) as any,
+  const form = useForm<z.infer<typeof serviceSchema>>({
+    resolver: zodResolver(serviceSchema),
     defaultValues: {
+      name: service.name,
+      description: service.description || "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof serviceSchema>) {
+    await updateService(service.id, { ...values, active: service.active });
+    setOpen(false);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger>
+        <button
+          type="button"
+          className="text-slate-400 hover:text-blue-600 p-1"
+        >
+          <Edit className="w-4 h-4" />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Editar Serviço</DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome da Categoria</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descrição (Opcional)</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <DialogFooter>
+              <Button type="submit">Atualizar Categoria</Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function CreatePackageDialog({ services }: { services: Service[] }) {
+  const [open, setOpen] = useState(false);
+  const form = useForm<any>({
+    resolver: zodResolver(packageSchema),
+    defaultValues: {
+      serviceId: services[0]?.id || "",
       name: "",
       description: "",
       price: undefined,
@@ -142,7 +204,7 @@ export function CreatePackageDialog({ serviceId }: { serviceId: string }) {
   });
 
   async function onSubmit(values: z.infer<typeof packageSchema>) {
-    await createServicePackage({ ...values, serviceId });
+    await createServicePackage(values);
     setOpen(false);
     form.reset();
   }
@@ -150,28 +212,47 @@ export function CreatePackageDialog({ serviceId }: { serviceId: string }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <div className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-9 px-3 w-full gap-2 text-primary border border-primary/20 bg-transparent hover:bg-primary/10">
-          <Plus className="w-4 h-4" /> Adicionar Pacote
+        <div className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-medium gap-2 cursor-pointer">
+          <Plus className="w-4 h-4" /> Adicionar Plano
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Novo Pacote</DialogTitle>
+          <DialogTitle>Novo Plano</DialogTitle>
           <DialogDescription>
-            Adicione um pacote (ex: Básico, Premium) para este serviço.
+            Crie um plano/pacote e associe a um serviço.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit as any)}
-            className="space-y-4"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
-              control={form.control as any}
+              control={form.control}
+              name="serviceId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Serviço (Categoria)</FormLabel>
+                  <FormControl>
+                    <select
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      {...field}
+                    >
+                      {services.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nome do Pacote</FormLabel>
+                  <FormLabel>Nome do Plano</FormLabel>
                   <FormControl>
                     <Input placeholder="Plano Básico" {...field} />
                   </FormControl>
@@ -180,7 +261,7 @@ export function CreatePackageDialog({ serviceId }: { serviceId: string }) {
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="price"
               render={({ field }) => (
                 <FormItem>
@@ -198,7 +279,7 @@ export function CreatePackageDialog({ serviceId }: { serviceId: string }) {
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="duration"
               render={({ field }) => (
                 <FormItem>
@@ -216,7 +297,7 @@ export function CreatePackageDialog({ serviceId }: { serviceId: string }) {
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="billingCycle"
               render={({ field }) => (
                 <FormItem>
@@ -237,7 +318,7 @@ export function CreatePackageDialog({ serviceId }: { serviceId: string }) {
               )}
             />
             <FormField
-              control={form.control as any}
+              control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
@@ -249,47 +330,156 @@ export function CreatePackageDialog({ serviceId }: { serviceId: string }) {
                 </FormItem>
               )}
             />
+            <DialogFooter>
+              <Button type="submit">Salvar Plano</Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function EditPackageDialog({
+  pkg,
+  services,
+}: {
+  pkg: ServicePackage;
+  services: Service[];
+}) {
+  const [open, setOpen] = useState(false);
+  const form = useForm<any>({
+    resolver: zodResolver(packageSchema),
+    defaultValues: {
+      serviceId: pkg.serviceId,
+      name: pkg.name,
+      description: pkg.description || "",
+      price: pkg.price || undefined,
+      duration: pkg.duration || undefined,
+      isHighlighted: pkg.isHighlighted,
+      billingCycle: pkg.billingCycle || "ONETIME",
+      features: pkg.features || "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof packageSchema>) {
+    await updateServicePackage(pkg.id, values);
+    setOpen(false);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger>
+        <button
+          type="button"
+          className="text-slate-400 hover:text-blue-600 p-1"
+        >
+          <Edit className="w-4 h-4" />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Editar Plano</DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
-              control={form.control as any}
-              name="features"
+              control={form.control}
+              name="serviceId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Benefícios / Checklists (um por linha)</FormLabel>
+                  <FormLabel>Serviço (Categoria)</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Suporte WhatsApp&#10;Consultoria de 2h&#10;Retorno em 15 dias"
+                    <select
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       {...field}
-                    />
+                    >
+                      {services.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
-              control={form.control as any}
-              name="isHighlighted"
+              control={form.control}
+              name="name"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormItem>
+                  <FormLabel>Nome do Plano</FormLabel>
                   <FormControl>
-                    <input
-                      type="checkbox"
-                      checked={field.value}
-                      onChange={field.onChange}
-                      className="w-4 h-4 text-primary rounded"
-                    />
+                    <Input {...field} />
                   </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Destacar este plano</FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      Planos destacados ganham uma cor ou banner diferente no
-                      site.
-                    </p>
-                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Preço (R$)</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} value={field.value ?? ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="duration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Duração (minutos)</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} value={field.value ?? ""} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="billingCycle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Ciclo de Cobrança</FormLabel>
+                  <FormControl>
+                    <select
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      {...field}
+                    >
+                      <option value="ONETIME">Pagamento Único</option>
+                      <option value="MONTHLY">Mensal</option>
+                      <option value="QUARTERLY">Trimestral</option>
+                      <option value="YEARLY">Anual</option>
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descrição Curta</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <Button type="submit">Salvar Pacote</Button>
+              <Button type="submit">Atualizar Plano</Button>
             </DialogFooter>
           </form>
         </Form>
@@ -305,18 +495,33 @@ export function DeleteAction({
   id: string;
   type: "service" | "package";
 }) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
   async function handleDelete() {
-    if (confirm("Tem certeza que deseja deletar? Isso é irreversível.")) {
-      if (type === "service") await deleteService(id);
-      else await deleteServicePackage(id);
+    if (!confirm("Tem certeza que deseja excluir?")) return;
+
+    setIsDeleting(true);
+    try {
+      if (type === "service") {
+        await deleteService(id);
+      } else {
+        await deleteServicePackage(id);
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao excluir");
+    } finally {
+      setIsDeleting(false);
     }
   }
 
   return (
     <button
-      onClick={handleDelete}
       type="button"
-      className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+      onClick={handleDelete}
+      disabled={isDeleting}
+      className="text-slate-400 hover:text-red-500 transition-colors p-1"
+      title="Excluir"
     >
       <Trash2 className="w-4 h-4" />
     </button>
