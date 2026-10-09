@@ -207,6 +207,7 @@ export function Contact() {
                 </div>
 
                 <Button
+                  type="submit"
                   disabled={pending}
                   className="w-full rounded-xl h-[3.5rem] bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold shadow-lg text-[1rem]"
                 >
