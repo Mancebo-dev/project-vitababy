@@ -253,12 +253,32 @@ export default async function AdminHomePage() {
                         <p className="font-bold text-slate-900 text-sm">
                           {booking.client.name}
                         </p>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          {booking.packages
-                            ?.map((p) => p.service?.name)
-                            .filter(Boolean)
-                            .join(" + ") || "Sem serviço"}
-                        </p>
+                        <div className="flex flex-col gap-0.5 mt-1">
+                          {booking.packages && booking.packages.length > 0 ? (
+                            booking.packages.map((pkg) => (
+                              <div
+                                key={pkg.id}
+                                className="flex items-center gap-1.5"
+                              >
+                                <span className="text-xs font-semibold text-slate-700">
+                                  {pkg.name}
+                                </span>
+                                {pkg.service && (
+                                  <>
+                                    <span className="w-1 h-1 rounded-full bg-slate-300" />
+                                    <span className="text-[11px] text-slate-500">
+                                      {pkg.service.name}
+                                    </span>
+                                  </>
+                                )}
+                              </div>
+                            ))
+                          ) : (
+                            <span className="text-xs text-slate-500">
+                              Sem pacote
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <span className="bg-[#ae4d30]/10 text-[#ae4d30] text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full">
                         {format(new Date(booking.scheduleSlot.date), "dd/MM")}
