@@ -26,12 +26,14 @@ export default async function ContratoPage({
   const contract = await prisma.contract.findUnique({
     where: { id },
     include: {
+      client: true,
+      schedule: true,
       booking: {
         include: {
           client: true,
           professional: true,
           packages: { include: { service: true } },
-          scheduleSlot: true,
+          scheduleSlot: { include: { professional: true } },
         },
       },
     },
@@ -40,7 +42,8 @@ export default async function ContratoPage({
   if (contract) {
     if (
       user?.role !== "admin" &&
-      contract.booking?.client?.userId !== user?.id
+      contract.booking?.client?.userId !== user?.id &&
+      contract.client?.userId !== user?.id
     ) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-[#fbf9f5]">
@@ -71,7 +74,7 @@ export default async function ContratoPage({
 
   let isTemplate = false;
 
-  if (contract?.booking) {
+  if (contract) {
     viewData.contractId = contract.id;
     viewData.isSigned = contract.signedByClient;
     viewData.signedAt = contract.signedAt;
@@ -82,45 +85,57 @@ export default async function ContratoPage({
     viewData.contractNumber = contract.id.slice(-6).toUpperCase();
     viewData.date = contract.createdAt.toLocaleDateString("pt-BR");
 
-    if (contract.booking.client) {
-      const c = contract.booking.client;
-      viewData.clientName = c.name;
-      viewData.clientEmail = c.email || "";
-      viewData.clientPhone = c.phone || "";
-      viewData.clientAddress = c.street
-        ? `${c.street}, ${c.number || "S/N"} ${c.complement ? ` - ${c.complement}` : ""} - ${c.neighborhood || ""} - ${c.city || ""}/${c.state || ""} - CEP: ${c.zipCode || ""}`
-        : c.address || "";
+    const client = contract.client || contract.booking?.client;
+    if (client) {
+      viewData.clientName = client.name;
+      viewData.clientEmail = client.email || "";
+      viewData.clientPhone = client.phone || "";
+      viewData.clientAddress = client.street
+        ? `${client.street}, ${client.number || "S/N"} ${client.complement ? ` - ${client.complement}` : ""} - ${client.neighborhood || ""} - ${client.city || ""}/${client.state || ""} - CEP: ${client.zipCode || ""}`
+        : client.address || "";
     }
 
-    viewData.serviceName =
-      contract.booking.packages?.map((p) => p.name).join(" + ") ||
-      viewData.serviceName;
-    viewData.serviceDetails =
-      contract.booking.packages
-        ?.map((p) => p.service?.name)
-        .filter(Boolean)
-        .join(" + ") || viewData.serviceDetails;
+    if (contract.booking) {
+      viewData.serviceName =
+        contract.booking.packages?.map((p) => p.name).join(" + ") ||
+        viewData.serviceName;
+      viewData.serviceDetails =
+        contract.booking.packages
+          ?.map((p) => p.service?.name)
+          .filter(Boolean)
+          .join(" + ") || viewData.serviceDetails;
 
-    // Calculate Total Value
-    const basePrice =
-      contract.booking.packages?.reduce((acc, p) => acc + (p.price || 0), 0) ||
-      0;
-    const transport = contract.booking.transportFee || 0;
-    const total = basePrice + transport;
-    if (total > 0) {
-      viewData.serviceValue = new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      }).format(total);
-      if (transport > 0) {
-        viewData.serviceValue += ` (inclui R$ ${transport.toFixed(2)} de deslocamento)`;
+      // Calculate Total Value
+      const basePrice =
+        contract.booking.packages?.reduce(
+          (acc, p) => acc + (p.price || 0),
+          0,
+        ) || 0;
+      const transport = contract.booking.transportFee || 0;
+      const total = basePrice + transport;
+      if (total > 0) {
+        viewData.serviceValue = new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(total);
+        if (transport > 0) {
+          viewData.serviceValue += ` (inclui R$ ${transport.toFixed(2)} de deslocamento)`;
+        }
       }
-    }
 
-    if (contract.booking.scheduleSlot) {
-      const d = new Date(contract.booking.scheduleSlot.date);
-      viewData.serviceDate = d.toLocaleDateString("pt-BR");
-      viewData.serviceTime = contract.booking.scheduleSlot.startTime;
+      if (contract.booking.scheduleSlot) {
+        const d = new Date(contract.booking.scheduleSlot.date);
+        viewData.serviceDate = d.toLocaleDateString("pt-BR");
+        viewData.serviceTime = contract.booking.scheduleSlot.startTime;
+        if (contract.booking.scheduleSlot.professional) {
+          viewData.serviceProfessional =
+            contract.booking.scheduleSlot.professional.name;
+        }
+      }
+    } else if (contract.schedule) {
+      viewData.serviceName =
+        contract.schedule.title || `Escala ${contract.schedule.month}`;
+      viewData.serviceDetails = "Prestação de Serviço (Escala)";
     }
   } else {
     // If not found, check if it's a template preview
