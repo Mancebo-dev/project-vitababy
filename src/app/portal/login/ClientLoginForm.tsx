@@ -21,9 +21,14 @@ export function ClientLoginForm() {
     setLoading(true);
 
     try {
+      let formattedPassword = password.replace(/\D/g, "");
+      if (formattedPassword.length < 8) {
+        formattedPassword = formattedPassword.padEnd(8, "0");
+      }
+
       const result = await signIn.email({
         email,
-        password,
+        password: formattedPassword,
       });
 
       if (result.error) {
