@@ -98,6 +98,7 @@ model Client {
   complement   String?
   address      String? // Keeping legacy address field just in case
   bookings     Booking[]
+  contracts    Contract[]
   reviews      Review[]
   notes        ConsultationNote[]
   files        ClientFile[]
@@ -139,6 +140,7 @@ model Service {
   id          String           @id @default(cuid())
   name        String
   description String?          @db.Text
+  icon        String?
   active      Boolean          @default(true)
   packages    ServicePackage[]
   createdAt   DateTime         @default(now())
@@ -206,8 +208,16 @@ model Booking {
 
 model Contract {
   id             String  @id @default(cuid())
-  bookingId      String  @unique
-  booking        Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  bookingId      String?  @unique
+  booking        Booking? @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  
+  clientId       String?
+  client         Client?  @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  scheduleId     String?
+  schedule       ClientSchedule? @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
   content        String  @db.LongText
   signedByClient Boolean @default(false)
   signedByProf   Boolean @default(false)
@@ -339,6 +349,7 @@ model ClientSchedule {
   month     String   // Format: "YYYY-MM"
   title     String?  // e.g., "Escala Mensal - Setembro"
   shifts    ClientScheduleShift[]
+  contracts Contract[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

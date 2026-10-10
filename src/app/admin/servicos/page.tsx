@@ -1,4 +1,5 @@
 import { Package } from "lucide-react";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { prisma } from "@/infrastructure/db/prisma";
 import {
   CreateServiceDialog,
@@ -47,7 +48,11 @@ export default async function ServicosPage() {
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-[#af4d30]/10 text-[#af4d30] rounded-lg flex items-center justify-center">
-                    <Package className="w-5 h-5" />
+                    <DynamicIcon
+                      name={service.icon}
+                      className="w-5 h-5"
+                      fallback={<Package className="w-5 h-5" />}
+                    />
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-slate-900">

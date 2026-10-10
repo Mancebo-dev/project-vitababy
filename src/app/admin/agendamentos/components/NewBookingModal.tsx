@@ -25,10 +25,12 @@ export function NewBookingModal({
   clients,
   packages,
   slots,
+  professionals,
 }: {
   clients: Client[];
   packages: (ServicePackage & { service: { name: string } })[];
   slots: (ScheduleSlot & { professional: Professional })[];
+  professionals: Professional[];
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,6 +38,17 @@ export function NewBookingModal({
   const [clientId, setClientId] = useState("");
   const [packageIds, setPackageIds] = useState<string[]>([]);
   const [scheduleSlotId, setScheduleSlotId] = useState("");
+
+  // Custom slot states
+  const [isCreatingSlot, setIsCreatingSlot] = useState(false);
+  const [newSlotDate, setNewSlotDate] = useState("");
+  const [newSlotStartTime, setNewSlotStartTime] = useState("");
+  const [newSlotEndTime, setNewSlotEndTime] = useState("");
+  const [newSlotType, setNewSlotType] = useState<"ONLINE" | "IN_PERSON">(
+    "IN_PERSON",
+  );
+  const [newSlotProfessionalId, setNewSlotProfessionalId] = useState("");
+
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [transportFee, setTransportFee] = useState<number>(0);
 
@@ -61,23 +74,46 @@ export function NewBookingModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clientId || packageIds.length === 0 || !scheduleSlotId) {
+    if (!clientId || packageIds.length === 0) {
       alert(
         "Preencha os campos obrigatórios (incluindo pelo menos um serviço).",
       );
       return;
     }
 
-    const slot = slots.find((s) => s.id === scheduleSlotId);
-    if (!slot) return;
+    if (!isCreatingSlot && !scheduleSlotId) {
+      alert("Selecione um horário ou crie um novo.");
+      return;
+    }
+
+    if (
+      isCreatingSlot &&
+      (!newSlotDate ||
+        !newSlotStartTime ||
+        !newSlotEndTime ||
+        !newSlotProfessionalId)
+    ) {
+      alert("Preencha todos os campos do novo horário.");
+      return;
+    }
 
     setLoading(true);
     try {
       await createManualBooking({
         clientId,
         packageIds,
-        professionalId: slot.professionalId,
-        scheduleSlotId,
+        professionalId: isCreatingSlot
+          ? newSlotProfessionalId
+          : slots.find((s) => s.id === scheduleSlotId)?.professionalId!,
+        scheduleSlotId: isCreatingSlot ? undefined : scheduleSlotId,
+        newSlot: isCreatingSlot
+          ? {
+              date: new Date(newSlotDate + "T00:00:00"), // Parse locally
+              startTime: newSlotStartTime,
+              endTime: newSlotEndTime,
+              type: newSlotType,
+            }
+          : undefined,
         additionalInfo,
         transportFee,
       });
@@ -145,24 +181,98 @@ export function NewBookingModal({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>Horário Disponível *</Label>
-            <select
-              required
-              className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
-              value={scheduleSlotId}
-              onChange={(e) => setScheduleSlotId(e.target.value)}
-            >
-              <option value="">Selecione um horário livre...</option>
-              {slots
-                .filter((s) => !s.isBooked)
-                .map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {format(new Date(s.date), "dd/MM/yyyy")} das {s.startTime}{" "}
-                    às {s.endTime} - {s.professional.name}
-                  </option>
-                ))}
-            </select>
+          <div className="space-y-2 border border-slate-200 rounded-md p-4 bg-slate-50">
+            <div className="flex items-center justify-between">
+              <Label>Horário do Agendamento *</Label>
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isCreatingSlot}
+                  onChange={(e) => setIsCreatingSlot(e.target.checked)}
+                  className="rounded border-slate-300 text-primary focus:ring-primary"
+                />
+                Criar novo horário agora
+              </label>
+            </div>
+
+            {!isCreatingSlot ? (
+              <select
+                required
+                className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
+                value={scheduleSlotId}
+                onChange={(e) => setScheduleSlotId(e.target.value)}
+              >
+                <option value="">Selecione um horário livre...</option>
+                {slots
+                  .filter((s) => !s.isBooked)
+                  .map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {format(new Date(s.date), "dd/MM/yyyy")} das {s.startTime}{" "}
+                      às {s.endTime} - {s.professional.name}
+                    </option>
+                  ))}
+              </select>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                <div className="space-y-2">
+                  <Label>Profissional *</Label>
+                  <select
+                    required={isCreatingSlot}
+                    className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
+                    value={newSlotProfessionalId}
+                    onChange={(e) => setNewSlotProfessionalId(e.target.value)}
+                  >
+                    <option value="">Selecione...</option>
+                    {professionals.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Data *</Label>
+                  <Input
+                    type="date"
+                    required={isCreatingSlot}
+                    value={newSlotDate}
+                    onChange={(e) => setNewSlotDate(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Início *</Label>
+                  <Input
+                    type="time"
+                    required={isCreatingSlot}
+                    value={newSlotStartTime}
+                    onChange={(e) => setNewSlotStartTime(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Fim *</Label>
+                  <Input
+                    type="time"
+                    required={isCreatingSlot}
+                    value={newSlotEndTime}
+                    onChange={(e) => setNewSlotEndTime(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label>Tipo *</Label>
+                  <select
+                    required={isCreatingSlot}
+                    className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
+                    value={newSlotType}
+                    onChange={(e) =>
+                      setNewSlotType(e.target.value as "ONLINE" | "IN_PERSON")
+                    }
+                  >
+                    <option value="IN_PERSON">Presencial</option>
+                    <option value="ONLINE">Online</option>
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">

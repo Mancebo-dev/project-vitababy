@@ -41,6 +41,10 @@ export default async function AgendamentosPage() {
     orderBy: [{ date: "asc" }, { startTime: "asc" }],
   });
 
+  const professionals = await prisma.professional.findMany({
+    orderBy: { name: "asc" },
+  });
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "CONFIRMED":
@@ -76,7 +80,12 @@ export default async function AgendamentosPage() {
             Gerencie todas as solicitações de consultoria e serviços.
           </p>
         </div>
-        <NewBookingModal clients={clients} packages={packages} slots={slots} />
+        <NewBookingModal
+          clients={clients}
+          packages={packages}
+          slots={slots}
+          professionals={professionals}
+        />
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">

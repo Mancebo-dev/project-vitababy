@@ -54,31 +54,49 @@ export async function getPendingBookings() {
 }
 
 export async function createContract(data: {
-  bookingId: string;
-  templateId: string;
+  clientId: string;
+  bookingId?: string;
+  scheduleId?: string;
+  templateId?: string;
+  customContent?: string;
   scale?: string;
   extraNotes?: string;
+  addImageClause?: boolean;
 }) {
-  const template = await prisma.contractTemplate.findUnique({
-    where: { id: data.templateId },
-  });
+  let templateContent = data.customContent || "";
 
-  if (!template) {
-    throw new Error("Template não encontrado.");
+  if (!templateContent && data.templateId) {
+    const template = await prisma.contractTemplate.findUnique({
+      where: { id: data.templateId },
+    });
+    if (!template) throw new Error("Template não encontrado.");
+    templateContent = template.content;
   }
 
-  const booking = await prisma.booking.findUnique({
-    where: { id: data.bookingId },
-    include: {
-      client: true,
-      professional: true,
-      packages: true,
-      scheduleSlot: true,
-    },
-  });
+  if (!templateContent) throw new Error("Conteúdo do contrato é obrigatório.");
 
-  if (!booking) {
-    throw new Error("Agendamento não encontrado.");
+  const client = await prisma.client.findUnique({
+    where: { id: data.clientId },
+  });
+  if (!client) throw new Error("Cliente não encontrado.");
+
+  let booking = null;
+  if (data.bookingId) {
+    booking = await prisma.booking.findUnique({
+      where: { id: data.bookingId },
+      include: {
+        professional: true,
+        packages: true,
+        scheduleSlot: true,
+      },
+    });
+  }
+
+  let schedule = null;
+  if (data.scheduleId) {
+    schedule = await prisma.clientSchedule.findUnique({
+      where: { id: data.scheduleId },
+    });
   }
 
   // Helper formatting functions
@@ -93,40 +111,55 @@ export async function createContract(data: {
     }).format(val);
   };
 
-  const totalPrice = booking.packages.reduce(
-    (sum, p) => sum + (p.price || 0),
-    0,
-  );
-  const serviceNames = booking.packages.map((p) => p.name).join(" + ");
+  const totalPrice =
+    booking?.packages.reduce((sum, p) => sum + (p.price || 0), 0) || 0;
+  const serviceNames =
+    booking?.packages.map((p) => p.name).join(" + ") || "Serviço Avulso/Escala";
 
   const fullAddress = [
-    booking.client.street,
-    booking.client.number,
-    booking.client.complement,
-    booking.client.neighborhood,
-    booking.client.city,
-    booking.client.state,
+    client.street,
+    client.number,
+    client.complement,
+    client.neighborhood,
+    client.city,
+    client.state,
   ]
     .filter(Boolean)
     .join(", ");
 
-  const contentWithVars = template.content
-    .replace(/\{\{NOME_CLIENTE\}\}/g, booking.client.name || "")
-    .replace(/\{\{CPF_CLIENTE\}\}/g, booking.client.cpf || "")
-    .replace(
-      /\{\{ENDERECO_CLIENTE\}\}/g,
-      fullAddress || booking.client.address || "",
-    )
+  let contentWithVars = templateContent
+    .replace(/\{\{NOME_CLIENTE\}\}/g, client.name || "")
+    .replace(/\{\{CPF_CLIENTE\}\}/g, client.cpf || "")
+    .replace(/\{\{ENDERECO_CLIENTE\}\}/g, fullAddress || client.address || "")
     .replace(/\{\{SERVICO\}\}/g, serviceNames || "")
     .replace(/\{\{VALOR\}\}/g, formatCurrency(totalPrice))
-    .replace(/\{\{NOME_ASSESSORA\}\}/g, booking.professional.name || "")
     .replace(
+      /\{\{NOME_ASSESSORA\}\}/g,
+      booking?.professional?.name || "A definir",
+    )
+    .replace(/\{\{ESCALA\}\}/g, data.scale || "N/A");
+
+  if (booking?.scheduleSlot) {
+    contentWithVars = contentWithVars.replace(
       /\{\{DATA_AGENDAMENTO\}\}/g,
       formatDate(booking.scheduleSlot.date) +
         " às " +
         booking.scheduleSlot.startTime,
-    )
-    .replace(/\{\{ESCALA\}\}/g, data.scale || "N/A");
+    );
+  } else {
+    contentWithVars = contentWithVars.replace(
+      /\{\{DATA_AGENDAMENTO\}\}/g,
+      "A definir",
+    );
+  }
+
+  if (data.addImageClause) {
+    const imageClause = `
+      <h4>Cláusula de Uso de Imagem</h4>
+      <p>O(A) CONTRATANTE autoriza expressamente o(a) CONTRATADO(A) a utilizar sua imagem, voz e som, bem como de seu bebê, captadas durante a prestação dos serviços, para fins de divulgação em redes sociais, site e materiais promocionais, de forma gratuita e por prazo indeterminado.</p>
+    `;
+    contentWithVars += imageClause;
+  }
 
   // Combine template content with extra notes
   const finalContent = `
@@ -136,20 +169,22 @@ export async function createContract(data: {
 
   const contract = await prisma.contract.create({
     data: {
-      bookingId: data.bookingId,
+      clientId: data.clientId,
+      bookingId: data.bookingId || undefined,
+      scheduleId: data.scheduleId || undefined,
       content: finalContent,
     },
   });
 
-  if (booking.client.email) {
+  if (client.email) {
     const { EmailService } = await import("@/domain/services/EmailService");
     const contractUrl = process.env.NEXT_PUBLIC_APP_URL
       ? `${process.env.NEXT_PUBLIC_APP_URL}/portal/contratos`
       : `http://localhost:3000/portal/contratos`;
 
     await EmailService.sendContractReady(
-      booking.client.email,
-      booking.client.name,
+      client.email,
+      client.name,
       contractUrl,
     );
   }

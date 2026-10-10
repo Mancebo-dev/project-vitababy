@@ -2,11 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Service, ServicePackage } from "@prisma/client";
+import * as LucideIcons from "lucide-react";
 import { Edit, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +27,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
   createService,
@@ -38,6 +47,7 @@ import {
 const serviceSchema = z.object({
   name: z.string().min(2, "Nome é obrigatório"),
   description: z.string().optional(),
+  icon: z.string().optional(),
 });
 
 const packageSchema = z.object({
@@ -51,11 +61,26 @@ const packageSchema = z.object({
   features: z.string().optional(),
 });
 
+const ICON_OPTIONS = [
+  { value: "Baby", label: "Bebê" },
+  { value: "Stethoscope", label: "Estetoscópio (Saúde)" },
+  { value: "Heart", label: "Coração" },
+  { value: "Activity", label: "Atividade" },
+  { value: "Shield", label: "Escudo" },
+  { value: "Sparkles", label: "Brilhos" },
+  { value: "Star", label: "Estrela" },
+  { value: "Clock", label: "Relógio" },
+  { value: "Calendar", label: "Calendário" },
+  { value: "Video", label: "Câmera (Online)" },
+  { value: "MessageCircle", label: "Mensagem (Chat)" },
+  { value: "Package", label: "Pacote (Padrão)" },
+];
+
 export function CreateServiceDialog() {
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof serviceSchema>>({
     resolver: zodResolver(serviceSchema),
-    defaultValues: { name: "", description: "" },
+    defaultValues: { name: "", description: "", icon: "" },
   });
 
   async function onSubmit(values: z.infer<typeof serviceSchema>) {
@@ -110,6 +135,36 @@ export function CreateServiceDialog() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="icon"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Ícone</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione um ícone..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {ICON_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          <div className="flex items-center gap-2">
+                            <DynamicIcon name={opt.value} className="w-4 h-4" />
+                            <span>{opt.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <DialogFooter>
               <Button type="submit">Salvar Categoria</Button>
             </DialogFooter>
@@ -127,6 +182,7 @@ export function EditServiceDialog({ service }: { service: Service }) {
     defaultValues: {
       name: service.name,
       description: service.description || "",
+      icon: service.icon || "",
     },
   });
 
@@ -173,6 +229,36 @@ export function EditServiceDialog({ service }: { service: Service }) {
                   <FormControl>
                     <Textarea {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="icon"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Ícone</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione um ícone..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {ICON_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          <div className="flex items-center gap-2">
+                            <DynamicIcon name={opt.value} className="w-4 h-4" />
+                            <span>{opt.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

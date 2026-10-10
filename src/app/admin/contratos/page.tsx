@@ -1,6 +1,7 @@
 import { CheckCircle2, FileText } from "lucide-react";
 import type { Metadata } from "next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { prisma } from "@/infrastructure/db/prisma";
 import {
   getContracts,
   getContractTemplates,
@@ -22,6 +23,15 @@ export default async function ContratosPage() {
   const templates = await getContractTemplates();
   const contracts = await getContracts();
   const pendingBookings = await getPendingBookings();
+
+  const clients = await prisma.client.findMany({
+    orderBy: { name: "asc" },
+  });
+
+  const clientSchedules = await prisma.clientSchedule.findMany({
+    include: { client: true },
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
     <div className="space-y-6">
@@ -47,6 +57,8 @@ export default async function ContratosPage() {
             <CreateContractModal
               pendingBookings={pendingBookings}
               templates={templates}
+              clients={clients}
+              clientSchedules={clientSchedules}
             />
           </div>
 
