@@ -2,12 +2,44 @@
 
 import type { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/infrastructure/auth/auth";
 import { prisma } from "@/infrastructure/db/prisma";
 
 export async function createClient(data: Prisma.ClientUncheckedCreateInput) {
-  await prisma.client.create({
+  const client = await prisma.client.create({
     data,
   });
+
+  if (client.email && client.cpf && !client.userId) {
+    try {
+      let password = client.cpf.replace(/\D/g, "");
+      if (password.length < 8) {
+        password = password.padEnd(8, "0");
+      }
+
+      const res = await auth.api.signUpEmail({
+        body: {
+          email: client.email,
+          password: password,
+          name: client.name,
+        },
+      });
+
+      if (res?.user?.id) {
+        await prisma.client.update({
+          where: { id: client.id },
+          data: { userId: res.user.id },
+        });
+        await prisma.user.update({
+          where: { id: res.user.id },
+          data: { role: "client" },
+        });
+      }
+    } catch (error) {
+      console.error("Error creating user account for client:", error);
+    }
+  }
+
   revalidatePath("/admin/clientes");
 }
 
@@ -15,10 +47,41 @@ export async function updateClient(
   id: string,
   data: Prisma.ClientUncheckedUpdateInput,
 ) {
-  await prisma.client.update({
+  const client = await prisma.client.update({
     where: { id },
     data,
   });
+
+  if (client.email && client.cpf && !client.userId) {
+    try {
+      let password = client.cpf.replace(/\D/g, "");
+      if (password.length < 8) {
+        password = password.padEnd(8, "0");
+      }
+
+      const res = await auth.api.signUpEmail({
+        body: {
+          email: client.email,
+          password: password,
+          name: client.name,
+        },
+      });
+
+      if (res?.user?.id) {
+        await prisma.client.update({
+          where: { id: client.id },
+          data: { userId: res.user.id },
+        });
+        await prisma.user.update({
+          where: { id: res.user.id },
+          data: { role: "client" },
+        });
+      }
+    } catch (error) {
+      console.error("Error creating user account during client update:", error);
+    }
+  }
+
   revalidatePath("/admin/clientes");
   revalidatePath(`/admin/clientes/${id}`);
 }
