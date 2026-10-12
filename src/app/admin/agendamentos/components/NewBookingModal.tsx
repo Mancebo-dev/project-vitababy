@@ -104,7 +104,7 @@ export function NewBookingModal({
         packageIds,
         professionalId: isCreatingSlot
           ? newSlotProfessionalId
-          : slots.find((s) => s.id === scheduleSlotId)?.professionalId!,
+          : (slots.find((s) => s.id === scheduleSlotId)?.professionalId ?? ""),
         scheduleSlotId: isCreatingSlot ? undefined : scheduleSlotId,
         newSlot: isCreatingSlot
           ? {

@@ -79,7 +79,16 @@ export default async function ContratoPage({
     viewData.isSigned = contract.signedByClient;
     viewData.signedAt = contract.signedAt;
     viewData.clientIp = contract.clientIp;
+    viewData.signedByProf = contract.signedByProf;
+    viewData.signedByProfAt = contract.signedByProfAt;
     viewData.pdfUrl = contract.pdfUrl;
+    viewData.isAdmin = user?.role === "admin";
+
+    viewData.totalValue = contract.totalValue;
+    viewData.monthlyValue = contract.monthlyValue;
+    viewData.dailyValue = contract.dailyValue;
+    viewData.validityDescription = contract.validityDescription;
+    viewData.workRegime = contract.workRegime;
 
     viewData.content = contract.content;
     viewData.contractNumber = contract.id.slice(-6).toUpperCase();
@@ -91,7 +100,7 @@ export default async function ContratoPage({
       viewData.clientEmail = client.email || "";
       viewData.clientPhone = client.phone || "";
       viewData.clientAddress = client.street
-        ? `${client.street}, ${client.number || "S/N"} ${client.complement ? ` - ${client.complement}` : ""} - ${client.neighborhood || ""} - ${client.city || ""}/${client.state || ""} - CEP: ${client.zipCode || ""}`
+        ? `${client.street}, ${client.number || "S/N"}${client.complement ? ` - ${client.complement}` : ""} - ${client.neighborhood || ""} - ${client.city || ""}/${client.state || ""}${client.zipCode ? ` - CEP: ${client.zipCode}` : ""}`
         : client.address || "";
     }
 
@@ -103,9 +112,9 @@ export default async function ContratoPage({
         contract.booking.packages
           ?.map((p) => p.service?.name)
           .filter(Boolean)
-          .join(" + ") || viewData.serviceDetails;
+          .join(" + ") || "";
 
-      // Calculate Total Value
+      // Calculate Total Value if not set explicitly on contract
       const basePrice =
         contract.booking.packages?.reduce(
           (acc, p) => acc + (p.price || 0),
@@ -113,20 +122,14 @@ export default async function ContratoPage({
         ) || 0;
       const transport = contract.booking.transportFee || 0;
       const total = basePrice + transport;
-      if (total > 0) {
-        viewData.serviceValue = new Intl.NumberFormat("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }).format(total);
-        if (transport > 0) {
-          viewData.serviceValue += ` (inclui R$ ${transport.toFixed(2)} de deslocamento)`;
-        }
+      if (!viewData.totalValue && total > 0) {
+        viewData.totalValue = total;
       }
 
       if (contract.booking.scheduleSlot) {
         const d = new Date(contract.booking.scheduleSlot.date);
         viewData.serviceDate = d.toLocaleDateString("pt-BR");
-        viewData.serviceTime = contract.booking.scheduleSlot.startTime;
+        viewData.serviceTime = contract.booking.scheduleSlot.startTime || "";
         if (contract.booking.scheduleSlot.professional) {
           viewData.serviceProfessional =
             contract.booking.scheduleSlot.professional.name;
@@ -135,7 +138,8 @@ export default async function ContratoPage({
     } else if (contract.schedule) {
       viewData.serviceName =
         contract.schedule.title || `Escala ${contract.schedule.month}`;
-      viewData.serviceDetails = "Prestação de Serviço (Escala)";
+      viewData.serviceDetails =
+        "Assessoria e Cuidados Materno-Infantil (Escala)";
     }
   } else {
     // If not found, check if it's a template preview

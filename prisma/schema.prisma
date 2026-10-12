@@ -170,8 +170,8 @@ model ScheduleSlot {
   professionalId String
   professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
   date           DateTime // Exact date
-  startTime      String // "09:00"
-  endTime        String // "10:00"
+  startTime      String? // "09:00" - optional
+  endTime        String? // "10:00" - optional
   isBooked       Boolean      @default(false)
   booking        Booking?
 
@@ -221,6 +221,15 @@ model Contract {
   content        String  @db.LongText
   signedByClient Boolean @default(false)
   signedByProf   Boolean @default(false)
+  signedByProfAt DateTime?
+
+  // Values and Competency
+  totalValue          Float?
+  monthlyValue        Float?
+  dailyValue          Float?
+  validityMonths      Int?
+  validityDescription String?
+  workRegime          String?
 
   // New signature fields
   pdfUrl   String?   @db.LongText
@@ -361,8 +370,8 @@ model ClientScheduleShift {
   scheduleId       String
   schedule         ClientSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   date             DateTime
-  startTime        String
-  endTime          String
+  startTime        String?
+  endTime          String?
   professionalId   String
   professional     Professional   @relation(fields: [professionalId], references: [id], onDelete: Cascade)
   status           String         @default("SCHEDULED") // SCHEDULED, COMPLETED, CANCELLED

@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Service, ServicePackage } from "@prisma/client";
-import * as LucideIcons from "lucide-react";
 import { Edit, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -273,12 +272,50 @@ export function EditServiceDialog({ service }: { service: Service }) {
   );
 }
 
-export function CreatePackageDialog({ services }: { services: Service[] }) {
+export function CreatePackageDialog({
+  services,
+  defaultServiceId,
+  trigger,
+  defaultBillingCycle = "ONETIME",
+}: {
+  services: Service[];
+  defaultServiceId?: string;
+  trigger?: React.ReactNode;
+  defaultBillingCycle?: string;
+}) {
   const [open, setOpen] = useState(false);
   const form = useForm<any>({
     resolver: zodResolver(packageSchema),
     defaultValues: {
-      serviceId: services[0]?.id || "",
+      serviceId: defaultServiceId || services[0]?.id || "",
+      name: "",
+      description: "",
+      price: undefined,
+      duration: undefined,
+      isHighlighted: false,
+      billingCycle: defaultBillingCycle,
+      features: "",
+    },
+  });
+
+  // When opened with a defaultServiceId, ensure it's selected
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (isOpen) {
+      if (defaultServiceId) {
+        form.setValue("serviceId", defaultServiceId);
+      }
+      if (defaultBillingCycle) {
+        form.setValue("billingCycle", defaultBillingCycle);
+      }
+    }
+  };
+
+  async function onSubmit(values: z.infer<typeof packageSchema>) {
+    await createServicePackage(values);
+    setOpen(false);
+    form.reset({
+      serviceId: defaultServiceId || services[0]?.id || "",
       name: "",
       description: "",
       price: undefined,
@@ -286,27 +323,26 @@ export function CreatePackageDialog({ services }: { services: Service[] }) {
       isHighlighted: false,
       billingCycle: "ONETIME",
       features: "",
-    },
-  });
-
-  async function onSubmit(values: z.infer<typeof packageSchema>) {
-    await createServicePackage(values);
-    setOpen(false);
-    form.reset();
+    });
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger>
-        <div className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-medium gap-2 cursor-pointer">
-          <Plus className="w-4 h-4" /> Adicionar Plano
-        </div>
+        {trigger ? (
+          trigger
+        ) : (
+          <div className="inline-flex items-center justify-center rounded-xl text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-[#af4d30] hover:bg-[#964228] text-white font-medium gap-2 cursor-pointer shadow-xs">
+            <Plus className="w-4 h-4" /> Novo Pacote ou Plano
+          </div>
+        )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Novo Plano</DialogTitle>
+          <DialogTitle>Novo Pacote ou Plano</DialogTitle>
           <DialogDescription>
-            Crie um plano/pacote e associe a um serviço.
+            Defina o pacote ou plano, seus preços e quais serviços ou benefícios
+            estão inclusos.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -316,10 +352,12 @@ export function CreatePackageDialog({ services }: { services: Service[] }) {
               name="serviceId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Serviço (Categoria)</FormLabel>
+                  <FormLabel className="font-semibold text-slate-800">
+                    Serviço Principal (Categoria)
+                  </FormLabel>
                   <FormControl>
                     <select
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      className="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#af4d30]"
                       {...field}
                     >
                       {services.map((s) => (
@@ -333,91 +371,177 @@ export function CreatePackageDialog({ services }: { services: Service[] }) {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome do Plano</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Plano Básico" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Preço (R$)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="500"
-                      {...field}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="duration"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Duração (minutos)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="60"
-                      {...field}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="billingCycle"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Ciclo de Cobrança</FormLabel>
-                  <FormControl>
-                    <select
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      {...field}
-                    >
-                      <option value="ONETIME">Pagamento Único</option>
-                      <option value="MONTHLY">Mensal</option>
-                      <option value="QUARTERLY">Trimestral</option>
-                      <option value="YEARLY">Anual</option>
-                    </select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="billingCycle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold text-slate-800">
+                      Tipo de Modalidade
+                    </FormLabel>
+                    <FormControl>
+                      <select
+                        className="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#af4d30]"
+                        {...field}
+                      >
+                        <option value="ONETIME">
+                          Pacote Avulso / Procedimento
+                        </option>
+                        <option value="MONTHLY">
+                          Plano Mensal (Recorrente)
+                        </option>
+                        <option value="QUARTERLY">Plano Trimestral</option>
+                        <option value="SEMIANNUAL">Plano Semestral</option>
+                        <option value="YEARLY">Plano Anual</option>
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold text-slate-800">
+                      Nome do Pacote / Plano
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Essencial 30 Dias" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold text-slate-800">
+                      Valor (R$)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Ex: 1200"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold text-slate-800">
+                      Duração / Sessão (min)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Ex: 60"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descrição Curta</FormLabel>
+                  <FormLabel className="font-semibold text-slate-800">
+                    Descrição Resumida
+                  </FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Detalhes curtos..." {...field} />
+                    <Textarea
+                      placeholder="Breve resumo sobre a proposta deste pacote ou plano..."
+                      rows={2}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <DialogFooter>
-              <Button type="submit">Salvar Plano</Button>
+
+            <FormField
+              control={form.control}
+              name="features"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-semibold text-slate-800">
+                    Serviços e Benefícios Inclusos no Pacote
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Digite um serviço/benefício por linha. Ex:&#10;• 4 Visitas domiciliares por semana&#10;• Acompanhamento e consultoria de sono&#10;• Suporte contínuo via WhatsApp&#10;• Escala personalizada com assessora"
+                      rows={4}
+                      {...field}
+                    />
+                  </FormControl>
+                  <p className="text-[11px] text-slate-400">
+                    Cada linha será exibida como um item com check no site e nos
+                    detalhes do pacote.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="isHighlighted"
+              render={({ field }) => (
+                <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+                  <input
+                    type="checkbox"
+                    id="isHighlighted"
+                    checked={field.value}
+                    onChange={field.onChange}
+                    className="w-4 h-4 text-[#af4d30] rounded border-slate-300 focus:ring-[#af4d30]"
+                  />
+                  <label
+                    htmlFor="isHighlighted"
+                    className="text-xs font-medium text-slate-700 cursor-pointer"
+                  >
+                    Destacar como "Mais Escolhido" na tabela de planos
+                  </label>
+                </div>
+              )}
+            />
+
+            <DialogFooter className="pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="bg-[#af4d30] hover:bg-[#964228] text-white"
+              >
+                Salvar Pacote / Plano
+              </Button>
             </DialogFooter>
           </form>
         </Form>
@@ -459,13 +583,17 @@ export function EditPackageDialog({
         <button
           type="button"
           className="text-slate-400 hover:text-blue-600 p-1"
+          title="Editar pacote/plano"
         >
           <Edit className="w-4 h-4" />
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Editar Plano</DialogTitle>
+          <DialogTitle>Editar Pacote / Plano</DialogTitle>
+          <DialogDescription>
+            Atualize dados, preços e serviços inclusos neste plano.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -474,10 +602,12 @@ export function EditPackageDialog({
               name="serviceId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Serviço (Categoria)</FormLabel>
+                  <FormLabel className="font-semibold text-slate-800">
+                    Serviço Principal (Categoria)
+                  </FormLabel>
                   <FormControl>
                     <select
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      className="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#af4d30]"
                       {...field}
                     >
                       {services.map((s) => (
@@ -491,81 +621,167 @@ export function EditPackageDialog({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome do Plano</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Preço (R$)</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} value={field.value ?? ""} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="duration"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Duração (minutos)</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} value={field.value ?? ""} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="billingCycle"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Ciclo de Cobrança</FormLabel>
-                  <FormControl>
-                    <select
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      {...field}
-                    >
-                      <option value="ONETIME">Pagamento Único</option>
-                      <option value="MONTHLY">Mensal</option>
-                      <option value="QUARTERLY">Trimestral</option>
-                      <option value="YEARLY">Anual</option>
-                    </select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="billingCycle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold text-slate-800">
+                      Tipo de Modalidade
+                    </FormLabel>
+                    <FormControl>
+                      <select
+                        className="flex h-10 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#af4d30]"
+                        {...field}
+                      >
+                        <option value="ONETIME">
+                          Pacote Avulso / Procedimento
+                        </option>
+                        <option value="MONTHLY">
+                          Plano Mensal (Recorrente)
+                        </option>
+                        <option value="QUARTERLY">Plano Trimestral</option>
+                        <option value="SEMIANNUAL">Plano Semestral</option>
+                        <option value="YEARLY">Plano Anual</option>
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold text-slate-800">
+                      Nome do Pacote / Plano
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold text-slate-800">
+                      Valor (R$)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold text-slate-800">
+                      Duração / Sessão (min)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descrição Curta</FormLabel>
+                  <FormLabel className="font-semibold text-slate-800">
+                    Descrição Resumida
+                  </FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
+                    <Textarea rows={2} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <DialogFooter>
-              <Button type="submit">Atualizar Plano</Button>
+
+            <FormField
+              control={form.control}
+              name="features"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-semibold text-slate-800">
+                    Serviços e Benefícios Inclusos
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Digite um serviço/benefício por linha"
+                      rows={4}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="isHighlighted"
+              render={({ field }) => (
+                <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+                  <input
+                    type="checkbox"
+                    id={`isHighlighted-${pkg.id}`}
+                    checked={field.value}
+                    onChange={field.onChange}
+                    className="w-4 h-4 text-[#af4d30] rounded border-slate-300 focus:ring-[#af4d30]"
+                  />
+                  <label
+                    htmlFor={`isHighlighted-${pkg.id}`}
+                    className="text-xs font-medium text-slate-700 cursor-pointer"
+                  >
+                    Destacar como "Mais Escolhido" na tabela de planos
+                  </label>
+                </div>
+              )}
+            />
+
+            <DialogFooter className="pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="bg-[#af4d30] hover:bg-[#964228] text-white"
+              >
+                Atualizar Plano
+              </Button>
             </DialogFooter>
           </form>
         </Form>

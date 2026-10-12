@@ -5,19 +5,20 @@ import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon, Clock, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { deleteSchedule } from "../actions";
+import { ShareEscalaModal } from "./ShareEscalaModal";
 
 type ScheduleProps = {
   id: string;
   month: string;
   title: string | null;
-  client: { name: string };
+  client: { name: string; phone?: string | null };
   shifts: {
     id: string;
     date: Date;
-    startTime: string;
-    endTime: string;
+    startTime?: string | null;
+    endTime?: string | null;
     status: string;
-    professional: { name: string; color: string | null };
+    professional: { name: string; color: string | null; phone?: string | null };
   }[];
 };
 
@@ -44,7 +45,9 @@ export function EscalaList({ schedules }: { schedules: ScheduleProps[] }) {
                 </span>
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <ShareEscalaModal schedule={schedule} />
+
               <Button
                 variant="outline"
                 size="sm"
@@ -84,7 +87,9 @@ export function EscalaList({ schedules }: { schedules: ScheduleProps[] }) {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-600 mb-3">
                   <Clock className="w-4 h-4 text-slate-400" />
-                  {shift.startTime} às {shift.endTime}
+                  {shift.startTime
+                    ? `${shift.startTime} às ${shift.endTime || "A definir"}`
+                    : "Plantão / Dia Todo"}
                 </div>
                 <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-200">
                   <span

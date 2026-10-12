@@ -6,6 +6,7 @@ import { prisma } from "@/infrastructure/db/prisma";
 export async function createService(data: {
   name: string;
   description?: string;
+  icon?: string;
 }) {
   await prisma.service.create({
     data,
@@ -17,7 +18,7 @@ export async function createService(data: {
 
 export async function updateService(
   id: string,
-  data: { name: string; description?: string; active: boolean },
+  data: { name: string; description?: string; icon?: string; active: boolean },
 ) {
   await prisma.service.update({
     where: { id },

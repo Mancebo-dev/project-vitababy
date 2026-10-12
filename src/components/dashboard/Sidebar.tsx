@@ -3,14 +3,11 @@
 import {
   Building2,
   Calendar,
-  CalendarDays,
-  CalendarRange,
   DollarSign,
   FileText,
   Handshake,
   Home,
   ImageIcon,
-  Layers,
   LogOut,
   MessageSquare,
   Package,
@@ -24,12 +21,9 @@ import { signOut } from "@/infrastructure/auth/client";
 
 export const navItems = [
   { name: "Início", href: "/admin", icon: Home },
-  { name: "Agendamentos", href: "/admin/agendamentos", icon: CalendarDays },
-  { name: "Escalas", href: "/admin/escalas", icon: CalendarRange },
-  { name: "Agenda", href: "/admin/agenda", icon: Calendar },
+  { name: "Agenda & Escalas", href: "/admin/agenda", icon: Calendar },
   { name: "Clientes", href: "/admin/clientes", icon: Users },
-  { name: "Serviços", href: "/admin/servicos", icon: Package },
-  { name: "Planos", href: "/admin/planos", icon: Layers },
+  { name: "Serviços & Planos", href: "/admin/servicos", icon: Package },
   { name: "Contratos", href: "/admin/contratos", icon: FileText },
   { name: "Mensagens", href: "/admin/mensagens", icon: MessageSquare },
   { name: "Financeiro", href: "/admin/financeiro", icon: DollarSign },
@@ -67,7 +61,15 @@ export function Sidebar() {
 
       <nav className="flex-1 overflow-y-auto py-[1rem] px-[1rem] flex flex-col gap-[0.25rem]">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive =
+            item.href === "/admin"
+              ? pathname === "/admin"
+              : pathname.startsWith(item.href) ||
+                (item.href === "/admin/agenda" &&
+                  (pathname.startsWith("/admin/agendamentos") ||
+                    pathname.startsWith("/admin/escalas"))) ||
+                (item.href === "/admin/servicos" &&
+                  pathname.startsWith("/admin/planos"));
           return (
             <Link
               key={item.name}

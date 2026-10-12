@@ -22,8 +22,8 @@ import { createScheduleSlot, deleteScheduleSlot } from "../actions";
 type ScheduleSlot = {
   id: string;
   date: Date;
-  startTime: string;
-  endTime: string;
+  startTime?: string | null;
+  endTime?: string | null;
   isBooked: boolean;
   professionalId: string;
 };
@@ -143,16 +143,19 @@ export function ScheduleManager({
     }
   };
 
-  const getSlotPosition = (start: string, end: string) => {
-    const [startH, startM] = start.split(":").map(Number);
-    const [endH, endM] = end.split(":").map(Number);
+  const getSlotPosition = (start?: string | null, end?: string | null) => {
+    const s = start || "08:00";
+    const e = end || "18:00";
+    const [startH, startM] = s.split(":").map(Number);
+    const [endH, endM] = e.split(":").map(Number);
 
-    const topMinutes = (startH - startHour) * 60 + startM;
-    const durationMinutes = endH * 60 + endM - (startH * 60 + startM);
+    const topMinutes = (startH - startHour) * 60 + (startM || 0);
+    const durationMinutes =
+      endH * 60 + (endM || 0) - (startH * 60 + (startM || 0));
 
     return {
       top: `${(topMinutes / 60) * HOUR_HEIGHT}px`,
-      height: `${(durationMinutes / 60) * HOUR_HEIGHT}px`,
+      height: `${(Math.max(durationMinutes, 60) / 60) * HOUR_HEIGHT}px`,
     };
   };
 

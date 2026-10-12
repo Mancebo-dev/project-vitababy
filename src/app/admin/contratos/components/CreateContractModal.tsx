@@ -42,6 +42,11 @@ const schema = z.object({
   scale: z.string().optional(),
   extraNotes: z.string().optional(),
   addImageClause: z.boolean().optional(),
+  totalValue: z.string().optional(),
+  monthlyValue: z.string().optional(),
+  dailyValue: z.string().optional(),
+  validityDescription: z.string().optional(),
+  workRegime: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -77,6 +82,11 @@ export function CreateContractModal({
       scale: "",
       extraNotes: "",
       addImageClause: false,
+      totalValue: "",
+      monthlyValue: "",
+      dailyValue: "",
+      validityDescription: "",
+      workRegime: "dias úteis da semana, (de segunda-feira à sexta-feira)",
     },
   });
 
@@ -97,7 +107,20 @@ export function CreateContractModal({
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     try {
-      await createContract(data);
+      await createContract({
+        ...data,
+        totalValue: data.totalValue
+          ? Number.parseFloat(data.totalValue)
+          : undefined,
+        monthlyValue: data.monthlyValue
+          ? Number.parseFloat(data.monthlyValue)
+          : undefined,
+        dailyValue: data.dailyValue
+          ? Number.parseFloat(data.dailyValue)
+          : undefined,
+        validityDescription: data.validityDescription,
+        workRegime: data.workRegime,
+      });
       setOpen(false);
       form.reset();
     } catch (error) {
@@ -263,13 +286,115 @@ export function CreateContractModal({
                   )}
                 />
 
+                {/* Competência e Regime */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                  <FormField
+                    control={form.control}
+                    name="validityDescription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Competência / Validade</FormLabel>
+                        <FormControl>
+                          <input
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="Ex: 3 meses (outubro, novembro e dezembro de 2026)"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="workRegime"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Regime de Atendimento</FormLabel>
+                        <FormControl>
+                          <input
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="Ex: dias úteis da semana (de seg a sex)"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Valores Financeiros */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                  <FormField
+                    control={form.control}
+                    name="totalValue"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Valor Total (R$)</FormLabel>
+                        <FormControl>
+                          <input
+                            type="number"
+                            step="0.01"
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="Ex: 3500.00"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="monthlyValue"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Valor Mensal (R$)</FormLabel>
+                        <FormControl>
+                          <input
+                            type="number"
+                            step="0.01"
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="Ex: 1200.00"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="dailyValue"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Valor Diária (R$)</FormLabel>
+                        <FormControl>
+                          <input
+                            type="number"
+                            step="0.01"
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            placeholder="Ex: 250.00"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
                 <FormField
                   control={form.control}
                   name="scale"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Formato de Escala (Opcional, ex: 12x36)
+                        Observação de Escala (Opcional, ex: 12x36)
                       </FormLabel>
                       <FormControl>
                         <input

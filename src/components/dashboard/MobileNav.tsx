@@ -44,7 +44,15 @@ export function MobileNav() {
         <div className="fixed inset-0 z-30 pt-[4.5rem] bg-white flex flex-col h-screen">
           <nav className="flex-1 overflow-y-auto p-[1rem] flex flex-col gap-[0.5rem]">
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive =
+                item.href === "/admin"
+                  ? pathname === "/admin"
+                  : pathname.startsWith(item.href) ||
+                    (item.href === "/admin/agenda" &&
+                      (pathname.startsWith("/admin/agendamentos") ||
+                        pathname.startsWith("/admin/escalas"))) ||
+                    (item.href === "/admin/servicos" &&
+                      pathname.startsWith("/admin/planos"));
               return (
                 <Link
                   key={item.name}

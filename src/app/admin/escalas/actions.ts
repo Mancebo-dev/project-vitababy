@@ -52,8 +52,8 @@ export async function createSchedule(data: {
   title: string;
   shifts: {
     date: Date;
-    startTime: string;
-    endTime: string;
+    startTime?: string | null;
+    endTime?: string | null;
     professionalId: string;
   }[];
 }) {
@@ -63,11 +63,17 @@ export async function createSchedule(data: {
       month: data.month,
       title: data.title,
       shifts: {
-        create: data.shifts,
+        create: data.shifts.map((s) => ({
+          date: s.date,
+          startTime: s.startTime || null,
+          endTime: s.endTime || null,
+          professionalId: s.professionalId,
+        })),
       },
     },
   });
   revalidatePath("/admin/escalas");
+  revalidatePath("/admin/agenda");
 }
 
 export async function deleteSchedule(id: string) {

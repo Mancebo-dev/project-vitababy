@@ -74,9 +74,8 @@ export function StepDateTime({
 
   const validDates = dates.filter((d) => d.date);
 
-  // Validação: precisa ter pelo menos 1 data, e todas as datas precisam ter horário
-  const canProceed =
-    validDates.length > 0 && validDates.every((d) => Boolean(d.time));
+  // Validação: precisa ter pelo menos 1 data (horário agora é opcional)
+  const canProceed = validDates.length > 0;
 
   const getSlotsForDate = (dateIso: string, profId: string) => {
     return availableSlots
@@ -85,9 +84,10 @@ export function StepDateTime({
         return slotDateIso === dateIso && slot.professionalId === profId;
       })
       .map((slot) => {
-        const hour = parseInt(slot.startTime.split(":")[0], 10);
+        const timeStr = slot.startTime || "09:00";
+        const hour = Number.parseInt(timeStr.split(":")[0], 10);
         return {
-          time: slot.startTime,
+          time: timeStr,
           period: hour < 12 ? "morning" : "afternoon",
           available: true,
         };

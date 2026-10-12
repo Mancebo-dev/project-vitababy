@@ -1,4 +1,9 @@
-import { CheckCircle2, FileText } from "lucide-react";
+import {
+  CheckCircle2,
+  FileText,
+  MessageCircle,
+  ShieldCheck,
+} from "lucide-react";
 import type { Metadata } from "next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { prisma } from "@/infrastructure/db/prisma";
@@ -9,6 +14,7 @@ import {
 } from "./actions";
 import { CopyLinkButton } from "./components/CopyLinkButton";
 import { CreateContractModal } from "./components/CreateContractModal";
+import { EditContractModal } from "./components/EditContractModal";
 import { PDFPreviewModal } from "./components/PDFPreviewModal";
 import {
   CreateTemplateModal,
@@ -41,7 +47,8 @@ export default async function ContratosPage() {
             Contratos
           </h1>
           <p className="text-slate-500 mt-2">
-            Gerencie os modelos base e emita novos contratos para seus clientes.
+            Gerencie os modelos base, emita novos contratos e envie diretamente
+            via WhatsApp.
           </p>
         </div>
       </div>
@@ -75,51 +82,144 @@ export default async function ContratosPage() {
               </div>
             ) : (
               <div className="divide-y divide-slate-100">
-                {contracts.map((contract) => (
-                  <div
-                    key={contract.id}
-                    className="p-6 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-slate-50/50 transition-colors gap-4"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`w-10 h-10 flex items-center justify-center rounded-lg ${contract.signedByClient ? "bg-emerald-100 text-emerald-600" : "bg-amber-100 text-amber-600"}`}
-                      >
-                        <CheckCircle2 className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-slate-900 flex items-center gap-2">
-                          {contract.booking?.packages
-                            ?.map((p) => p.name)
-                            .join(" + ") || "Contrato"}
+                {contracts.map((contract) => {
+                  const client =
+                    contract.client ||
+                    contract.booking?.client ||
+                    contract.schedule?.client;
+                  const cleanPhone = client?.phone?.replace(/\D/g, "");
+                  const appUrl =
+                    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+                  const contractUrl = `${appUrl}/contrato/${contract.id}`;
+                  const whatsappUrl = cleanPhone
+                    ? `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(`Olá, ${client?.name}! Segue o link para visualização e assinatura digital do seu contrato Vita Baby: ${contractUrl}`)}`
+                    : null;
 
-                          {contract.signedByClient ? (
-                            <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                              Assinado
-                            </span>
+                  return (
+                    <div
+                      key={contract.id}
+                      className="p-6 flex flex-col md:flex-row md:items-center justify-between hover:bg-slate-50/50 transition-colors gap-4"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div
+                          className={`w-10 h-10 flex items-center justify-center rounded-lg shrink-0 mt-1 ${
+                            contract.signedByClient && contract.signedByProf
+                              ? "bg-emerald-100 text-emerald-600"
+                              : contract.signedByProf
+                                ? "bg-blue-100 text-blue-600"
+                                : contract.signedByClient
+                                  ? "bg-amber-100 text-amber-600"
+                                  : "bg-slate-100 text-slate-600"
+                          }`}
+                        >
+                          {contract.signedByClient && contract.signedByProf ? (
+                            <CheckCircle2 className="w-5 h-5" />
+                          ) : contract.signedByProf ? (
+                            <ShieldCheck className="w-5 h-5" />
                           ) : (
-                            <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                              Aguardando
-                            </span>
+                            <FileText className="w-5 h-5" />
                           )}
-                        </h3>
-                        <p className="text-xs text-slate-500 mt-1">
-                          Cliente: {contract.booking?.client?.name}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          Gerado em:{" "}
-                          {new Date(contract.createdAt).toLocaleDateString()}
-                        </p>
+                        </div>
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="font-semibold text-slate-900">
+                              {contract.booking?.packages
+                                ?.map((p) => p.name)
+                                .join(" + ") ||
+                                contract.schedule?.title ||
+                                `Contrato Nº ${contract.id.slice(-6).toUpperCase()}`}
+                            </h3>
+
+                            {contract.signedByClient &&
+                            contract.signedByProf ? (
+                              <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                                100% Assinado
+                              </span>
+                            ) : contract.signedByProf ? (
+                              <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                                Assinado p/ Contratada
+                              </span>
+                            ) : contract.signedByClient ? (
+                              <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                                Assinado p/ Cliente
+                              </span>
+                            ) : (
+                              <span className="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                                Aguardando Assinatura
+                              </span>
+                            )}
+                          </div>
+
+                          <p className="text-xs text-slate-600 mt-1 font-medium">
+                            Cliente: {client?.name || "Cliente não informado"}
+                            {client?.phone && ` (${client.phone})`}
+                          </p>
+
+                          <div className="flex flex-wrap gap-x-4 text-xs text-slate-500 mt-1">
+                            {contract.totalValue && (
+                              <span className="font-semibold text-[#ae4d30]">
+                                Total:{" "}
+                                {new Intl.NumberFormat("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                }).format(contract.totalValue)}
+                              </span>
+                            )}
+                            {contract.monthlyValue && (
+                              <span>
+                                Mensal:{" "}
+                                {new Intl.NumberFormat("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                }).format(contract.monthlyValue)}
+                              </span>
+                            )}
+                            {contract.dailyValue && (
+                              <span>
+                                Diária:{" "}
+                                {new Intl.NumberFormat("pt-BR", {
+                                  style: "currency",
+                                  currency: "BRL",
+                                }).format(contract.dailyValue)}
+                              </span>
+                            )}
+                            <span>
+                              Criado em:{" "}
+                              {new Date(
+                                contract.createdAt,
+                              ).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2">
+                        {whatsappUrl && (
+                          <a
+                            href={whatsappUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-xs"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5" />
+                            WhatsApp
+                          </a>
+                        )}
+
+                        {!contract.signedByClient && (
+                          <EditContractModal contract={contract} />
+                        )}
+
+                        <CopyLinkButton contractId={contract.id} />
+
+                        <PDFPreviewModal
+                          contractId={contract.id}
+                          title={`Contrato Cliente`}
+                        />
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                      <CopyLinkButton contractId={contract.id} />
-                      <PDFPreviewModal
-                        contractId={contract.id}
-                        title={`Contrato Cliente`}
-                      />
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

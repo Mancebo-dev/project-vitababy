@@ -62,6 +62,12 @@ export async function createContract(data: {
   scale?: string;
   extraNotes?: string;
   addImageClause?: boolean;
+  totalValue?: number;
+  monthlyValue?: number;
+  dailyValue?: number;
+  validityMonths?: number;
+  validityDescription?: string;
+  workRegime?: string;
 }) {
   let templateContent = data.customContent || "";
 
@@ -92,18 +98,6 @@ export async function createContract(data: {
     });
   }
 
-  let schedule = null;
-  if (data.scheduleId) {
-    schedule = await prisma.clientSchedule.findUnique({
-      where: { id: data.scheduleId },
-    });
-  }
-
-  // Helper formatting functions
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("pt-BR").format(date);
-  };
-
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -111,10 +105,13 @@ export async function createContract(data: {
     }).format(val);
   };
 
-  const totalPrice =
-    booking?.packages.reduce((sum, p) => sum + (p.price || 0), 0) || 0;
+  const calculatedPrice =
+    data.totalValue ||
+    booking?.packages.reduce((sum, p) => sum + (p.price || 0), 0) ||
+    0;
   const serviceNames =
-    booking?.packages.map((p) => p.name).join(" + ") || "Serviço Avulso/Escala";
+    booking?.packages.map((p) => p.name).join(" + ") ||
+    "Assessoria Materno-Infantil";
 
   const fullAddress = [
     client.street,
@@ -127,29 +124,55 @@ export async function createContract(data: {
     .filter(Boolean)
     .join(", ");
 
+  const validityText =
+    data.validityDescription ||
+    (data.validityMonths
+      ? `${data.validityMonths} meses`
+      : "tempo indeterminado");
+  const regimeText =
+    data.workRegime ||
+    data.scale ||
+    "dias úteis da semana (segunda-feira à sexta-feira)";
+
+  // Dynamic Clause 1 interpolation
+  const clausulaObjeto = `O presente instrumento tem por objeto a prestação de serviços de assessoria materno-infantil pela VITA BABY ASSESSORIA, conforme o plano descrito neste documento. Sendo em ${regimeText}, em horários previamente acordados entre ambas as partes, tendo como validade o presente contrato por ${validityText}.`;
+
   let contentWithVars = templateContent
     .replace(/\{\{NOME_CLIENTE\}\}/g, client.name || "")
     .replace(/\{\{CPF_CLIENTE\}\}/g, client.cpf || "")
     .replace(/\{\{ENDERECO_CLIENTE\}\}/g, fullAddress || client.address || "")
-    .replace(/\{\{SERVICO\}\}/g, serviceNames || "")
-    .replace(/\{\{VALOR\}\}/g, formatCurrency(totalPrice))
+    .replace(/\{\{SERVICO\}\}/g, serviceNames)
+    .replace(/\{\{VALOR\}\}/g, formatCurrency(calculatedPrice))
+    .replace(
+      /\{\{VALOR_MENSAL\}\}/g,
+      data.monthlyValue ? formatCurrency(data.monthlyValue) : "",
+    )
+    .replace(
+      /\{\{VALOR_DIARIA\}\}/g,
+      data.dailyValue ? formatCurrency(data.dailyValue) : "",
+    )
+    .replace(/\{\{VALIDADE\}\}/g, validityText)
+    .replace(/\{\{REGIME\}\}/g, regimeText)
+    .replace(/\{\{CLAUSULA_OBJETO\}\}/g, clausulaObjeto)
     .replace(
       /\{\{NOME_ASSESSORA\}\}/g,
       booking?.professional?.name || "A definir",
     )
-    .replace(/\{\{ESCALA\}\}/g, data.scale || "N/A");
+    .replace(/\{\{ESCALA\}\}/g, data.scale || regimeText);
 
   if (booking?.scheduleSlot) {
+    const d = new Date(booking.scheduleSlot.date);
+    const dateFormatted = new Intl.DateTimeFormat("pt-BR").format(d);
     contentWithVars = contentWithVars.replace(
       /\{\{DATA_AGENDAMENTO\}\}/g,
-      formatDate(booking.scheduleSlot.date) +
-        " às " +
-        booking.scheduleSlot.startTime,
+      booking.scheduleSlot.startTime
+        ? `${dateFormatted} às ${booking.scheduleSlot.startTime}`
+        : dateFormatted,
     );
   } else {
     contentWithVars = contentWithVars.replace(
       /\{\{DATA_AGENDAMENTO\}\}/g,
-      "A definir",
+      "Conforme escala acordada",
     );
   }
 
@@ -161,11 +184,9 @@ export async function createContract(data: {
     contentWithVars += imageClause;
   }
 
-  // Combine template content with extra notes
-  const finalContent = `
-    ${contentWithVars}
-    ${data.extraNotes ? `<h4>Observações Adicionais</h4><p>${data.extraNotes}</p>` : ""}
-  `;
+  const finalContent = data.extraNotes
+    ? `${contentWithVars}<h4>Observações Adicionais</h4><p>${data.extraNotes}</p>`
+    : contentWithVars;
 
   const contract = await prisma.contract.create({
     data: {
@@ -173,29 +194,96 @@ export async function createContract(data: {
       bookingId: data.bookingId || undefined,
       scheduleId: data.scheduleId || undefined,
       content: finalContent,
+      totalValue: data.totalValue,
+      monthlyValue: data.monthlyValue,
+      dailyValue: data.dailyValue,
+      validityMonths: data.validityMonths,
+      validityDescription: data.validityDescription,
+      workRegime: data.workRegime,
     },
   });
 
   if (client.email) {
-    const { EmailService } = await import("@/domain/services/EmailService");
-    const contractUrl = process.env.NEXT_PUBLIC_APP_URL
-      ? `${process.env.NEXT_PUBLIC_APP_URL}/portal/contratos`
-      : `http://localhost:3000/portal/contratos`;
+    try {
+      const { EmailService } = await import("@/domain/services/EmailService");
+      const contractUrl = process.env.NEXT_PUBLIC_APP_URL
+        ? `${process.env.NEXT_PUBLIC_APP_URL}/portal/contratos`
+        : "http://localhost:3000/portal/contratos";
 
-    await EmailService.sendContractReady(
-      client.email,
-      client.name,
-      contractUrl,
-    );
+      await EmailService.sendContractReady(
+        client.email,
+        client.name,
+        contractUrl,
+      );
+    } catch (err) {
+      console.error("Erro ao enviar email do contrato:", err);
+    }
   }
 
   revalidatePath("/admin/contratos");
   return contract;
 }
 
+export async function updateContract(
+  id: string,
+  data: {
+    content?: string;
+    totalValue?: number;
+    monthlyValue?: number;
+    dailyValue?: number;
+    validityMonths?: number;
+    validityDescription?: string;
+    workRegime?: string;
+  },
+) {
+  const existing = await prisma.contract.findUnique({
+    where: { id },
+  });
+
+  if (!existing) {
+    throw new Error("Contrato não encontrado.");
+  }
+
+  if (existing.signedByClient) {
+    throw new Error(
+      "Este contrato já foi assinado digitalmente pelo cliente e não pode ser alterado.",
+    );
+  }
+
+  const updated = await prisma.contract.update({
+    where: { id },
+    data: {
+      content: data.content ?? existing.content,
+      totalValue:
+        data.totalValue !== undefined ? data.totalValue : existing.totalValue,
+      monthlyValue:
+        data.monthlyValue !== undefined
+          ? data.monthlyValue
+          : existing.monthlyValue,
+      dailyValue:
+        data.dailyValue !== undefined ? data.dailyValue : existing.dailyValue,
+      validityMonths:
+        data.validityMonths !== undefined
+          ? data.validityMonths
+          : existing.validityMonths,
+      validityDescription:
+        data.validityDescription ?? existing.validityDescription,
+      workRegime: data.workRegime ?? existing.workRegime,
+    },
+  });
+
+  revalidatePath("/admin/contratos");
+  revalidatePath(`/contrato/${id}`);
+  return updated;
+}
+
 export async function getContracts() {
   return await prisma.contract.findMany({
     include: {
+      client: true,
+      schedule: {
+        include: { client: true },
+      },
       booking: {
         include: {
           client: true,
