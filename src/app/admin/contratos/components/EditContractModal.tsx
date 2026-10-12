@@ -67,7 +67,7 @@ export function EditContractModal({ contract }: { contract: Contract }) {
           Editar
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>
             Editar Contrato (Nº {contract.id.slice(-6).toUpperCase()})
@@ -171,18 +171,18 @@ export function EditContractModal({ contract }: { contract: Contract }) {
             <RichEditor value={content} onChange={setContent} a4Mode={false} />
           </div>
 
-          <div className="flex justify-end gap-3 pt-3 border-t">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-3 border-t border-slate-100">
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="px-4 py-2 text-sm text-slate-600 bg-white border rounded-lg hover:bg-slate-50"
+              className="w-full sm:w-auto px-4 py-2 text-sm text-slate-600 bg-white border rounded-lg hover:bg-slate-50"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary/90 disabled:opacity-50"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary/90 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>

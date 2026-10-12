@@ -5,24 +5,37 @@ import { ptBR } from "date-fns/locale";
 import { Calendar as CalendarIcon, Clock, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { deleteSchedule } from "../actions";
+import { EditEscalaModal } from "./EditEscalaModal";
 import { ShareEscalaModal } from "./ShareEscalaModal";
 
 type ScheduleProps = {
   id: string;
   month: string;
   title: string | null;
-  client: { name: string; phone?: string | null };
+  clientId?: string;
+  client: { id?: string; name: string; phone?: string | null };
   shifts: {
     id: string;
     date: Date;
     startTime?: string | null;
     endTime?: string | null;
     status: string;
-    professional: { name: string; color: string | null; phone?: string | null };
+    professional: {
+      id?: string;
+      name: string;
+      color: string | null;
+      phone?: string | null;
+    };
   }[];
 };
 
-export function EscalaList({ schedules }: { schedules: ScheduleProps[] }) {
+export function EscalaList({
+  schedules,
+  professionals = [],
+}: {
+  schedules: ScheduleProps[];
+  professionals?: { id: string; name: string }[];
+}) {
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta escala?")) {
       await deleteSchedule(id);
@@ -47,6 +60,11 @@ export function EscalaList({ schedules }: { schedules: ScheduleProps[] }) {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <ShareEscalaModal schedule={schedule} />
+
+              <EditEscalaModal
+                schedule={schedule}
+                professionals={professionals}
+              />
 
               <Button
                 variant="outline"

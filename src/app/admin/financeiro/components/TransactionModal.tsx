@@ -62,12 +62,12 @@ export function TransactionModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={trigger} />
-      <DialogContent>
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Nova Movimentação</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-          <div className="space-y-2">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+          <div className="space-y-1.5">
             <Label htmlFor="type">Tipo</Label>
             <select
               id="type"
@@ -82,7 +82,7 @@ export function TransactionModal({
             </select>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <Label htmlFor="description">Descrição</Label>
             <Input
               id="description"
@@ -94,8 +94,8 @@ export function TransactionModal({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="space-y-1.5">
               <Label htmlFor="amount">Valor (R$)</Label>
               <Input
                 id="amount"
@@ -108,7 +108,7 @@ export function TransactionModal({
                 }
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="date">Data</Label>
               <Input
                 id="date"
@@ -122,8 +122,8 @@ export function TransactionModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="space-y-1.5">
               <Label htmlFor="method">Forma de Pagamento</Label>
               <select
                 id="method"
@@ -140,7 +140,7 @@ export function TransactionModal({
                 <option value="TRANSFER">Transferência</option>
               </select>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="status">Status</Label>
               <select
                 id="status"
@@ -156,17 +156,18 @@ export function TransactionModal({
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end gap-2">
+          <div className="pt-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 mt-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
+              className="w-full sm:w-auto"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
-              className="bg-primary text-white hover:bg-primary/90"
+              className="bg-primary text-white hover:bg-primary/90 w-full sm:w-auto"
               disabled={loading}
             >
               {loading ? "Salvando..." : "Salvar"}

@@ -200,7 +200,7 @@ export function ProfessionalModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={trigger} />
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-slate-900">
             {prof ? "Editar Assessora" : "Nova Assessora"}
@@ -209,7 +209,7 @@ export function ProfessionalModal({
 
         <form onSubmit={handleSubmit} className="space-y-6 pt-2">
           {/* Seção de Foto / Avatar */}
-          <div className="flex items-center gap-5 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
             <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white shadow bg-slate-200 flex-shrink-0 flex items-center justify-center">
               {formData.avatarUrl ? (
                 <Image
@@ -532,7 +532,7 @@ export function ProfessionalModal({
             </div>
           )}
 
-          <div className="pt-4 border-t border-slate-100 flex justify-between gap-2 mt-4">
+          <div className="pt-4 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:justify-between items-stretch sm:items-center gap-2 mt-4">
             <div>
               {prof?.id && (
                 <Button
@@ -540,23 +540,25 @@ export function ProfessionalModal({
                   variant="destructive"
                   onClick={handleDelete}
                   disabled={loading || uploadingAvatar}
+                  className="w-full sm:w-auto"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Excluir
                 </Button>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col-reverse sm:flex-row gap-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
+                className="w-full sm:w-auto"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                className="bg-primary text-white hover:bg-primary/90 min-w-[100px]"
+                className="bg-primary text-white hover:bg-primary/90 w-full sm:w-auto min-w-[100px]"
                 disabled={loading || uploadingAvatar}
               >
                 {loading ? "Salvando..." : "Salvar"}

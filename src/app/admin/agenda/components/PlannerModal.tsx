@@ -66,13 +66,13 @@ export function PlannerModal({ trigger }: { trigger: React.ReactElement }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={trigger} />
-      <DialogContent>
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Adicionar na Agenda</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2 col-span-2">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="space-y-1.5 sm:col-span-2">
               <Label htmlFor="title">Título *</Label>
               <Input
                 id="title"
@@ -85,7 +85,7 @@ export function PlannerModal({ trigger }: { trigger: React.ReactElement }) {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="type">Tipo</Label>
               <select
                 id="type"
@@ -101,7 +101,7 @@ export function PlannerModal({ trigger }: { trigger: React.ReactElement }) {
               </select>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="date">Data</Label>
               <Input
                 id="date"
@@ -114,7 +114,7 @@ export function PlannerModal({ trigger }: { trigger: React.ReactElement }) {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="startTime">Início</Label>
               <Input
                 id="startTime"
@@ -126,7 +126,7 @@ export function PlannerModal({ trigger }: { trigger: React.ReactElement }) {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="endTime">Fim</Label>
               <Input
                 id="endTime"
@@ -138,7 +138,7 @@ export function PlannerModal({ trigger }: { trigger: React.ReactElement }) {
               />
             </div>
 
-            <div className="space-y-2 col-span-2">
+            <div className="space-y-1.5 sm:col-span-2">
               <Label htmlFor="description">Descrição / Notas</Label>
               <Input
                 id="description"
@@ -149,9 +149,9 @@ export function PlannerModal({ trigger }: { trigger: React.ReactElement }) {
               />
             </div>
 
-            <div className="space-y-2 col-span-2">
+            <div className="space-y-1.5 sm:col-span-2">
               <Label>Cor de destaque</Label>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {PRESET_COLORS.map((c) => (
                   <button
                     key={c}
@@ -165,17 +165,18 @@ export function PlannerModal({ trigger }: { trigger: React.ReactElement }) {
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end gap-2">
+          <div className="pt-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100 mt-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
+              className="w-full sm:w-auto"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
-              className="bg-primary text-white hover:bg-primary/90"
+              className="bg-primary text-white hover:bg-primary/90 w-full sm:w-auto"
               disabled={loading}
             >
               {loading ? "Salvando..." : "Salvar"}

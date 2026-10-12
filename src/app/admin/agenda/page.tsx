@@ -14,6 +14,8 @@ import type { Metadata } from "next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { prisma } from "@/infrastructure/db/prisma";
 import { BookingDetailsModal } from "../agendamentos/components/BookingDetailsModal";
+import { DeleteBookingButton } from "../agendamentos/components/DeleteBookingButton";
+import { EditBookingModal } from "../agendamentos/components/EditBookingModal";
 import { NewBookingModal } from "../agendamentos/components/NewBookingModal";
 import { EscalaList } from "../escalas/components/EscalaList";
 import { NewEscalaModal } from "../escalas/components/NewEscalaModal";
@@ -233,7 +235,10 @@ export default async function AgendaPage({
                 </p>
               </div>
             ) : (
-              <EscalaList schedules={schedules} />
+              <EscalaList
+                schedules={schedules}
+                professionals={activeProfessionals}
+              />
             )}
           </div>
         </TabsContent>
@@ -336,7 +341,16 @@ export default async function AgendaPage({
                           </div>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <BookingDetailsModal booking={booking} />
+                          <div className="flex items-center justify-end gap-1.5">
+                            <BookingDetailsModal booking={booking} />
+                            <EditBookingModal
+                              booking={booking}
+                              clients={clients}
+                              packages={packages}
+                              professionals={activeProfessionals}
+                            />
+                            <DeleteBookingButton bookingId={booking.id} />
+                          </div>
                         </td>
                       </tr>
                     ))}

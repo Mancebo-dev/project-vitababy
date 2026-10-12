@@ -64,20 +64,10 @@ export function NewBookingModal({
     }
   };
 
-  const handlePackageToggle = (pkgId: string) => {
-    setPackageIds((prev) =>
-      prev.includes(pkgId)
-        ? prev.filter((id) => id !== pkgId)
-        : [...prev, pkgId],
-    );
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!clientId || packageIds.length === 0) {
-      alert(
-        "Preencha os campos obrigatórios (incluindo pelo menos um serviço).",
-      );
+      alert("Selecione o cliente e o serviço desejado.");
       return;
     }
 
@@ -86,14 +76,8 @@ export function NewBookingModal({
       return;
     }
 
-    if (
-      isCreatingSlot &&
-      (!newSlotDate ||
-        !newSlotStartTime ||
-        !newSlotEndTime ||
-        !newSlotProfessionalId)
-    ) {
-      alert("Preencha todos os campos do novo horário.");
+    if (isCreatingSlot && (!newSlotDate || !newSlotProfessionalId)) {
+      alert("Informe a data e o profissional para o novo horário.");
       return;
     }
 
@@ -108,9 +92,9 @@ export function NewBookingModal({
         scheduleSlotId: isCreatingSlot ? undefined : scheduleSlotId,
         newSlot: isCreatingSlot
           ? {
-              date: new Date(`${newSlotDate}T00:00:00`), // Parse locally
-              startTime: newSlotStartTime,
-              endTime: newSlotEndTime,
+              date: new Date(`${newSlotDate}T00:00:00`),
+              startTime: newSlotStartTime || null,
+              endTime: newSlotEndTime || null,
               type: newSlotType,
             }
           : undefined,
@@ -136,55 +120,54 @@ export function NewBookingModal({
           </Button>
         }
       />
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Criar Agendamento Manual</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-          <div className="space-y-2">
-            <Label>Cliente *</Label>
-            <select
-              required
-              className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
-              value={clientId}
-              onChange={handleClientChange}
-            >
-              <option value="">Selecione um cliente...</option>
-              {clients.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name} ({c.city || "Sem cidade"})
-                </option>
-              ))}
-            </select>
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label>Cliente *</Label>
+              <select
+                required
+                className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ae4d30]"
+                value={clientId}
+                onChange={handleClientChange}
+              >
+                <option value="">Selecione um cliente...</option>
+                {clients.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name} ({c.city || "Sem cidade"})
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <div className="space-y-2">
-            <Label>Serviços / Pacotes *</Label>
-            <div className="max-h-[160px] overflow-y-auto border border-slate-200 rounded-md p-2 space-y-2 bg-slate-50">
-              {packages.map((p) => (
-                <label
-                  key={p.id}
-                  className="flex items-center gap-2 text-sm cursor-pointer hover:bg-slate-100 p-1 rounded"
-                >
-                  <input
-                    type="checkbox"
-                    checked={packageIds.includes(p.id)}
-                    onChange={() => handlePackageToggle(p.id)}
-                    className="rounded border-slate-300 text-primary focus:ring-primary"
-                  />
-                  <span>
-                    <span className="font-semibold">{p.service.name}</span> -{" "}
-                    {p.name}
-                  </span>
-                </label>
-              ))}
+            <div className="space-y-1.5">
+              <Label>Serviço / Pacote *</Label>
+              <select
+                required
+                className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ae4d30]"
+                value={packageIds[0] || ""}
+                onChange={(e) =>
+                  setPackageIds(e.target.value ? [e.target.value] : [])
+                }
+              >
+                <option value="">Selecione o serviço ou pacote...</option>
+                {packages.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.service?.name ? `${p.service.name} - ` : ""}
+                    {p.name} {p.price ? `(R$ ${p.price.toFixed(2)})` : ""}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
           <div className="space-y-2 border border-slate-200 rounded-md p-4 bg-slate-50">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-1.5">
               <Label>Horário do Agendamento *</Label>
-              <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <label className="flex items-center gap-2 text-xs sm:text-sm cursor-pointer">
                 <input
                   type="checkbox"
                   checked={isCreatingSlot}
@@ -207,14 +190,16 @@ export function NewBookingModal({
                   .filter((s) => !s.isBooked)
                   .map((s) => (
                     <option key={s.id} value={s.id}>
-                      {format(new Date(s.date), "dd/MM/yyyy")} das {s.startTime}{" "}
-                      às {s.endTime} - {s.professional.name}
+                      {format(new Date(s.date), "dd/MM/yyyy")}{" "}
+                      {s.startTime ? `das ${s.startTime}` : ""}
+                      {s.endTime ? ` às ${s.endTime}` : ""} -{" "}
+                      {s.professional.name}
                     </option>
                   ))}
               </select>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-2">
+                <div className="space-y-1.5">
                   <Label>Profissional *</Label>
                   <select
                     required={isCreatingSlot}
@@ -222,7 +207,7 @@ export function NewBookingModal({
                     value={newSlotProfessionalId}
                     onChange={(e) => setNewSlotProfessionalId(e.target.value)}
                   >
-                    <option value="">Selecione...</option>
+                    <option value="">Selecione o profissional...</option>
                     {professionals.map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.name}
@@ -230,7 +215,7 @@ export function NewBookingModal({
                     ))}
                   </select>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <Label>Data *</Label>
                   <Input
                     type="date"
@@ -239,28 +224,25 @@ export function NewBookingModal({
                     onChange={(e) => setNewSlotDate(e.target.value)}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label>Início *</Label>
+                <div className="space-y-1.5">
+                  <Label>Início (Opcional)</Label>
                   <Input
                     type="time"
-                    required={isCreatingSlot}
                     value={newSlotStartTime}
                     onChange={(e) => setNewSlotStartTime(e.target.value)}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label>Fim *</Label>
+                <div className="space-y-1.5">
+                  <Label>Fim (Opcional)</Label>
                   <Input
                     type="time"
-                    required={isCreatingSlot}
                     value={newSlotEndTime}
                     onChange={(e) => setNewSlotEndTime(e.target.value)}
                   />
                 </div>
-                <div className="space-y-2 md:col-span-2">
-                  <Label>Tipo *</Label>
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label>Tipo</Label>
                   <select
-                    required={isCreatingSlot}
                     className="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm"
                     value={newSlotType}
                     onChange={(e) =>
@@ -275,36 +257,41 @@ export function NewBookingModal({
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label>Taxa de Transporte (Fora de Macaé)</Label>
-            <Input
-              type="number"
-              step="0.01"
-              value={transportFee}
-              onChange={(e) => setTransportFee(parseFloat(e.target.value) || 0)}
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label>Taxa de Transporte (R$)</Label>
+              <Input
+                type="number"
+                step="0.01"
+                value={transportFee}
+                onChange={(e) =>
+                  setTransportFee(Number.parseFloat(e.target.value) || 0)
+                }
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label>Informações Adicionais</Label>
+              <Input
+                value={additionalInfo}
+                onChange={(e) => setAdditionalInfo(e.target.value)}
+                placeholder="Ex: Endereço alternativo, dúvidas..."
+              />
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <Label>Informações Adicionais</Label>
-            <Input
-              value={additionalInfo}
-              onChange={(e) => setAdditionalInfo(e.target.value)}
-              placeholder="Ex: Endereço alternativo, dúvidas..."
-            />
-          </div>
-
-          <div className="pt-4 flex justify-end gap-2">
+          <div className="pt-3 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 border-t border-slate-100">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
+              className="w-full sm:w-auto"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
-              className="bg-[#ae4d30] text-white hover:bg-[#ae4d30]/90"
+              className="bg-[#ae4d30] text-white hover:bg-[#ae4d30]/90 w-full sm:w-auto"
               disabled={loading}
             >
               {loading ? "Salvando..." : "Confirmar Agendamento"}

@@ -111,15 +111,15 @@ export function ClientModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={trigger} />
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>
             {client ? "Editar Cliente" : "Novo Cliente"}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2 col-span-2 sm:col-span-1">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="space-y-1.5 sm:col-span-2">
               <Label htmlFor="name">Nome Completo *</Label>
               <Input
                 id="name"
@@ -130,7 +130,7 @@ export function ClientModal({
                 }
               />
             </div>
-            <div className="space-y-2 col-span-2 sm:col-span-1">
+            <div className="space-y-1.5">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -141,7 +141,7 @@ export function ClientModal({
                 }
               />
             </div>
-            <div className="space-y-2 col-span-2 sm:col-span-1">
+            <div className="space-y-1.5">
               <Label htmlFor="childName">Nome do Bebê</Label>
               <Input
                 id="childName"
@@ -151,7 +151,7 @@ export function ClientModal({
                 }
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="phone">Telefone / WhatsApp *</Label>
               <Input
                 id="phone"
@@ -162,7 +162,7 @@ export function ClientModal({
                 }
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="cpf">CPF</Label>
               <Input
                 id="cpf"
@@ -175,11 +175,11 @@ export function ClientModal({
           </div>
 
           <div className="pt-2 border-t border-slate-100">
-            <h4 className="text-sm font-semibold text-slate-700 mb-4">
+            <h4 className="text-sm font-semibold text-slate-700 mb-3">
               Endereço
             </h4>
-            <div className="grid grid-cols-12 gap-4">
-              <div className="space-y-2 col-span-12 sm:col-span-4">
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 sm:gap-4">
+              <div className="space-y-1.5 sm:col-span-4">
                 <Label htmlFor="zipCode">CEP</Label>
                 <Input
                   id="zipCode"
@@ -189,7 +189,7 @@ export function ClientModal({
                   onChange={handleZipCodeChange}
                 />
               </div>
-              <div className="space-y-2 col-span-12 sm:col-span-8">
+              <div className="space-y-1.5 sm:col-span-8">
                 <Label htmlFor="street">Rua</Label>
                 <Input
                   id="street"
@@ -199,7 +199,7 @@ export function ClientModal({
                   }
                 />
               </div>
-              <div className="space-y-2 col-span-12 sm:col-span-3">
+              <div className="space-y-1.5 sm:col-span-3">
                 <Label htmlFor="number">Número</Label>
                 <Input
                   id="number"
@@ -209,7 +209,7 @@ export function ClientModal({
                   }
                 />
               </div>
-              <div className="space-y-2 col-span-12 sm:col-span-4">
+              <div className="space-y-1.5 sm:col-span-4">
                 <Label htmlFor="complement">Complemento</Label>
                 <Input
                   id="complement"
@@ -219,7 +219,7 @@ export function ClientModal({
                   }
                 />
               </div>
-              <div className="space-y-2 col-span-12 sm:col-span-5">
+              <div className="space-y-1.5 sm:col-span-5">
                 <Label htmlFor="neighborhood">Bairro</Label>
                 <Input
                   id="neighborhood"
@@ -229,7 +229,7 @@ export function ClientModal({
                   }
                 />
               </div>
-              <div className="space-y-2 col-span-12 sm:col-span-8">
+              <div className="space-y-1.5 sm:col-span-8">
                 <Label htmlFor="city">Cidade</Label>
                 <Input
                   id="city"
@@ -239,7 +239,7 @@ export function ClientModal({
                   }
                 />
               </div>
-              <div className="space-y-2 col-span-12 sm:col-span-4">
+              <div className="space-y-1.5 sm:col-span-4">
                 <Label htmlFor="state">Estado (UF)</Label>
                 <Input
                   id="state"
@@ -256,7 +256,7 @@ export function ClientModal({
             </div>
           </div>
 
-          <div className="pt-4 flex justify-between gap-2 mt-4">
+          <div className="pt-4 flex flex-col-reverse sm:flex-row sm:justify-between items-stretch sm:items-center gap-2 border-t border-slate-100 mt-4">
             <div>
               {client?.id && (
                 <Button
@@ -264,23 +264,25 @@ export function ClientModal({
                   variant="destructive"
                   onClick={handleDelete}
                   disabled={loading}
+                  className="w-full sm:w-auto"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Excluir
                 </Button>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col-reverse sm:flex-row gap-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
+                className="w-full sm:w-auto"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                className="bg-primary text-white hover:bg-primary/90"
+                className="bg-primary text-white hover:bg-primary/90 w-full sm:w-auto"
                 disabled={loading}
               >
                 {loading ? "Salvando..." : "Salvar"}

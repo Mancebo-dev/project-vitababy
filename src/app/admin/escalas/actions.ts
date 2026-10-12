@@ -76,14 +76,60 @@ export async function createSchedule(data: {
   revalidatePath("/admin/agenda");
 }
 
+export async function updateSchedule(data: {
+  id: string;
+  clientId: string;
+  month: string;
+  title: string;
+  shifts: {
+    id?: string;
+    date: Date;
+    startTime?: string | null;
+    endTime?: string | null;
+    professionalId: string;
+    status?: string;
+  }[];
+}) {
+  await prisma.$transaction(async (tx) => {
+    await tx.clientSchedule.update({
+      where: { id: data.id },
+      data: {
+        clientId: data.clientId,
+        month: data.month,
+        title: data.title,
+      },
+    });
+
+    await tx.clientScheduleShift.deleteMany({
+      where: { scheduleId: data.id },
+    });
+
+    await tx.clientScheduleShift.createMany({
+      data: data.shifts.map((s) => ({
+        scheduleId: data.id,
+        date: s.date,
+        startTime: s.startTime || null,
+        endTime: s.endTime || null,
+        professionalId: s.professionalId,
+        status: s.status || "SCHEDULED",
+      })),
+    });
+  });
+
+  revalidatePath("/admin/escalas");
+  revalidatePath("/admin/agenda");
+}
+
 export async function deleteSchedule(id: string) {
   await prisma.clientSchedule.delete({ where: { id } });
   revalidatePath("/admin/escalas");
+  revalidatePath("/admin/agenda");
 }
 
 export async function deleteShift(id: string) {
   await prisma.clientScheduleShift.delete({ where: { id } });
   revalidatePath("/admin/escalas");
+  revalidatePath("/admin/agenda");
 }
 
 export async function updateShiftStatus(id: string, status: string) {
@@ -92,4 +138,5 @@ export async function updateShiftStatus(id: string, status: string) {
     data: { status },
   });
   revalidatePath("/admin/escalas");
+  revalidatePath("/admin/agenda");
 }

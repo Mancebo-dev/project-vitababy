@@ -7,6 +7,7 @@ import { Star, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { deleteReview, toggleHighlight } from "../actions";
+import { ShareStoryModal } from "./ShareStoryModal";
 
 export function DepoimentoItem({
   review,
@@ -89,15 +90,19 @@ export function DepoimentoItem({
           <span className="text-sm font-medium text-slate-600">Destaque</span>
         </div>
 
-        <button
-          type="button"
-          onClick={handleDelete}
-          disabled={loading}
-          className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-colors"
-          title="Excluir depoimento"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <ShareStoryModal review={review} />
+
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={loading}
+            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-colors cursor-pointer"
+            title="Excluir depoimento"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );

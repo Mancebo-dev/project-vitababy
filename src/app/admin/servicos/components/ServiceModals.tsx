@@ -95,7 +95,7 @@ export function CreateServiceDialog() {
           <Plus className="w-4 h-4" /> Novo Serviço
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Criar Serviço (Categoria)</DialogTitle>
           <DialogDescription>
@@ -164,8 +164,18 @@ export function CreateServiceDialog() {
                 </FormItem>
               )}
             />
-            <DialogFooter>
-              <Button type="submit">Salvar Categoria</Button>
+            <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                className="w-full sm:w-auto"
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" className="w-full sm:w-auto">
+                Salvar Categoria
+              </Button>
             </DialogFooter>
           </form>
         </Form>
@@ -200,7 +210,7 @@ export function EditServiceDialog({ service }: { service: Service }) {
           <Edit className="w-4 h-4" />
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Editar Serviço</DialogTitle>
         </DialogHeader>
@@ -262,8 +272,18 @@ export function EditServiceDialog({ service }: { service: Service }) {
                 </FormItem>
               )}
             />
-            <DialogFooter>
-              <Button type="submit">Atualizar Categoria</Button>
+            <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                className="w-full sm:w-auto"
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" className="w-full sm:w-auto">
+                Atualizar Categoria
+              </Button>
             </DialogFooter>
           </form>
         </Form>
@@ -339,7 +359,7 @@ export function CreatePackageDialog({
           </div>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Novo Pacote ou Plano</DialogTitle>
           <DialogDescription>
@@ -421,7 +441,7 @@ export function CreatePackageDialog({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FormField
                 control={form.control}
                 name="price"
@@ -544,17 +564,18 @@ export function CreatePackageDialog({
               )}
             />
 
-            <DialogFooter className="pt-2">
+            <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
+                className="w-full sm:w-auto"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                className="bg-[#af4d30] hover:bg-[#964228] text-white"
+                className="bg-[#af4d30] hover:bg-[#964228] text-white w-full sm:w-auto"
               >
                 Salvar Pacote / Plano
               </Button>
@@ -604,7 +625,7 @@ export function EditPackageDialog({
           <Edit className="w-4 h-4" />
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Editar Pacote / Plano</DialogTitle>
           <DialogDescription>
@@ -685,7 +706,7 @@ export function EditPackageDialog({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FormField
                 control={form.control}
                 name="price"
@@ -798,17 +819,18 @@ export function EditPackageDialog({
               )}
             />
 
-            <DialogFooter className="pt-2">
+            <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
+                className="w-full sm:w-auto"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                className="bg-[#af4d30] hover:bg-[#964228] text-white"
+                className="bg-[#af4d30] hover:bg-[#964228] text-white w-full sm:w-auto"
               >
                 Atualizar Plano
               </Button>

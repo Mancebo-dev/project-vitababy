@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { approveBooking, rejectBooking } from "../actions";
+import { approveBooking, deleteBooking, rejectBooking } from "../actions";
 
 type BookingWithDetails = Prisma.BookingGetPayload<{
   include: {
@@ -32,6 +32,26 @@ export function BookingDetailsModal({
   const [isRejecting, setIsRejecting] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleDelete = async () => {
+    if (
+      !confirm(
+        "Tem certeza que deseja excluir este agendamento? Esta ação não pode ser desfeita.",
+      )
+    ) {
+      return;
+    }
+    setLoading(true);
+    try {
+      await deleteBooking(booking.id);
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao excluir agendamento.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleApprove = async () => {
     setLoading(true);
@@ -97,7 +117,7 @@ export function BookingDetailsModal({
           </Button>
         }
       />
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-[600px] max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="flex justify-between items-center pr-8">
             Detalhes do Agendamento
@@ -105,8 +125,8 @@ export function BookingDetailsModal({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 pt-4">
-          <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="space-y-6 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
             <div className="bg-slate-50 p-4 rounded-lg">
               <h4 className="font-semibold text-slate-900 mb-2">Cliente</h4>
               <p className="text-slate-600">{booking.client?.name}</p>
@@ -203,6 +223,18 @@ export function BookingDetailsModal({
                   Confirmar Recusa
                 </button>
               </div>
+            </div>
+          )}
+          {booking.status !== "PENDING" && !isRejecting && (
+            <div className="flex justify-between items-center pt-4 border-t">
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={loading}
+                className="px-3 py-1.5 text-xs font-medium text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-md transition-colors"
+              >
+                Excluir Agendamento
+              </button>
             </div>
           )}
         </div>

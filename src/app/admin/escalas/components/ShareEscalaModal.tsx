@@ -196,7 +196,7 @@ export function ShareEscalaModal({ schedule }: { schedule: ScheduleProps }) {
           <Share2 className="w-3.5 h-3.5" /> Compartilhar / Enviar
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-[550px] max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-slate-900 font-heading">
             <Share2 className="w-5 h-5 text-emerald-600" /> Compartilhar Escala
@@ -209,7 +209,7 @@ export function ShareEscalaModal({ schedule }: { schedule: ScheduleProps }) {
 
         <div className="space-y-6 pt-2">
           {/* 1. PDF Download */}
-          <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-4 flex items-center justify-between">
+          <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h4 className="text-sm font-bold text-slate-800">
                 PDF Oficial da Escala
@@ -223,7 +223,7 @@ export function ShareEscalaModal({ schedule }: { schedule: ScheduleProps }) {
               variant="outline"
               size="sm"
               onClick={handleDownloadPDF}
-              className="gap-1.5 text-xs font-semibold"
+              className="gap-1.5 text-xs font-semibold w-full sm:w-auto"
             >
               <Download className="w-4 h-4 text-slate-600" /> Baixar PDF
             </Button>

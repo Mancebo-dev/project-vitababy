@@ -47,9 +47,9 @@ export async function createManualBooking(data: {
   scheduleSlotId?: string;
   newSlot?: {
     date: Date;
-    startTime: string;
-    endTime: string;
-    type: "ONLINE" | "IN_PERSON";
+    startTime?: string | null;
+    endTime?: string | null;
+    type?: "ONLINE" | "IN_PERSON";
   };
   additionalInfo?: string;
   transportFee?: number;
@@ -62,15 +62,15 @@ export async function createManualBooking(data: {
         data: {
           professionalId: data.professionalId,
           date: data.newSlot.date,
-          startTime: data.newSlot.startTime,
-          endTime: data.newSlot.endTime,
+          startTime: data.newSlot.startTime || null,
+          endTime: data.newSlot.endTime || null,
           isBooked: true,
         },
       });
       finalSlotId = slot.id;
     }
 
-    if (!finalSlotId) throw new Error("Horário é obrigatório");
+    if (!finalSlotId) throw new Error("Data ou horário é obrigatório");
 
     // 1. Create booking
     await tx.booking.create({
@@ -97,4 +97,91 @@ export async function createManualBooking(data: {
   });
 
   revalidatePath("/admin/agendamentos");
+  revalidatePath("/admin/agenda");
+}
+
+export async function updateBooking(
+  id: string,
+  data: {
+    clientId: string;
+    packageIds: string[];
+    professionalId: string;
+    date: Date;
+    startTime?: string | null;
+    endTime?: string | null;
+    status: string;
+    transportFee?: number;
+    additionalInfo?: string;
+  },
+) {
+  await prisma.$transaction(async (tx) => {
+    const booking = await tx.booking.findUnique({
+      where: { id },
+      include: { scheduleSlot: true },
+    });
+
+    if (!booking) throw new Error("Agendamento não encontrado");
+
+    // Update schedule slot
+    if (booking.scheduleSlotId) {
+      await tx.scheduleSlot.update({
+        where: { id: booking.scheduleSlotId },
+        data: {
+          date: data.date,
+          startTime: data.startTime || null,
+          endTime: data.endTime || null,
+          professionalId: data.professionalId,
+        },
+      });
+    }
+
+    // Update booking
+    await tx.booking.update({
+      where: { id },
+      data: {
+        clientId: data.clientId,
+        professionalId: data.professionalId,
+        status: data.status,
+        transportFee: data.transportFee,
+        additionalInfo: data.additionalInfo,
+        packages: {
+          set: data.packageIds.map((pid) => ({ id: pid })),
+        },
+      },
+    });
+  });
+
+  revalidatePath("/admin/agendamentos");
+  revalidatePath("/admin/agenda");
+}
+
+export async function deleteBooking(id: string) {
+  const booking = await prisma.booking.findUnique({
+    where: { id },
+    select: { scheduleSlotId: true },
+  });
+
+  if (booking) {
+    await prisma.$transaction(async (tx) => {
+      await tx.booking.delete({
+        where: { id },
+      });
+
+      if (booking.scheduleSlotId) {
+        try {
+          await tx.scheduleSlot.delete({
+            where: { id: booking.scheduleSlotId },
+          });
+        } catch {
+          await tx.scheduleSlot.update({
+            where: { id: booking.scheduleSlotId },
+            data: { isBooked: false },
+          });
+        }
+      }
+    });
+  }
+
+  revalidatePath("/admin/agendamentos");
+  revalidatePath("/admin/agenda");
 }

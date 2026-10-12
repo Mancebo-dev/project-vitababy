@@ -211,17 +211,17 @@ export function NewEscalaModal({
           Nova Escala Flexível
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-2xl lg:max-w-3xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl font-bold text-slate-900">
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl font-bold text-slate-900">
             <CalendarDays className="w-5 h-5 text-[#af4d30]" />
             Criador Flexível de Escalas
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6 pt-2">
+        <form onSubmit={handleSubmit} className="space-y-5 pt-2">
           {/* Cliente e Período */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-3.5 sm:p-4 bg-slate-50 rounded-xl border border-slate-200">
             <div className="sm:col-span-2">
               <label
                 htmlFor="modal-client"
@@ -303,16 +303,16 @@ export function NewEscalaModal({
           </div>
 
           {/* Seleção dos Dias da Semana */}
-          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+          <div className="p-3.5 sm:p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
                 Dias da Semana do Atendimento
               </span>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
                 <button
                   type="button"
                   onClick={handleSelectBusinessDays}
-                  className="text-xs text-[#af4d30] hover:underline font-medium"
+                  className="text-[#af4d30] hover:underline font-medium"
                 >
                   Seg a Sex
                 </button>
@@ -320,7 +320,7 @@ export function NewEscalaModal({
                 <button
                   type="button"
                   onClick={handleSelectAllDays}
-                  className="text-xs text-[#af4d30] hover:underline font-medium"
+                  className="text-[#af4d30] hover:underline font-medium"
                 >
                   Todos os dias
                 </button>
@@ -328,14 +328,14 @@ export function NewEscalaModal({
                 <button
                   type="button"
                   onClick={handleSelectWeekend}
-                  className="text-xs text-[#af4d30] hover:underline font-medium"
+                  className="text-[#af4d30] hover:underline font-medium"
                 >
                   Finais de semana
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-1 sm:gap-2">
               {DAYS_OF_WEEK.map((d) => {
                 const isSelected = selectedDays.includes(d.id);
                 return (
@@ -343,7 +343,7 @@ export function NewEscalaModal({
                     key={d.id}
                     type="button"
                     onClick={() => handleToggleDay(d.id)}
-                    className={`p-2.5 rounded-lg text-xs font-bold border text-center transition-all ${
+                    className={`py-2 px-1 sm:px-2.5 rounded-lg text-[11px] sm:text-xs font-bold border text-center transition-all min-w-0 ${
                       isSelected
                         ? "bg-[#af4d30] text-white border-[#af4d30] shadow-xs"
                         : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
@@ -357,7 +357,7 @@ export function NewEscalaModal({
           </div>
 
           {/* Frequência de Semanas e Assessora */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 sm:p-4 bg-slate-50 rounded-xl border border-slate-200">
             <div>
               <label
                 htmlFor="modal-weeks"
@@ -416,23 +416,27 @@ export function NewEscalaModal({
               </label>
 
               {hasSpecificHours && (
-                <div className="flex items-center gap-3 mt-2">
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs text-slate-500">Início:</span>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-slate-500 min-w-10">
+                      Início:
+                    </span>
                     <input
                       type="time"
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
-                      className="px-2 py-1 text-sm border rounded bg-white"
+                      className="w-full sm:w-auto px-2 py-1 text-xs sm:text-sm border rounded bg-white"
                     />
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs text-slate-500">Fim:</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-slate-500 min-w-10">
+                      Fim:
+                    </span>
                     <input
                       type="time"
                       value={endTime}
                       onChange={(e) => setEndTime(e.target.value)}
-                      className="px-2 py-1 text-sm border rounded bg-white"
+                      className="w-full sm:w-auto px-2 py-1 text-xs sm:text-sm border rounded bg-white"
                     />
                   </div>
                 </div>
@@ -441,19 +445,19 @@ export function NewEscalaModal({
           </div>
 
           {/* Botão para Gerar Prévia */}
-          <div className="flex justify-between items-center pt-2">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 pt-2">
             <Button
               type="button"
               variant="outline"
               onClick={handleGeneratePreview}
-              className="text-xs font-semibold text-slate-700"
+              className="text-xs font-semibold text-slate-700 w-full sm:w-auto"
             >
               <Layers className="w-4 h-4 mr-1.5 text-slate-500" />
               Calcular & Visualizar Plantões
             </Button>
 
             {generatedShifts.length > 0 && (
-              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 text-center sm:text-left self-start sm:self-auto">
                 {generatedShifts.length} plantões calculados
               </span>
             )}
@@ -461,7 +465,7 @@ export function NewEscalaModal({
 
           {/* Lista de Prévia de Plantões */}
           {generatedShifts.length > 0 && (
-            <div className="border border-slate-200 rounded-xl p-4 bg-white max-h-60 overflow-y-auto space-y-2">
+            <div className="border border-slate-200 rounded-xl p-3 sm:p-4 bg-white max-h-60 overflow-y-auto space-y-2">
               <span className="text-xs font-bold text-slate-700 block mb-2 uppercase">
                 Prévia de Dias Agendados ({generatedShifts.length})
               </span>
@@ -469,7 +473,7 @@ export function NewEscalaModal({
                 {generatedShifts.map((shift) => (
                   <div
                     key={shift.id}
-                    className="p-2 border rounded-lg text-xs flex items-center justify-between bg-slate-50"
+                    className="p-2 border rounded-lg text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 bg-slate-50"
                   >
                     <div>
                       <span className="font-semibold text-slate-800">
@@ -483,13 +487,13 @@ export function NewEscalaModal({
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-200/60">
                       <select
                         value={shift.professionalId}
                         onChange={(e) =>
                           handleUpdateShiftProf(shift.id, e.target.value)
                         }
-                        className="text-[11px] py-0.5 px-1.5 border rounded bg-white"
+                        className="text-[11px] py-0.5 px-1.5 border rounded bg-white flex-1 sm:flex-initial"
                       >
                         {professionals.map((p) => (
                           <option key={p.id} value={p.id}>
@@ -500,7 +504,8 @@ export function NewEscalaModal({
                       <button
                         type="button"
                         onClick={() => handleRemoveShift(shift.id)}
-                        className="text-slate-400 hover:text-rose-500"
+                        className="p-1 text-slate-400 hover:text-rose-500 rounded"
+                        title="Remover plantão"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -512,18 +517,19 @@ export function NewEscalaModal({
           )}
 
           {/* Ações */}
-          <div className="flex justify-end gap-3 pt-4 border-t">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-4 border-t border-slate-100">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
+              className="w-full sm:w-auto"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold"
+              className="bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold w-full sm:w-auto"
             >
               {loading ? (
                 <>
