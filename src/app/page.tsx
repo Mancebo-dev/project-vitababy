@@ -1,3 +1,4 @@
+import type { Client, Review, Service, ServicePackage } from "@prisma/client";
 import dynamic from "next/dynamic";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
@@ -6,6 +7,9 @@ import { Partners } from "@/components/sections/Partners";
 import { prisma } from "@/infrastructure/db/prisma";
 
 export const revalidate = 0;
+
+type ServiceWithPackages = Service & { packages: ServicePackage[] };
+type ReviewWithClient = Review & { client: Client };
 
 // Carregadas apenas quando o browser precisar (below the fold)
 const About = dynamic(() =>
@@ -39,8 +43,8 @@ const BackToTop = dynamic(() =>
 );
 
 export default async function Home() {
-  let services: any[] = [];
-  let reviews: any[] = [];
+  let services: ServiceWithPackages[] = [];
+  let reviews: ReviewWithClient[] = [];
 
   try {
     services = await prisma.service.findMany({

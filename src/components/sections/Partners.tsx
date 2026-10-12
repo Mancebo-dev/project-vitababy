@@ -1,10 +1,11 @@
+import type { Partner } from "@prisma/client";
 import Image from "next/image";
 import { StaggerContainer } from "@/components/ui/StaggerContainer";
 import { StaggerItem } from "@/components/ui/StaggerItem";
 import { prisma } from "@/infrastructure/db/prisma";
 
 export async function Partners() {
-  let partners: any[] = [];
+  let partners: Partner[] = [];
   try {
     partners = await prisma.partner.findMany({
       where: { active: true },

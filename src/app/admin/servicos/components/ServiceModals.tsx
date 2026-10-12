@@ -53,10 +53,10 @@ const packageSchema = z.object({
   serviceId: z.string().min(1, "Serviço é obrigatório"),
   name: z.string().min(2, "Nome é obrigatório"),
   description: z.string().optional(),
-  price: z.coerce.number().optional(),
-  duration: z.coerce.number().optional(),
-  isHighlighted: z.boolean().default(false),
-  billingCycle: z.string().default("ONETIME"),
+  price: z.number().optional(),
+  duration: z.number().optional(),
+  isHighlighted: z.boolean(),
+  billingCycle: z.string(),
   features: z.string().optional(),
 });
 
@@ -272,6 +272,8 @@ export function EditServiceDialog({ service }: { service: Service }) {
   );
 }
 
+type PackageFormValues = z.infer<typeof packageSchema>;
+
 export function CreatePackageDialog({
   services,
   defaultServiceId,
@@ -284,7 +286,7 @@ export function CreatePackageDialog({
   defaultBillingCycle?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const form = useForm<any>({
+  const form = useForm<PackageFormValues>({
     resolver: zodResolver(packageSchema),
     defaultValues: {
       serviceId: defaultServiceId || services[0]?.id || "",
@@ -434,6 +436,13 @@ export function CreatePackageDialog({
                         placeholder="Ex: 1200"
                         {...field}
                         value={field.value ?? ""}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ""
+                              ? undefined
+                              : Number(e.target.value),
+                          )
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -454,6 +463,13 @@ export function CreatePackageDialog({
                         placeholder="Ex: 60"
                         {...field}
                         value={field.value ?? ""}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ""
+                              ? undefined
+                              : Number(e.target.value),
+                          )
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -558,7 +574,7 @@ export function EditPackageDialog({
   services: Service[];
 }) {
   const [open, setOpen] = useState(false);
-  const form = useForm<any>({
+  const form = useForm<PackageFormValues>({
     resolver: zodResolver(packageSchema),
     defaultValues: {
       serviceId: pkg.serviceId,
@@ -683,6 +699,13 @@ export function EditPackageDialog({
                         type="number"
                         {...field}
                         value={field.value ?? ""}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ""
+                              ? undefined
+                              : Number(e.target.value),
+                          )
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -702,6 +725,13 @@ export function EditPackageDialog({
                         type="number"
                         {...field}
                         value={field.value ?? ""}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ""
+                              ? undefined
+                              : Number(e.target.value),
+                          )
+                        }
                       />
                     </FormControl>
                     <FormMessage />

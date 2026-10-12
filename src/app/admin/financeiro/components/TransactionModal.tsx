@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { createTransaction } from "../actions";
 
 export function TransactionModal({
-  transaction,
+  transaction: _transaction,
   trigger,
 }: {
   transaction?: Payment;

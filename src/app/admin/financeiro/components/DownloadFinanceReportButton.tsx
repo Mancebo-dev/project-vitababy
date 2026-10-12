@@ -60,7 +60,9 @@ export function DownloadFinanceReportButton({
 
     const balance = totalIncome - totalExpense;
 
-    const finalY = (doc as any).lastAutoTable.finalY || 30;
+    const finalY =
+      (doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable
+        ?.finalY || 30;
 
     doc.setFontSize(12);
     doc.text(

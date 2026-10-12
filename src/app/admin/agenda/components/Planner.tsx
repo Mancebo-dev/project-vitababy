@@ -33,7 +33,7 @@ type ViewMode = "1d" | "3d" | "7d" | "14d" | "month";
 
 export function Planner({
   initialItems,
-  professionals,
+  professionals: _professionals,
 }: {
   initialItems: AgendaEvent[];
   professionals: Professional[];

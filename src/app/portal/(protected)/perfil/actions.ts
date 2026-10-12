@@ -36,9 +36,10 @@ export async function updatePasswordAction(
     }
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao atualizar senha:", error);
-    if (error?.status === 400 || error?.message?.includes("password")) {
+    const err = error as { status?: number; message?: string } | undefined;
+    if (err?.status === 400 || err?.message?.includes("password")) {
       return {
         success: false,
         error: "Senha atual incorreta ou nova senha inválida.",
@@ -82,7 +83,7 @@ export async function updateClientProfile(
     });
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao atualizar perfil:", error);
     return { success: false, error: "Ocorreu um erro ao atualizar os dados." };
   }

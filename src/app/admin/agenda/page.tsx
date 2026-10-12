@@ -161,7 +161,7 @@ export default async function AgendaPage({
         <div className="flex items-center gap-3">
           <DownloadScheduleReportButton
             professionals={activeProfessionals}
-            events={allEvents as any}
+            events={allEvents}
           />
 
           <div className="relative">
@@ -233,7 +233,7 @@ export default async function AgendaPage({
                 </p>
               </div>
             ) : (
-              <EscalaList schedules={schedules as any} />
+              <EscalaList schedules={schedules} />
             )}
           </div>
         </TabsContent>
@@ -244,7 +244,7 @@ export default async function AgendaPage({
             <NewBookingModal
               clients={clients}
               packages={packages}
-              slots={slots as any}
+              slots={slots}
               professionals={activeProfessionals}
             />
           </div>
@@ -351,7 +351,7 @@ export default async function AgendaPage({
         <TabsContent value="horarios" className="outline-none">
           <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-xs">
             <ScheduleManager
-              initialSlots={slots as any}
+              initialSlots={slots}
               professionals={activeProfessionals}
             />
           </div>

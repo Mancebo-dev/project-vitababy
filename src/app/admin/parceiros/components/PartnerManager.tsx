@@ -1,5 +1,6 @@
 "use client";
 
+import type { Partner } from "@prisma/client";
 import { Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -15,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { deletePartner, uploadPartnerAction } from "../actions";
 
-export function PartnerManager({ partners }: { partners: any[] }) {
+export function PartnerManager({ partners }: { partners: Partner[] }) {
   const [isUploading, setIsUploading] = useState(false);
   const [openUpload, setOpenUpload] = useState(false);
 

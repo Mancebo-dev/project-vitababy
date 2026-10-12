@@ -1,5 +1,6 @@
 "use client";
 
+import type { ClientFile, PublicGallery } from "@prisma/client";
 import { ImageIcon, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -21,12 +22,14 @@ import {
   uploadPublicGalleryImageAction,
 } from "../actions";
 
+type ClientImageItem = ClientFile & { client: { name: string } };
+
 export function GalleryManager({
   publicImages,
   clientImages,
 }: {
-  publicImages: any[];
-  clientImages: any[];
+  publicImages: PublicGallery[];
+  clientImages: ClientImageItem[];
 }) {
   const [isUploading, setIsUploading] = useState(false);
   const [openUpload, setOpenUpload] = useState(false);
@@ -64,7 +67,7 @@ export function GalleryManager({
     }
   };
 
-  const handleCopyFromClient = async (clientImage: any) => {
+  const handleCopyFromClient = async (clientImage: ClientImageItem) => {
     setIsUploading(true);
     try {
       await addImageToPublicGallery({

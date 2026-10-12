@@ -108,7 +108,7 @@ export function NewBookingModal({
         scheduleSlotId: isCreatingSlot ? undefined : scheduleSlotId,
         newSlot: isCreatingSlot
           ? {
-              date: new Date(newSlotDate + "T00:00:00"), // Parse locally
+              date: new Date(`${newSlotDate}T00:00:00`), // Parse locally
               startTime: newSlotStartTime,
               endTime: newSlotEndTime,
               type: newSlotType,
