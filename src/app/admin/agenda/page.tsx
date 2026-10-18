@@ -88,6 +88,21 @@ export default async function AgendaPage({
   // 5. Fetch planner items
   const plannerItems = await prisma.plannerItem.findMany();
 
+  // Map shifts from all client schedules
+  const scheduleShiftEvents = schedules.flatMap((schedule) =>
+    schedule.shifts.map((shift) => ({
+      id: shift.id,
+      title: `${schedule.client.name} - Plantão (${shift.professional.name})`,
+      description: `Escala: ${schedule.title || schedule.month} | Profissional: ${shift.professional.name}${shift.status ? ` | Status: ${shift.status}` : ""}`,
+      type: "ESCALA_SHIFT",
+      date: shift.date,
+      startTime: shift.startTime || "08:00",
+      endTime: shift.endTime || "12:00",
+      color: shift.professional.color || "#0284c7",
+      professionalId: shift.professionalId,
+    })),
+  );
+
   // Combine events for planner
   const allEvents = [
     ...(plannerItems || []).map((pi: PlannerItem) => ({
@@ -111,6 +126,7 @@ export default async function AgendaPage({
       color: b.professional?.color || "#ae4d30",
       professionalId: b.professionalId,
     })),
+    ...scheduleShiftEvents,
   ];
 
   const today = startOfDay(new Date());
