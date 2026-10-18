@@ -18,6 +18,12 @@ export function EditContractModal({ contract }: { contract: Contract }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [content, setContent] = useState(contract.content);
+  const [serviceName, setServiceName] = useState<string>(
+    contract.serviceName || "",
+  );
+  const [serviceDetails, setServiceDetails] = useState<string>(
+    contract.serviceDetails || "",
+  );
   const [totalValue, setTotalValue] = useState<string>(
     contract.totalValue ? String(contract.totalValue) : "",
   );
@@ -34,12 +40,20 @@ export function EditContractModal({ contract }: { contract: Contract }) {
     contract.workRegime || "",
   );
 
+  const isSigned = Boolean(contract.signedByClient);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSigned) {
+      alert("Contratos já assinados pelo cliente não podem ser editados.");
+      return;
+    }
     setIsSubmitting(true);
     try {
       await updateContract(contract.id, {
         content,
+        serviceName,
+        serviceDetails,
         totalValue: totalValue ? Number.parseFloat(totalValue) : undefined,
         monthlyValue: monthlyValue
           ? Number.parseFloat(monthlyValue)
@@ -75,6 +89,47 @@ export function EditContractModal({ contract }: { contract: Contract }) {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+          {/* Serviço / Objeto Contratado */}
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+            <div>
+              <label
+                htmlFor={`edit-service-name-${contract.id}`}
+                className="block text-xs font-semibold text-slate-700 mb-1"
+              >
+                Nome do Serviço / Objeto Contratado
+              </label>
+              <input
+                id={`edit-service-name-${contract.id}`}
+                type="text"
+                placeholder="Ex: Assessoria Noturna Materno-Infantil (deixe em branco se não aplicável)"
+                value={serviceName}
+                onChange={(e) => setServiceName(e.target.value)}
+                className="w-full px-3 py-2 text-sm border rounded-lg bg-white"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">
+                Se este campo for deixado em branco, a caixa de &quot;Objeto do
+                Contrato&quot; não será exibida no contrato.
+              </p>
+            </div>
+
+            <div>
+              <label
+                htmlFor={`edit-service-details-${contract.id}`}
+                className="block text-xs font-semibold text-slate-700 mb-1"
+              >
+                Detalhes / Especificação do Serviço
+              </label>
+              <input
+                id={`edit-service-details-${contract.id}`}
+                type="text"
+                placeholder="Ex: 3 noites semanais, 22h às 06h, assessoria presencial"
+                value={serviceDetails}
+                onChange={(e) => setServiceDetails(e.target.value)}
+                className="w-full px-3 py-2 text-sm border rounded-lg bg-white"
+              />
+            </div>
+          </div>
+
           {/* Grid de Valores e Competência */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
             <div>

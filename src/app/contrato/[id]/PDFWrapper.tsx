@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { buildWhatsAppLink } from "@/utils/whatsapp";
 import { signContractAction, signContractByProfAction } from "../actions";
 
 export type ContractData = {
@@ -36,6 +37,7 @@ export type ContractData = {
   isSigned?: boolean;
   signedAt?: Date | null;
   clientIp?: string | null;
+  imageUsageAccepted?: boolean | null;
   signedByProf?: boolean;
   signedByProfAt?: Date | null;
   pdfUrl?: string | null;
@@ -45,7 +47,29 @@ export type ContractData = {
 export function PDFWrapper({ data }: { data: ContractData }) {
   const [isSigningClient, setIsSigningClient] = useState(false);
   const [isSigningProf, setIsSigningProf] = useState(false);
+  const [imageUsageAccepted, setImageUsageAccepted] = useState<boolean>(
+    data.imageUsageAccepted !== undefined && data.imageUsageAccepted !== null
+      ? data.imageUsageAccepted
+      : true,
+  );
   const [successMessage, setSuccessMessage] = useState("");
+
+  const hasService = Boolean(
+    data.serviceName &&
+      !data.serviceName.startsWith("[") &&
+      data.serviceName.trim() !== "",
+  );
+
+  const hasFinancialSummary = Boolean(
+    (data.totalValue && data.totalValue > 0) ||
+      (data.serviceValue &&
+        !data.serviceValue.startsWith("[") &&
+        data.serviceValue.trim() !== "") ||
+      (data.monthlyValue && data.monthlyValue > 0) ||
+      (data.dailyValue && data.dailyValue > 0) ||
+      (data.validityDescription && data.validityDescription.trim() !== "") ||
+      (data.workRegime && data.workRegime.trim() !== ""),
+  );
 
   const formatBRL = (val?: number | null) => {
     if (!val || val <= 0) return null;
@@ -61,14 +85,17 @@ export function PDFWrapper({ data }: { data: ContractData }) {
 
   const handleSignClient = async () => {
     if (!data.contractId) return;
+    const consentText = imageUsageAccepted
+      ? "com USO DE IMAGEM AUTORIZADO"
+      : "com USO DE IMAGEM NÃO AUTORIZADO";
     const confirmSign = window.confirm(
-      "Confirmar a assinatura digital deste contrato com a Vita Baby?",
+      `Confirmar a assinatura digital deste contrato com a Vita Baby (${consentText})?`,
     );
     if (!confirmSign) return;
 
     setIsSigningClient(true);
     try {
-      await signContractAction(data.contractId);
+      await signContractAction(data.contractId, imageUsageAccepted);
       setSuccessMessage("Contrato assinado digitalmente com sucesso!");
       setTimeout(() => {
         window.location.reload();
@@ -102,19 +129,14 @@ export function PDFWrapper({ data }: { data: ContractData }) {
     }
   };
 
-  const cleanPhone = data.clientPhone?.replace(/\D/g, "");
   const contractUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/contrato/${data.contractId}`
       : "";
 
-  const whatsappMessage = encodeURIComponent(
-    `Olá, ${data.clientName}! Segue o link para visualização e assinatura digital do seu contrato com a Vita Baby Assessoria:\n\n${contractUrl}\n\nQualquer dúvida, estamos à disposição!`,
-  );
+  const whatsappMessage = `Olá, ${data.clientName}! Segue o link para visualização e assinatura digital do seu contrato com a Vita Baby Assessoria:\n\n${contractUrl}\n\nQualquer dúvida, estamos à disposição!`;
 
-  const whatsappUrl = cleanPhone
-    ? `https://wa.me/55${cleanPhone}?text=${whatsappMessage}`
-    : `https://wa.me/?text=${whatsappMessage}`;
+  const whatsappUrl = buildWhatsAppLink(data.clientPhone, whatsappMessage);
 
   return (
     <div className="space-y-6 text-[#444840] w-full flex flex-col items-center">
@@ -269,148 +291,154 @@ export function PDFWrapper({ data }: { data: ContractData }) {
             </div>
 
             {/* Financial Summary & Competency (Valores Total, Mensal, Diária e Validade) */}
-            <div className="mb-8">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-1.5 h-4 bg-[#ae4d30]" />
-                <h3 className="text-[11px] font-bold text-[#ae4d30] uppercase tracking-widest">
-                  Resumo Financeiro e Competência do Contrato
-                </h3>
+            {hasFinancialSummary && (
+              <div className="mb-8">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1.5 h-4 bg-[#ae4d30]" />
+                  <h3 className="text-[11px] font-bold text-[#ae4d30] uppercase tracking-widest">
+                    Resumo Financeiro e Competência do Contrato
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-[#fcfaf7] p-4 rounded-lg border border-[#f0ebe1] text-xs">
+                  {/* Valor Total */}
+                  {(data.totalValue || data.serviceValue) && (
+                    <div>
+                      <span className="text-[#a1a1aa] block text-[10px] uppercase font-semibold">
+                        Valor Total do Contrato
+                      </span>
+                      <span className="text-base font-bold text-[#ae4d30]">
+                        {formatBRL(data.totalValue) || data.serviceValue}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Valor Mensal */}
+                  {data.monthlyValue && (
+                    <div>
+                      <span className="text-[#a1a1aa] block text-[10px] uppercase font-semibold">
+                        Valor Mensal
+                      </span>
+                      <span className="text-sm font-bold text-slate-900">
+                        {formatBRL(data.monthlyValue)}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Valor da Diária */}
+                  {data.dailyValue && (
+                    <div>
+                      <span className="text-[#a1a1aa] block text-[10px] uppercase font-semibold">
+                        Valor da Diária / Plantão
+                      </span>
+                      <span className="text-sm font-bold text-slate-900">
+                        {formatBRL(data.dailyValue)}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Competência / Validade */}
+                  {data.validityDescription && (
+                    <div className="col-span-2 sm:col-span-3 pt-2 border-t border-[#f0ebe1]">
+                      <span className="text-[#a1a1aa] block text-[10px] uppercase font-semibold">
+                        Vigência / Competência
+                      </span>
+                      <span className="text-xs font-medium text-slate-800">
+                        {data.validityDescription}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Regime de Trabalho */}
+                  {data.workRegime && (
+                    <div className="col-span-2 sm:col-span-3 pt-1">
+                      <span className="text-[#a1a1aa] block text-[10px] uppercase font-semibold">
+                        Regime de Atendimento
+                      </span>
+                      <span className="text-xs font-medium text-slate-800">
+                        {data.workRegime}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-[#fcfaf7] p-4 rounded-lg border border-[#f0ebe1] text-xs">
-                {/* Valor Total */}
-                {(data.totalValue || data.serviceValue) && (
-                  <div>
-                    <span className="text-[#a1a1aa] block text-[10px] uppercase font-semibold">
-                      Valor Total do Contrato
-                    </span>
-                    <span className="text-base font-bold text-[#ae4d30]">
-                      {formatBRL(data.totalValue) || data.serviceValue}
-                    </span>
-                  </div>
-                )}
-
-                {/* Valor Mensal */}
-                {data.monthlyValue && (
-                  <div>
-                    <span className="text-[#a1a1aa] block text-[10px] uppercase font-semibold">
-                      Valor Mensal
-                    </span>
-                    <span className="text-sm font-bold text-slate-900">
-                      {formatBRL(data.monthlyValue)}
-                    </span>
-                  </div>
-                )}
-
-                {/* Valor da Diária */}
-                {data.dailyValue && (
-                  <div>
-                    <span className="text-[#a1a1aa] block text-[10px] uppercase font-semibold">
-                      Valor da Diária / Plantão
-                    </span>
-                    <span className="text-sm font-bold text-slate-900">
-                      {formatBRL(data.dailyValue)}
-                    </span>
-                  </div>
-                )}
-
-                {/* Competência / Validade */}
-                {data.validityDescription && (
-                  <div className="col-span-2 sm:col-span-3 pt-2 border-t border-[#f0ebe1]">
-                    <span className="text-[#a1a1aa] block text-[10px] uppercase font-semibold">
-                      Vigência / Competência
-                    </span>
-                    <span className="text-xs font-medium text-slate-800">
-                      {data.validityDescription}
-                    </span>
-                  </div>
-                )}
-
-                {/* Regime de Trabalho */}
-                {data.workRegime && (
-                  <div className="col-span-2 sm:col-span-3 pt-1">
-                    <span className="text-[#a1a1aa] block text-[10px] uppercase font-semibold">
-                      Regime de Atendimento
-                    </span>
-                    <span className="text-xs font-medium text-slate-800">
-                      {data.workRegime}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
+            )}
 
             {/* Objeto do Contrato Section */}
-            <div className="mb-8">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-1.5 h-4 bg-[#ae4d30]" />
-                <h3 className="text-[11px] font-bold text-[#ae4d30] uppercase tracking-widest">
-                  Objeto do Contrato
-                </h3>
-              </div>
+            {hasService && (
+              <div className="mb-8">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1.5 h-4 bg-[#ae4d30]" />
+                  <h3 className="text-[11px] font-bold text-[#ae4d30] uppercase tracking-widest">
+                    Objeto do Contrato
+                  </h3>
+                </div>
 
-              <div className="border border-[#f0ebe1] rounded-lg overflow-hidden">
-                <table className="w-full text-left text-[11px]">
-                  <thead>
-                    <tr className="text-[#a1a1aa] bg-[#fcfaf7] border-b border-[#f0ebe1] uppercase tracking-wider text-[10px]">
-                      <th className="font-semibold px-4 py-3 w-1/3">Serviço</th>
-                      {(data.serviceDate || data.serviceTime) && (
-                        <th className="font-semibold px-4 py-3">
-                          Data e Horário
+                <div className="border border-[#f0ebe1] rounded-lg overflow-hidden">
+                  <table className="w-full text-left text-[11px]">
+                    <thead>
+                      <tr className="text-[#a1a1aa] bg-[#fcfaf7] border-b border-[#f0ebe1] uppercase tracking-wider text-[10px]">
+                        <th className="font-semibold px-4 py-3 w-1/3">
+                          Serviço
                         </th>
-                      )}
-                      {data.serviceDetails && (
-                        <th className="font-semibold px-4 py-3">Detalhes</th>
-                      )}
-                      {(data.totalValue || data.serviceValue) && (
-                        <th className="font-semibold px-4 py-3 text-right">
-                          Valor
-                        </th>
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="px-4 py-4 align-top">
-                        <p className="font-bold text-[12px] text-slate-900">
-                          {data.serviceName}
-                        </p>
-                        {data.serviceProfessional && (
-                          <p className="text-[10px] text-[#71717a] mt-1">
-                            Assessora: {data.serviceProfessional}
-                          </p>
+                        {(data.serviceDate || data.serviceTime) && (
+                          <th className="font-semibold px-4 py-3">
+                            Data e Horário
+                          </th>
                         )}
-                      </td>
-
-                      {(data.serviceDate || data.serviceTime) && (
+                        {data.serviceDetails && (
+                          <th className="font-semibold px-4 py-3">Detalhes</th>
+                        )}
+                        {(data.totalValue || data.serviceValue) && (
+                          <th className="font-semibold px-4 py-3 text-right">
+                            Valor
+                          </th>
+                        )}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
                         <td className="px-4 py-4 align-top">
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#fcfaf7] border border-[#f0ebe1] rounded-md text-[11px] font-medium">
-                            {data.serviceDate}
-                            {data.serviceTime && (
-                              <span className="text-[#ae4d30]">
-                                {data.serviceTime}
-                              </span>
-                            )}
-                          </div>
+                          <p className="font-bold text-[12px] text-slate-900">
+                            {data.serviceName}
+                          </p>
+                          {data.serviceProfessional && (
+                            <p className="text-[10px] text-[#71717a] mt-1">
+                              Assessora: {data.serviceProfessional}
+                            </p>
+                          )}
                         </td>
-                      )}
 
-                      {data.serviceDetails && (
-                        <td className="px-4 py-4 align-top text-[#71717a] leading-relaxed">
-                          {data.serviceDetails}
-                        </td>
-                      )}
+                        {(data.serviceDate || data.serviceTime) && (
+                          <td className="px-4 py-4 align-top">
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#fcfaf7] border border-[#f0ebe1] rounded-md text-[11px] font-medium">
+                              {data.serviceDate}
+                              {data.serviceTime && (
+                                <span className="text-[#ae4d30]">
+                                  {data.serviceTime}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                        )}
 
-                      {(data.totalValue || data.serviceValue) && (
-                        <td className="px-4 py-4 align-top text-right font-bold text-[#444840]">
-                          {formatBRL(data.totalValue) || data.serviceValue}
-                        </td>
-                      )}
-                    </tr>
-                  </tbody>
-                </table>
+                        {data.serviceDetails && (
+                          <td className="px-4 py-4 align-top text-[#71717a] leading-relaxed">
+                            {data.serviceDetails}
+                          </td>
+                        )}
+
+                        {(data.totalValue || data.serviceValue) && (
+                          <td className="px-4 py-4 align-top text-right font-bold text-[#444840]">
+                            {formatBRL(data.totalValue) || data.serviceValue}
+                          </td>
+                        )}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Termos e Cláusulas */}
             <div className="mb-8">
@@ -433,6 +461,63 @@ export function PDFWrapper({ data }: { data: ContractData }) {
                 />
               </div>
             </div>
+
+            {/* Registro / Seleção da Cláusula de Uso de Imagem */}
+            {data.isSigned ? (
+              <div className="mb-8 p-4 bg-[#fcfaf7] border border-[#f0ebe1] rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <div>
+                  <span className="font-bold text-slate-800 block sm:inline">
+                    Cláusula de Uso de Imagem e Voz:
+                  </span>
+                  <span className="text-slate-500 text-[11px] ml-0 sm:ml-2">
+                    (Divulgação institucional e redes sociais da Vita Baby)
+                  </span>
+                </div>
+                {data.imageUsageAccepted ? (
+                  <span className="inline-flex items-center gap-1.5 font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Autorizado pelo
+                    Cliente
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+                    Não autorizado pelo Cliente
+                  </span>
+                )}
+              </div>
+            ) : data.contractId ? (
+              <div className="mb-8 p-4 bg-amber-50/70 border border-amber-200 rounded-lg text-xs print:hidden">
+                <p className="font-bold text-amber-900 mb-1">
+                  Autorização de Uso de Imagem e Voz
+                </p>
+                <p className="text-amber-800 mb-3 text-[11px] leading-relaxed">
+                  Você autoriza a Vita Baby a utilizar fotos e vídeos dos
+                  atendimentos para fins de divulgação e portfólio em materiais
+                  institucionais e redes sociais?
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <label className="inline-flex items-center gap-2 cursor-pointer font-medium text-slate-800">
+                    <input
+                      type="radio"
+                      name="imageConsent"
+                      checked={imageUsageAccepted === true}
+                      onChange={() => setImageUsageAccepted(true)}
+                      className="text-[#ae4d30] focus:ring-[#ae4d30]"
+                    />
+                    Sim, autorizo o uso de imagem e voz
+                  </label>
+                  <label className="inline-flex items-center gap-2 cursor-pointer font-medium text-slate-800">
+                    <input
+                      type="radio"
+                      name="imageConsent"
+                      checked={imageUsageAccepted === false}
+                      onChange={() => setImageUsageAccepted(false)}
+                      className="text-[#ae4d30] focus:ring-[#ae4d30]"
+                    />
+                    Não autorizo o uso de imagem
+                  </label>
+                </div>
+              </div>
+            ) : null}
 
             {/* Signatures */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12 pt-8 border-t border-[#f0ebe1] break-inside-avoid">

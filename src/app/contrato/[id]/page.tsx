@@ -104,16 +104,41 @@ export default async function ContratoPage({
         : client.address || "";
     }
 
-    if (contract.booking) {
+    viewData.imageUsageAccepted = contract.imageUsageAccepted;
+
+    // Service Name: prioritize explicitly saved contract.serviceName
+    if (contract.serviceName !== null && contract.serviceName !== undefined) {
+      viewData.serviceName = contract.serviceName;
+    } else if (contract.booking) {
       viewData.serviceName =
-        contract.booking.packages?.map((p) => p.name).join(" + ") ||
-        viewData.serviceName;
+        contract.booking.packages?.map((p) => p.name).join(" + ") || "";
+    } else if (contract.schedule) {
+      viewData.serviceName =
+        contract.schedule.title || `Escala ${contract.schedule.month}`;
+    } else {
+      viewData.serviceName = "";
+    }
+
+    // Service Details: prioritize explicitly saved contract.serviceDetails
+    if (
+      contract.serviceDetails !== null &&
+      contract.serviceDetails !== undefined
+    ) {
+      viewData.serviceDetails = contract.serviceDetails;
+    } else if (contract.booking) {
       viewData.serviceDetails =
         contract.booking.packages
           ?.map((p) => p.service?.name)
           .filter(Boolean)
           .join(" + ") || "";
+    } else if (contract.schedule) {
+      viewData.serviceDetails =
+        "Assessoria e Cuidados Materno-Infantil (Escala)";
+    } else {
+      viewData.serviceDetails = "";
+    }
 
+    if (contract.booking) {
       // Calculate Total Value if not set explicitly on contract
       const basePrice =
         contract.booking.packages?.reduce(
@@ -135,11 +160,6 @@ export default async function ContratoPage({
             contract.booking.scheduleSlot.professional.name;
         }
       }
-    } else if (contract.schedule) {
-      viewData.serviceName =
-        contract.schedule.title || `Escala ${contract.schedule.month}`;
-      viewData.serviceDetails =
-        "Assessoria e Cuidados Materno-Infantil (Escala)";
     }
   } else {
     // If not found, check if it's a template preview

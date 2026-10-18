@@ -59,6 +59,8 @@ export async function createContract(data: {
   scheduleId?: string;
   templateId?: string;
   customContent?: string;
+  serviceName?: string;
+  serviceDetails?: string;
   scale?: string;
   extraNotes?: string;
   addImageClause?: boolean;
@@ -194,6 +196,8 @@ export async function createContract(data: {
       bookingId: data.bookingId || undefined,
       scheduleId: data.scheduleId || undefined,
       content: finalContent,
+      serviceName: data.serviceName || serviceNames,
+      serviceDetails: data.serviceDetails || null,
       totalValue: data.totalValue,
       monthlyValue: data.monthlyValue,
       dailyValue: data.dailyValue,
@@ -228,6 +232,8 @@ export async function updateContract(
   id: string,
   data: {
     content?: string;
+    serviceName?: string;
+    serviceDetails?: string;
     totalValue?: number;
     monthlyValue?: number;
     dailyValue?: number;
@@ -254,6 +260,14 @@ export async function updateContract(
     where: { id },
     data: {
       content: data.content ?? existing.content,
+      serviceName:
+        data.serviceName !== undefined
+          ? data.serviceName
+          : existing.serviceName,
+      serviceDetails:
+        data.serviceDetails !== undefined
+          ? data.serviceDetails
+          : existing.serviceDetails,
       totalValue:
         data.totalValue !== undefined ? data.totalValue : existing.totalValue,
       monthlyValue:
@@ -275,6 +289,22 @@ export async function updateContract(
   revalidatePath("/admin/contratos");
   revalidatePath(`/contrato/${id}`);
   return updated;
+}
+
+export async function deleteContract(id: string) {
+  const existing = await prisma.contract.findUnique({
+    where: { id },
+  });
+
+  if (!existing) {
+    throw new Error("Contrato não encontrado.");
+  }
+
+  await prisma.contract.delete({
+    where: { id },
+  });
+
+  revalidatePath("/admin/contratos");
 }
 
 export async function getContracts() {

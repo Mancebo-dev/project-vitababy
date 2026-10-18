@@ -231,6 +231,11 @@ model Contract {
   validityDescription String?
   workRegime          String?
 
+  // Custom Service & Image Clause
+  serviceName         String?
+  serviceDetails      String?
+  imageUsageAccepted  Boolean?
+
   // New signature fields
   pdfUrl   String?   @db.LongText
   clientIp String?

@@ -5,7 +5,10 @@ import { headers } from "next/headers";
 import { auth } from "@/infrastructure/auth/auth";
 import { prisma } from "@/infrastructure/db/prisma";
 
-export async function signContractAction(contractId: string) {
+export async function signContractAction(
+  contractId: string,
+  imageUsageAccepted?: boolean,
+) {
   const headersList = await headers();
   const session = await auth.api.getSession({ headers: headersList });
   if (!session?.user) {
@@ -52,6 +55,7 @@ export async function signContractAction(contractId: string) {
       signedByClient: true,
       signedAt: new Date(),
       clientIp,
+      imageUsageAccepted: imageUsageAccepted ?? false,
     },
     include: {
       client: true,
