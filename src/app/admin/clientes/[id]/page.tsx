@@ -14,6 +14,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { prisma } from "@/infrastructure/db/prisma";
+import { buildWhatsAppLink } from "@/utils/whatsapp";
 import { ClientFilesTab } from "../components/ClientFilesTab";
 import { ClientModal } from "../components/ClientModal";
 import { ClientNotesTab } from "../components/ClientNotesTab";
@@ -107,7 +108,21 @@ export default async function ClientProfilePage({
                   <p className="font-medium text-slate-900">
                     Telefone / WhatsApp
                   </p>
-                  <p className="text-slate-600">{client.phone}</p>
+                  {client.phone ? (
+                    <a
+                      href={buildWhatsAppLink(
+                        client.phone,
+                        `Olá, ${client.name}! Equipe Vita Baby aqui.`,
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-700 hover:text-emerald-800 font-medium inline-flex items-center gap-1 hover:underline"
+                    >
+                      {client.phone}
+                    </a>
+                  ) : (
+                    <p className="text-slate-400">Não informado</p>
+                  )}
                 </div>
               </div>
 

@@ -1,7 +1,7 @@
-import { Check } from "lucide-react";
-import Link from "next/link";
+import { Check, MessageCircle } from "lucide-react";
 import { StaggerContainer } from "@/components/ui/StaggerContainer";
 import { StaggerItem } from "@/components/ui/StaggerItem";
+import { buildWhatsAppLink, VITA_BABY_WHATSAPP } from "@/utils/whatsapp";
 import type { ServiceWithPackages } from "./Services";
 
 interface PricingProps {
@@ -103,16 +103,22 @@ export function Pricing({ initialServices }: PricingProps) {
                       )}
                     </div>
 
-                    <Link
-                      href={`/agendamento?servico=${encodeURIComponent(service.name)}&plano=${encodeURIComponent(pkg.name)}`}
-                      className={`w-full text-center py-3 rounded-xl font-semibold transition-colors mt-auto ${
+                    <a
+                      href={buildWhatsAppLink(
+                        VITA_BABY_WHATSAPP,
+                        `Olá! Gostaria de mais informações sobre o plano "${pkg.name}" (${service.name}) da Vita Baby.`,
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`w-full text-center py-3 rounded-xl font-semibold transition-colors mt-auto flex items-center justify-center gap-2 ${
                         pkg.isHighlighted
-                          ? "bg-[#af4d30] text-white hover:bg-[#8c3d26]"
+                          ? "bg-[#25D366] text-white hover:bg-[#20b859] shadow-sm"
                           : "bg-[#f5f3ef] text-[#411f03] hover:bg-[#e4e2de]"
                       }`}
                     >
-                      Agendar Assessoria
-                    </Link>
+                      <MessageCircle className="w-4 h-4 fill-current shrink-0" />
+                      Falar no WhatsApp
+                    </a>
                   </StaggerItem>
                 ))}
               </StaggerContainer>

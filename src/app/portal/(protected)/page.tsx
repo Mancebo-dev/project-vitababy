@@ -2,6 +2,7 @@ import { Calendar, Clock, MessageCircle, User as UserIcon } from "lucide-react";
 import { headers } from "next/headers";
 import { auth } from "@/infrastructure/auth/auth";
 import { prisma } from "@/infrastructure/db/prisma";
+import { buildWhatsAppLink } from "@/utils/whatsapp";
 
 export default async function PortalDashboard() {
   const headersList = await headers();
@@ -115,7 +116,10 @@ export default async function PortalDashboard() {
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
                   {booking.professional.phone && (
                     <a
-                      href={`https://wa.me/55${booking.professional.phone.replace(/\D/g, "")}`}
+                      href={buildWhatsAppLink(
+                        booking.professional.phone,
+                        "Olá! Sou cliente da Vita Baby e gostaria de falar sobre meu atendimento.",
+                      )}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-[#25D366] text-white rounded-xl font-medium hover:bg-[#20bd5a] transition-colors text-sm shadow-sm"

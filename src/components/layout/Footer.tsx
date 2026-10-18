@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { buildWhatsAppLink, VITA_BABY_WHATSAPP } from "@/utils/whatsapp";
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg
@@ -168,7 +169,16 @@ export function Footer() {
               Contato
             </h4>
             <ul className="flex flex-col gap-[0.5rem] text-[#444840] text-[0.875rem]">
-              <li>WhatsApp: (22) 99772-8581</li>
+              <li>
+                <a
+                  href={buildWhatsAppLink(VITA_BABY_WHATSAPP)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#af4d30] transition-colors"
+                >
+                  WhatsApp: (22) 99772-8581
+                </a>
+              </li>
               <li>Email: contato@vitababy.com.br</li>
             </ul>
             <div className="flex gap-[1rem] mt-[0.5rem]">
@@ -182,7 +192,7 @@ export function Footer() {
                 <InstagramIcon className="w-5 h-5" />
               </Link>
               <Link
-                href="https://wa.me/5511999999999"
+                href={buildWhatsAppLink(VITA_BABY_WHATSAPP)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-[2.5rem] h-[2.5rem] bg-[#fbf9f5] hover:bg-[#af4d30] border border-[#e4e2de] hover:border-[#af4d30] rounded-full flex items-center justify-center text-[#411f03] hover:text-white shadow-sm hover:scale-110 transition-all duration-300"

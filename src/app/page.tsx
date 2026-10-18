@@ -41,6 +41,11 @@ const Contact = dynamic(() =>
 const BackToTop = dynamic(() =>
   import("@/components/ui/BackToTop").then((m) => ({ default: m.BackToTop })),
 );
+const FloatingWhatsAppButton = dynamic(() =>
+  import("@/components/ui/FloatingWhatsAppButton").then((m) => ({
+    default: m.FloatingWhatsAppButton,
+  })),
+);
 
 export default async function Home() {
   let services: ServiceWithPackages[] = [];
@@ -85,6 +90,7 @@ export default async function Home() {
       <Contact />
       <Footer />
       <BackToTop />
+      <FloatingWhatsAppButton />
     </main>
   );
 }

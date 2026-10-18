@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { FloatingWhatsAppButton } from "@/components/ui/FloatingWhatsAppButton";
 import { prisma } from "@/infrastructure/db/prisma";
 
 export const metadata: Metadata = {
@@ -102,6 +103,7 @@ export default async function PublicGaleriaPage() {
       </main>
 
       <Footer />
+      <FloatingWhatsAppButton />
     </div>
   );
 }

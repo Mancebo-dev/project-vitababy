@@ -1,16 +1,16 @@
 import type { Prisma } from "@prisma/client";
 import {
   Award,
-  ChevronRight,
   HeartHandshake,
   HeartPulse,
+  MessageCircle,
   Sparkles,
   SunMedium,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { StaggerContainer } from "@/components/ui/StaggerContainer";
 import { StaggerItem } from "@/components/ui/StaggerItem";
+import { buildWhatsAppLink, VITA_BABY_WHATSAPP } from "@/utils/whatsapp";
 
 export type ServiceWithPackages = Prisma.ServiceGetPayload<{
   include: { packages: true };
@@ -209,17 +209,22 @@ export function Services({ initialServices }: ServicesProps) {
                 {service.description}
               </p>
 
-              <div className="w-full pt-[1.25rem] border-t border-[#e4e2de] flex items-center justify-between mt-auto">
+              <div className="w-full pt-[1.25rem] border-t border-[#e4e2de] flex items-center justify-between mt-auto gap-2">
                 <span className="text-[#af4d30] font-bold text-[0.9375rem]">
                   {service.price}
                 </span>
-                <Link
-                  href={`/agendamento?servico=${encodeURIComponent(service.title)}`}
-                  className="text-[0.8125rem] font-semibold text-[#411f03] hover:text-[#af4d30] flex items-center gap-1 transition-colors group"
+                <a
+                  href={buildWhatsAppLink(
+                    VITA_BABY_WHATSAPP,
+                    `Olá! Gostaria de saber mais sobre o serviço "${service.title}" da Vita Baby.`,
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[0.8125rem] font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200/60 px-3 py-1.5 rounded-full transition-all group"
                 >
-                  Agendar{" "}
-                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                </Link>
+                  <MessageCircle className="w-3.5 h-3.5 text-emerald-600 group-hover:scale-110 transition-transform" />
+                  <span>Saber mais</span>
+                </a>
               </div>
             </StaggerItem>
           ))}

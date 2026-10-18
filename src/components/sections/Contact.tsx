@@ -6,6 +6,7 @@ import { submitContactForm } from "@/app/actions/contact";
 import { Button } from "@/components/ui/button";
 import { StaggerContainer } from "@/components/ui/StaggerContainer";
 import { StaggerItem } from "@/components/ui/StaggerItem";
+import { buildWhatsAppLink, VITA_BABY_WHATSAPP } from "@/utils/whatsapp";
 
 export function Contact() {
   const [state, formAction, pending] = useActionState(submitContactForm, null);
@@ -38,23 +39,36 @@ export function Contact() {
             </div>
 
             <div className="flex flex-col gap-[1.5rem] w-full mt-[1rem]">
-              <StaggerItem className="flex items-start gap-[1.5rem]">
-                <div className="w-[3rem] h-[3rem] rounded-full bg-[#fbf9f5] flex items-center justify-center shrink-0 border border-[#e4e2de]">
-                  <Image
-                    src="/assets/9e1bfaf7fa976bd77bf774edd751cdee7ee3a0d1.svg"
-                    alt="WhatsApp"
-                    width={20}
-                    height={20}
-                  />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[1.25rem] font-semibold text-[#411f03]">
-                    WhatsApp
-                  </span>
-                  <span className="text-[#444840] text-[0.9375rem]">
-                    (22) 99772-8581
-                  </span>
-                </div>
+              <StaggerItem>
+                <a
+                  href={buildWhatsAppLink(
+                    VITA_BABY_WHATSAPP,
+                    "Olá! Gostaria de conversar com a equipe da Vita Baby.",
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-[1.5rem] group hover:opacity-95 transition-opacity"
+                >
+                  <div className="w-[3rem] h-[3rem] rounded-full bg-[#fbf9f5] group-hover:bg-[#25D366]/10 flex items-center justify-center shrink-0 border border-[#e4e2de] group-hover:border-[#25D366]/30 transition-colors">
+                    <Image
+                      src="/assets/9e1bfaf7fa976bd77bf774edd751cdee7ee3a0d1.svg"
+                      alt="WhatsApp"
+                      width={20}
+                      height={20}
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[1.25rem] font-semibold text-[#411f03] group-hover:text-[#af4d30] transition-colors flex items-center gap-2">
+                      WhatsApp{" "}
+                      <span className="text-xs text-emerald-600 font-medium">
+                        (Falar agora)
+                      </span>
+                    </span>
+                    <span className="text-[#444840] text-[0.9375rem]">
+                      (22) 99772-8581
+                    </span>
+                  </div>
+                </a>
               </StaggerItem>
 
               <StaggerItem className="flex items-start gap-[1.5rem]">

@@ -32,7 +32,7 @@ export function BackToTop() {
   return (
     <Button
       onClick={scrollToTop}
-      className="fixed bottom-[2rem] right-[2rem] z-50 w-[3.5rem] h-[3.5rem] rounded-full bg-[#af4d30] hover:bg-[#af4d30]/90 text-white shadow-xl flex items-center justify-center p-0 transition-all duration-300 animate-in fade-in zoom-in"
+      className="fixed bottom-[6.5rem] right-[1.5rem] sm:right-[2rem] z-50 w-[3rem] h-[3rem] sm:w-[3.5rem] sm:h-[3.5rem] rounded-full bg-[#af4d30] hover:bg-[#af4d30]/90 text-white shadow-xl flex items-center justify-center p-0 transition-all duration-300 animate-in fade-in zoom-in"
       aria-label="Voltar ao topo"
     >
       <ArrowUp className="w-6 h-6" />
