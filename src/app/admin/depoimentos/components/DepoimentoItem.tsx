@@ -7,6 +7,7 @@ import { Star, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { deleteReview, toggleHighlight } from "../actions";
+import { EditReviewModal } from "./EditReviewModal";
 import { ShareStoryModal } from "./ShareStoryModal";
 
 export function DepoimentoItem({
@@ -91,6 +92,7 @@ export function DepoimentoItem({
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2">
+          <EditReviewModal review={review} />
           <ShareStoryModal review={review} />
 
           <button
