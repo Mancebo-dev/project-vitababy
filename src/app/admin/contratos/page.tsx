@@ -7,6 +7,7 @@ import {
 import type { Metadata } from "next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { prisma } from "@/infrastructure/db/prisma";
+import { buildWhatsAppLink } from "@/utils/whatsapp";
 import {
   getContracts,
   getContractTemplates,
@@ -14,7 +15,9 @@ import {
 } from "./actions";
 import { CopyLinkButton } from "./components/CopyLinkButton";
 import { CreateContractModal } from "./components/CreateContractModal";
+import { DeleteContractButton } from "./components/DeleteContractButton";
 import { EditContractModal } from "./components/EditContractModal";
+import { ExportContractsModal } from "./components/ExportContractsModal";
 import { PDFPreviewModal } from "./components/PDFPreviewModal";
 import {
   CreateTemplateModal,
@@ -60,7 +63,8 @@ export default async function ContratosPage() {
         </TabsList>
 
         <TabsContent value="emitidos" className="space-y-4">
-          <div className="flex justify-end mb-4">
+          <div className="flex flex-wrap items-center justify-end gap-2.5 mb-4">
+            <ExportContractsModal contracts={contracts} />
             <CreateContractModal
               pendingBookings={pendingBookings}
               templates={templates}
@@ -87,13 +91,14 @@ export default async function ContratosPage() {
                     contract.client ||
                     contract.booking?.client ||
                     contract.schedule?.client;
-                  const cleanPhone = client?.phone?.replace(/\D/g, "");
                   const appUrl =
                     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
                   const contractUrl = `${appUrl}/contrato/${contract.id}`;
-                  const whatsappUrl = cleanPhone
-                    ? `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(`Olá, ${client?.name}! Segue o link para visualização e assinatura digital do seu contrato Vita Baby: ${contractUrl}`)}`
-                    : null;
+                  const whatsappMessage = `Olá, ${client?.name || "Cliente"}! Segue o link para visualização e assinatura digital do seu contrato Vita Baby: ${contractUrl}`;
+                  const whatsappUrl = buildWhatsAppLink(
+                    client?.phone,
+                    whatsappMessage,
+                  );
 
                   return (
                     <div
@@ -216,6 +221,8 @@ export default async function ContratosPage() {
                           contractId={contract.id}
                           title={`Contrato Cliente`}
                         />
+
+                        <DeleteContractButton contractId={contract.id} />
                       </div>
                     </div>
                   );
