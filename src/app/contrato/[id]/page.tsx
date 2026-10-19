@@ -1,15 +1,18 @@
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
+import {
+  type ContractData,
+  PDFWrapper,
+} from "@/components/contracts/PDFWrapper";
 import { auth } from "@/infrastructure/auth/auth";
 import { prisma } from "@/infrastructure/db/prisma";
-import { type ContractData, PDFWrapper } from "./PDFWrapper";
 
 export default async function ContratoPage({
   params,
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ token?: string }>;
+  searchParams?: Promise<{ token?: string; preview?: string }>;
 }) {
   const { id } = await params;
   const query = searchParams ? await searchParams : undefined;
@@ -19,22 +22,28 @@ export default async function ContratoPage({
   }
 
   const headersList = await headers();
-  const session = await auth.api.getSession({ headers: headersList });
+  const session = await auth.api
+    .getSession({ headers: headersList })
+    .catch(() => null);
 
-  if (!session?.user) {
-    redirect(`/portal/login?callbackUrl=/contrato/${id}`);
-  }
+  const user = session?.user?.id
+    ? await prisma.user
+        .findUnique({
+          where: { id: session.user.id },
+          include: { clientProfile: true },
+        })
+        .catch(() => null)
+    : null;
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-  });
+  const isAdmin = user?.role === "admin";
+  const isPreview = query?.preview === "1";
 
-  // Try to find an actual signed contract
+  // Busca contrato emitido
   const contract = await prisma.contract.findUnique({
     where: { id },
     include: {
       client: true,
-      schedule: true,
+      schedule: { include: { client: true } },
       booking: {
         include: {
           client: true,
@@ -46,23 +55,7 @@ export default async function ContratoPage({
     },
   });
 
-  if (contract) {
-    if (
-      user?.role !== "admin" &&
-      contract.booking?.client?.userId !== user?.id &&
-      contract.client?.userId !== user?.id
-    ) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-[#fbf9f5]">
-          <h1 className="text-xl font-bold text-[#af4d30]">
-            Acesso negado. Este contrato pertence a outro cliente.
-          </h1>
-        </div>
-      );
-    }
-  }
-
-  // Basic placeholders for template previews
+  // Basic placeholders para templates ou contratos
   const viewData: ContractData = {
     contractNumber: "[NÚMERO DO CONTRATO]",
     date: "[DATA DE GERAÇÃO]",
@@ -82,14 +75,43 @@ export default async function ContratoPage({
   let isTemplate = false;
 
   if (contract) {
+    // Se o contrato AINDA NÃO foi assinado pelo cliente:
+    if (!contract.signedByClient) {
+      // Se não for admin e não for preview explícito do admin,
+      // redireciona para a página de assinatura direta sem login (/assinar/[token])
+      if (!isAdmin && !isPreview) {
+        let token = contract.signToken;
+        const isExpired =
+          contract.signTokenExpiresAt &&
+          contract.signTokenExpiresAt < new Date();
+
+        if (!token || isExpired) {
+          const crypto = await import("node:crypto");
+          token = crypto.randomBytes(16).toString("hex");
+          const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1h
+
+          await prisma.contract.update({
+            where: { id: contract.id },
+            data: {
+              signToken: token,
+              signTokenExpiresAt: expiresAt,
+            },
+          });
+        }
+
+        redirect(`/assinar/${token}`);
+      }
+    }
+
     viewData.contractId = contract.id;
+    viewData.signToken = contract.signToken || undefined;
     viewData.isSigned = contract.signedByClient;
     viewData.signedAt = contract.signedAt;
     viewData.clientIp = contract.clientIp;
     viewData.signedByProf = contract.signedByProf;
     viewData.signedByProfAt = contract.signedByProfAt;
     viewData.pdfUrl = contract.pdfUrl;
-    viewData.isAdmin = user?.role === "admin";
+    viewData.isAdmin = isAdmin;
 
     viewData.totalValue = contract.totalValue;
     viewData.monthlyValue = contract.monthlyValue;
@@ -101,7 +123,8 @@ export default async function ContratoPage({
     viewData.contractNumber = contract.id.slice(-6).toUpperCase();
     viewData.date = contract.createdAt.toLocaleDateString("pt-BR");
 
-    const client = contract.client || contract.booking?.client;
+    const client =
+      contract.client || contract.booking?.client || contract.schedule?.client;
     if (client) {
       viewData.clientName = client.name;
       viewData.clientEmail = client.email || "";
@@ -113,7 +136,7 @@ export default async function ContratoPage({
 
     viewData.imageUsageAccepted = contract.imageUsageAccepted;
 
-    // Service Name: prioritize explicitly saved contract.serviceName
+    // Service Name
     if (contract.serviceName !== null && contract.serviceName !== undefined) {
       viewData.serviceName = contract.serviceName;
     } else if (contract.booking) {
@@ -126,7 +149,7 @@ export default async function ContratoPage({
       viewData.serviceName = "";
     }
 
-    // Service Details: prioritize explicitly saved contract.serviceDetails
+    // Service Details
     if (
       contract.serviceDetails !== null &&
       contract.serviceDetails !== undefined
@@ -146,7 +169,6 @@ export default async function ContratoPage({
     }
 
     if (contract.booking) {
-      // Calculate Total Value if not set explicitly on contract
       const basePrice =
         contract.booking.packages?.reduce(
           (acc, p) => acc + (p.price || 0),
@@ -169,13 +191,14 @@ export default async function ContratoPage({
       }
     }
   } else {
-    // If not found, check if it's a template preview
+    // Se não for contrato emitido, verifica se é pré-visualização de modelo (template)
     const template = await prisma.contractTemplate.findUnique({
       where: { id },
     });
     if (template) {
       isTemplate = true;
       viewData.content = template.content;
+      viewData.isAdmin = isAdmin;
     } else {
       notFound();
     }

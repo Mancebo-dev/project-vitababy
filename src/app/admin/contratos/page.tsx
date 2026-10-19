@@ -94,7 +94,7 @@ export default async function ContratosPage() {
                   const appUrl =
                     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
                   const contractUrl = `${appUrl}/contrato/${contract.id}`;
-                  const whatsappMessage = `Olá, ${client?.name || "Cliente"}! Segue o link para visualização e assinatura digital do seu contrato Vita Baby: ${contractUrl}`;
+                  const whatsappMessage = `Olá, ${client?.name || "Cliente"}! Segue o link para visualização do seu contrato Vita Baby assinado: ${contractUrl}`;
                   const whatsappUrl = buildWhatsAppLink(
                     client?.phone,
                     whatsappMessage,

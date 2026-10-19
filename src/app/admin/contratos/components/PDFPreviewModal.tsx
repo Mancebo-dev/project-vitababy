@@ -42,7 +42,7 @@ export function PDFPreviewModal({
           <div className="flex-1 w-full bg-slate-200/70 overflow-hidden">
             {open && (
               <iframe
-                src={`/contrato/${contractId}`}
+                src={`/contrato/${contractId}?preview=1`}
                 className="w-full h-full border-0"
                 title={`Contrato ${title}`}
               />

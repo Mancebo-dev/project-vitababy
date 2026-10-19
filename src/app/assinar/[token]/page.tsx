@@ -7,7 +7,10 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { type ContractData, PDFWrapper } from "@/app/contrato/[id]/PDFWrapper";
+import {
+  type ContractData,
+  PDFWrapper,
+} from "@/components/contracts/PDFWrapper";
 import { prisma } from "@/infrastructure/db/prisma";
 import { buildWhatsAppLink } from "@/utils/whatsapp";
 
