@@ -325,3 +325,38 @@ export async function getContracts() {
     orderBy: { createdAt: "desc" },
   });
 }
+
+export async function generateSignLink(contractId: string) {
+  const contract = await prisma.contract.findUnique({
+    where: { id: contractId },
+    select: {
+      id: true,
+      signedByClient: true,
+      signToken: true,
+      signTokenExpiresAt: true,
+    },
+  });
+
+  if (!contract) {
+    throw new Error("Contrato não encontrado.");
+  }
+
+  if (contract.signedByClient) {
+    throw new Error("Este contrato já foi assinado pelo cliente.");
+  }
+
+  const crypto = await import("node:crypto");
+  const token = crypto.randomBytes(16).toString("hex");
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hora de validade
+
+  await prisma.contract.update({
+    where: { id: contractId },
+    data: {
+      signToken: token,
+      signTokenExpiresAt: expiresAt,
+    },
+  });
+
+  revalidatePath("/admin/contratos");
+  return { success: true, token, expiresAt };
+}

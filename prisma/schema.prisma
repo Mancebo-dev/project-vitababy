@@ -237,9 +237,11 @@ model Contract {
   imageUsageAccepted  Boolean?
 
   // New signature fields
-  pdfUrl   String?   @db.LongText
-  clientIp String?
-  signedAt DateTime?
+  pdfUrl             String?   @db.LongText
+  clientIp           String?
+  signedAt           DateTime?
+  signToken          String?   @unique
+  signTokenExpiresAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -199,7 +199,7 @@ export default async function ContratosPage() {
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2">
-                        {whatsappUrl && (
+                        {contract.signedByClient && whatsappUrl && (
                           <a
                             href={whatsappUrl}
                             target="_blank"
@@ -215,7 +215,12 @@ export default async function ContratosPage() {
                           <EditContractModal contract={contract} />
                         )}
 
-                        <CopyLinkButton contractId={contract.id} />
+                        <CopyLinkButton
+                          contractId={contract.id}
+                          isSigned={contract.signedByClient}
+                          clientPhone={client?.phone}
+                          clientName={client?.name}
+                        />
 
                         <PDFPreviewModal
                           contractId={contract.id}

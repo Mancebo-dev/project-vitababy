@@ -10,10 +10,15 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import { buildWhatsAppLink } from "@/utils/whatsapp";
-import { signContractAction, signContractByProfAction } from "../actions";
+import {
+  signContractAction,
+  signContractByProfAction,
+  signContractWithTokenAction,
+} from "../actions";
 
 export type ContractData = {
   contractId?: string;
+  signToken?: string;
   contractNumber: string;
   date: string;
   content: string;
@@ -84,7 +89,7 @@ export function PDFWrapper({ data }: { data: ContractData }) {
   };
 
   const handleSignClient = async () => {
-    if (!data.contractId) return;
+    if (!data.contractId && !data.signToken) return;
     const consentText = imageUsageAccepted
       ? "com USO DE IMAGEM AUTORIZADO"
       : "com USO DE IMAGEM NÃO AUTORIZADO";
@@ -95,7 +100,11 @@ export function PDFWrapper({ data }: { data: ContractData }) {
 
     setIsSigningClient(true);
     try {
-      await signContractAction(data.contractId, imageUsageAccepted);
+      if (data.signToken) {
+        await signContractWithTokenAction(data.signToken, imageUsageAccepted);
+      } else if (data.contractId) {
+        await signContractAction(data.contractId, imageUsageAccepted);
+      }
       setSuccessMessage("Contrato assinado digitalmente com sucesso!");
       setTimeout(() => {
         window.location.reload();
@@ -131,7 +140,9 @@ export function PDFWrapper({ data }: { data: ContractData }) {
 
   const contractUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/contrato/${data.contractId}`
+      ? data.signToken
+        ? `${window.location.origin}/assinar/${data.signToken}`
+        : `${window.location.origin}/contrato/${data.contractId}`
       : "";
 
   const whatsappMessage = `Olá, ${data.clientName}! Segue o link para visualização e assinatura digital do seu contrato com a Vita Baby Assessoria:\n\n${contractUrl}\n\nQualquer dúvida, estamos à disposição!`;
@@ -214,7 +225,7 @@ export function PDFWrapper({ data }: { data: ContractData }) {
             )}
 
             {/* Assinar Digitalmente pelo Cliente */}
-            {!data.isSigned && data.contractId && (
+            {!data.isSigned && (data.contractId || data.signToken) && (
               <button
                 type="button"
                 onClick={handleSignClient}
@@ -484,7 +495,7 @@ export function PDFWrapper({ data }: { data: ContractData }) {
                   </span>
                 )}
               </div>
-            ) : data.contractId ? (
+            ) : data.contractId || data.signToken ? (
               <div className="mb-8 p-4 bg-amber-50/70 border border-amber-200 rounded-lg text-xs print:hidden">
                 <p className="font-bold text-amber-900 mb-1">
                   Autorização de Uso de Imagem e Voz
@@ -494,7 +505,7 @@ export function PDFWrapper({ data }: { data: ContractData }) {
                   atendimentos para fins de divulgação e portfólio em materiais
                   institucionais e redes sociais?
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 mb-4">
                   <label className="inline-flex items-center gap-2 cursor-pointer font-medium text-slate-800">
                     <input
                       type="radio"
@@ -516,6 +527,21 @@ export function PDFWrapper({ data }: { data: ContractData }) {
                     Não autorizo o uso de imagem
                   </label>
                 </div>
+                {!data.isSigned && (
+                  <div className="pt-3 border-t border-amber-200/70 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={handleSignClient}
+                      disabled={isSigningClient}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#af4d30] hover:bg-[#af4d30]/90 text-white rounded-lg shadow-sm transition-all text-xs font-bold disabled:opacity-50"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      {isSigningClient
+                        ? "Processando Assinatura..."
+                        : "Confirmar e Assinar Contrato"}
+                    </button>
+                  </div>
+                )}
               </div>
             ) : null}
 

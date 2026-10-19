@@ -3,7 +3,7 @@
 import type { Client } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -63,7 +63,28 @@ export function ClientModal({
     city: client?.city || "",
     state: client?.state || "",
     complement: client?.complement || "",
+    password: "",
   });
+
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        name: client?.name || "",
+        childName: client?.childName || "",
+        email: client?.email || "",
+        phone: client?.phone || "",
+        cpf: client?.cpf || "",
+        zipCode: client?.zipCode || "",
+        street: client?.street || "",
+        number: client?.number || "",
+        neighborhood: client?.neighborhood || "",
+        city: client?.city || "",
+        state: client?.state || "",
+        complement: client?.complement || "",
+        password: "",
+      });
+    }
+  }, [open, client]);
 
   const handleZipCodeChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -102,7 +123,9 @@ export function ClientModal({
       setOpen(false);
     } catch (error) {
       console.error(error);
-      alert("Erro ao salvar o cliente.");
+      alert(
+        error instanceof Error ? error.message : "Erro ao salvar o cliente.",
+      );
     } finally {
       setLoading(false);
     }
@@ -171,6 +194,31 @@ export function ClientModal({
                   setFormData({ ...formData, cpf: e.target.value })
                 }
               />
+            </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="password">
+                {client
+                  ? "Alterar Senha do Portal (opcional)"
+                  : "Senha de Acesso ao Portal (opcional)"}
+              </Label>
+              <Input
+                id="password"
+                type="text"
+                placeholder={
+                  client
+                    ? "Digite uma nova senha (ou deixe em branco para manter)"
+                    : "Padrão: CPF (apenas números) ou 'clientevitababy'"
+                }
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+              />
+              <p className="text-[11px] text-slate-500">
+                {client
+                  ? "Caso queira definir uma nova senha para a cliente acessar o portal, digite-a acima. A senha padrão do sistema é 'clientevitababy'."
+                  : "Caso não informada, a senha de primeiro acesso será os números do CPF ou 'clientevitababy'."}
+              </p>
             </div>
           </div>
 

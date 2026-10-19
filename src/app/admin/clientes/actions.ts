@@ -1,89 +1,346 @@
 "use server";
 
-import type { Prisma } from "@prisma/client";
+import crypto from "node:crypto";
+import { hashPassword } from "better-auth/crypto";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/infrastructure/auth/auth";
 import { prisma } from "@/infrastructure/db/prisma";
 
-export async function createClient(data: Prisma.ClientUncheckedCreateInput) {
+export type ClientFormData = {
+  name: string;
+  phone: string;
+  email?: string | null;
+  cpf?: string | null;
+  childName?: string | null;
+  zipCode?: string | null;
+  street?: string | null;
+  number?: string | null;
+  neighborhood?: string | null;
+  city?: string | null;
+  state?: string | null;
+  complement?: string | null;
+  address?: string | null;
+  password?: string | null;
+};
+
+function sanitizeString(val?: string | null): string | null {
+  if (!val) return null;
+  const trimmed = val.trim();
+  return trimmed === "" ? null : trimmed;
+}
+
+function normalizeEmail(email?: string | null): string | null {
+  const sanitized = sanitizeString(email);
+  if (!sanitized) return null;
+  return sanitized
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+export async function createClient(data: ClientFormData) {
+  const name = data.name?.trim();
+  if (!name) throw new Error("Nome é obrigatório.");
+  const phone = data.phone?.trim();
+  if (!phone) throw new Error("Telefone é obrigatório.");
+
+  const email = normalizeEmail(data.email);
+  const cpf = sanitizeString(data.cpf);
+  const childName = sanitizeString(data.childName);
+  const zipCode = sanitizeString(data.zipCode);
+  const street = sanitizeString(data.street);
+  const number = sanitizeString(data.number);
+  const neighborhood = sanitizeString(data.neighborhood);
+  const city = sanitizeString(data.city);
+  const state = sanitizeString(data.state)?.toUpperCase() || null;
+  const complement = sanitizeString(data.complement);
+  const address = sanitizeString(data.address);
+  const password = sanitizeString(data.password);
+
+  // Validação de unicidade
+  if (email) {
+    const existingEmail = await prisma.client.findFirst({
+      where: { email },
+    });
+    if (existingEmail) {
+      throw new Error(`Já existe um cliente cadastrado com o e-mail: ${email}`);
+    }
+  }
+
+  if (cpf) {
+    const existingCpf = await prisma.client.findFirst({
+      where: { cpf },
+    });
+    if (existingCpf) {
+      throw new Error(`Já existe um cliente cadastrado com o CPF: ${cpf}`);
+    }
+  }
+
   const client = await prisma.client.create({
-    data,
+    data: {
+      name,
+      phone,
+      email,
+      cpf,
+      childName,
+      zipCode,
+      street,
+      number,
+      neighborhood,
+      city,
+      state,
+      complement,
+      address,
+    },
   });
 
-  if (client.email && client.cpf && !client.userId) {
+  if (email) {
     try {
-      let password = client.cpf.replace(/\D/g, "");
-      if (password.length < 8) {
-        password = password.padEnd(8, "0");
+      let targetPassword = password;
+      if (!targetPassword) {
+        const cleanCpf = cpf ? cpf.replace(/\D/g, "") : "";
+        const isDummyCpf = !cleanCpf || cleanCpf.replace(/0/g, "") === "";
+        if (cleanCpf.length >= 8 && !isDummyCpf) {
+          targetPassword = cleanCpf;
+        } else {
+          targetPassword = "clientevitababy";
+        }
       }
 
-      const res = await auth.api.signUpEmail({
-        body: {
-          email: client.email,
-          password: password,
-          name: client.name,
-        },
-      });
+      const hashedPassword = await hashPassword(targetPassword);
 
-      if (res?.user?.id) {
-        await prisma.client.update({
-          where: { id: client.id },
-          data: { userId: res.user.id },
+      let user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        const userId = crypto.randomUUID();
+        user = await prisma.user.create({
+          data: {
+            id: userId,
+            name,
+            email,
+            emailVerified: true,
+            role: "client",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
         });
+
+        await prisma.account.create({
+          data: {
+            id: crypto.randomUUID(),
+            accountId: userId,
+            providerId: "credential",
+            userId: userId,
+            password: hashedPassword,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
+      } else {
         await prisma.user.update({
-          where: { id: res.user.id },
+          where: { id: user.id },
           data: { role: "client" },
         });
+
+        const acc = await prisma.account.findFirst({
+          where: { userId: user.id, providerId: "credential" },
+        });
+        if (acc && password) {
+          await prisma.account.update({
+            where: { id: acc.id },
+            data: { password: hashedPassword, updatedAt: new Date() },
+          });
+        } else if (!acc) {
+          await prisma.account.create({
+            data: {
+              id: crypto.randomUUID(),
+              accountId: user.id,
+              providerId: "credential",
+              userId: user.id,
+              password: hashedPassword,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            },
+          });
+        }
       }
+
+      await prisma.client.update({
+        where: { id: client.id },
+        data: { userId: user.id },
+      });
     } catch (error) {
       console.error("Error creating user account for client:", error);
     }
   }
 
   revalidatePath("/admin/clientes");
+  return client;
 }
 
-export async function updateClient(
-  id: string,
-  data: Prisma.ClientUncheckedUpdateInput,
-) {
+export async function updateClient(id: string, data: ClientFormData) {
+  const name = data.name?.trim();
+  if (!name) throw new Error("Nome é obrigatório.");
+  const phone = data.phone?.trim();
+  if (!phone) throw new Error("Telefone é obrigatório.");
+
+  const email = normalizeEmail(data.email);
+  const cpf = sanitizeString(data.cpf);
+  const childName = sanitizeString(data.childName);
+  const zipCode = sanitizeString(data.zipCode);
+  const street = sanitizeString(data.street);
+  const number = sanitizeString(data.number);
+  const neighborhood = sanitizeString(data.neighborhood);
+  const city = sanitizeString(data.city);
+  const state = sanitizeString(data.state)?.toUpperCase() || null;
+  const complement = sanitizeString(data.complement);
+  const address = sanitizeString(data.address);
+  const password = sanitizeString(data.password);
+
+  // Validação de unicidade contra outros clientes
+  if (email) {
+    const existingEmail = await prisma.client.findFirst({
+      where: { email, id: { not: id } },
+    });
+    if (existingEmail) {
+      throw new Error(
+        `Já existe outro cliente cadastrado com o e-mail: ${email}`,
+      );
+    }
+  }
+
+  if (cpf) {
+    const existingCpf = await prisma.client.findFirst({
+      where: { cpf, id: { not: id } },
+    });
+    if (existingCpf) {
+      throw new Error(`Já existe outro cliente cadastrado com o CPF: ${cpf}`);
+    }
+  }
+
   const client = await prisma.client.update({
     where: { id },
-    data,
+    data: {
+      name,
+      phone,
+      email,
+      cpf,
+      childName,
+      zipCode,
+      street,
+      number,
+      neighborhood,
+      city,
+      state,
+      complement,
+      address,
+    },
   });
 
-  if (client.email && client.cpf && !client.userId) {
+  if (client.userId) {
+    // Sincroniza usuário e senha
+    await prisma.user.update({
+      where: { id: client.userId },
+      data: {
+        name,
+        ...(email ? { email } : {}),
+        role: "client",
+      },
+    });
+
+    if (password) {
+      const hashedPassword = await hashPassword(password);
+      const acc = await prisma.account.findFirst({
+        where: { userId: client.userId, providerId: "credential" },
+      });
+      if (acc) {
+        await prisma.account.update({
+          where: { id: acc.id },
+          data: { password: hashedPassword, updatedAt: new Date() },
+        });
+      } else {
+        await prisma.account.create({
+          data: {
+            id: crypto.randomUUID(),
+            accountId: client.userId,
+            providerId: "credential",
+            userId: client.userId,
+            password: hashedPassword,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
+      }
+    }
+  } else if (email) {
+    // Cliente não tinha usuário, cria com a senha informada ou padrão
     try {
-      let password = client.cpf.replace(/\D/g, "");
-      if (password.length < 8) {
-        password = password.padEnd(8, "0");
+      let targetPassword = password;
+      if (!targetPassword) {
+        const cleanCpf = cpf ? cpf.replace(/\D/g, "") : "";
+        const isDummyCpf = !cleanCpf || cleanCpf.replace(/0/g, "") === "";
+        if (cleanCpf.length >= 8 && !isDummyCpf) {
+          targetPassword = cleanCpf;
+        } else {
+          targetPassword = "clientevitababy";
+        }
       }
 
-      const res = await auth.api.signUpEmail({
-        body: {
-          email: client.email,
-          password: password,
-          name: client.name,
-        },
-      });
-
-      if (res?.user?.id) {
-        await prisma.client.update({
-          where: { id: client.id },
-          data: { userId: res.user.id },
+      const hashedPassword = await hashPassword(targetPassword);
+      let user = await prisma.user.findUnique({ where: { email } });
+      if (!user) {
+        const userId = crypto.randomUUID();
+        user = await prisma.user.create({
+          data: {
+            id: userId,
+            name,
+            email,
+            emailVerified: true,
+            role: "client",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
         });
+
+        await prisma.account.create({
+          data: {
+            id: crypto.randomUUID(),
+            accountId: userId,
+            providerId: "credential",
+            userId: userId,
+            password: hashedPassword,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
+      } else {
         await prisma.user.update({
-          where: { id: res.user.id },
+          where: { id: user.id },
           data: { role: "client" },
         });
+        if (password) {
+          const acc = await prisma.account.findFirst({
+            where: { userId: user.id, providerId: "credential" },
+          });
+          if (acc) {
+            await prisma.account.update({
+              where: { id: acc.id },
+              data: { password: hashedPassword, updatedAt: new Date() },
+            });
+          }
+        }
       }
+
+      await prisma.client.update({
+        where: { id: client.id },
+        data: { userId: user.id },
+      });
     } catch (error) {
-      console.error("Error creating user account during client update:", error);
+      console.error("Error creating/linking user during client update:", error);
     }
   }
 
   revalidatePath("/admin/clientes");
   revalidatePath(`/admin/clientes/${id}`);
+  return client;
 }
 
 export async function deleteClient(id: string) {

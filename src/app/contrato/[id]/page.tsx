@@ -6,10 +6,17 @@ import { type ContractData, PDFWrapper } from "./PDFWrapper";
 
 export default async function ContratoPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ token?: string }>;
 }) {
   const { id } = await params;
+  const query = searchParams ? await searchParams : undefined;
+
+  if (query?.token) {
+    redirect(`/assinar/${query.token}`);
+  }
 
   const headersList = await headers();
   const session = await auth.api.getSession({ headers: headersList });
