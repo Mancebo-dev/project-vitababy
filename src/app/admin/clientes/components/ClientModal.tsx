@@ -36,7 +36,11 @@ export function ClientModal({
       setLoading(true);
       try {
         if (!client) return;
-        await deleteClient(client.id);
+        const res = await deleteClient(client.id);
+        if (!res.success) {
+          alert(res.error || "Erro ao excluir o cliente.");
+          return;
+        }
         setOpen(false);
         router.push("/admin/clientes");
       } catch (err) {
@@ -115,10 +119,15 @@ export function ClientModal({
     e.preventDefault();
     setLoading(true);
     try {
+      let res: { success: boolean; error?: string };
       if (client?.id) {
-        await updateClient(client.id, formData);
+        res = await updateClient(client.id, formData);
       } else {
-        await createClient(formData);
+        res = await createClient(formData);
+      }
+      if (!res.success) {
+        alert(res.error || "Erro ao salvar o cliente.");
+        return;
       }
       setOpen(false);
     } catch (error) {

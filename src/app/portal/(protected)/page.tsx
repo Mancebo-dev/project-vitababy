@@ -27,8 +27,20 @@ export default async function PortalDashboard() {
 
   if (!client) {
     return (
-      <div className="p-4">
-        <h1>Perfil de cliente não encontrado.</h1>
+      <div className="bg-white rounded-2xl p-8 border border-[#e4e2de] text-center max-w-lg mx-auto mt-8 space-y-4">
+        <h2 className="text-xl font-bold font-heading text-[#411f03]">
+          Perfil de Cliente não vinculado
+        </h2>
+        <p className="text-[#444840] text-sm">
+          Sua conta atual não possui uma ficha de cliente associada. Se você é
+          administrador, acesse o painel principal.
+        </p>
+        <a
+          href="/admin"
+          className="inline-block px-5 py-2.5 bg-[#af4d30] hover:bg-[#af4d30]/90 text-white rounded-xl font-semibold text-sm transition-all shadow-sm"
+        >
+          Ir para Painel Administrativo
+        </a>
       </div>
     );
   }

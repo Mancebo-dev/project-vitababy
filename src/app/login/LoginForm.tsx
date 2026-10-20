@@ -1,12 +1,14 @@
 "use client";
 
 import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { signIn } from "@/infrastructure/auth/client";
+import { signIn, signOut, useSession } from "@/infrastructure/auth/client";
 
 export function LoginForm() {
   const _router = useRouter();
+  const { data: sessionData } = useSession();
 
   // Login States
   const [email, setEmail] = useState("");
@@ -22,14 +24,24 @@ export function LoginForm() {
     setLoading(true);
 
     try {
+      const cleanEmail = email.trim().toLowerCase();
+      const rawPassword = password.trim();
+
       const result = await signIn.email({
-        email,
-        password,
+        email: cleanEmail,
+        password: rawPassword,
       });
 
       if (result.error) {
         setError(result.error.message || "E-mail ou senha incorretos.");
         setLoading(false);
+        return;
+      }
+
+      const role = (result.data?.user as { role?: string } | undefined)?.role;
+      if (role && role !== "admin") {
+        // Redireciona clientes para a área do cliente
+        window.location.href = "/portal";
         return;
       }
 
@@ -40,8 +52,12 @@ export function LoginForm() {
     }
   };
 
+  const currentUser = sessionData?.user as
+    | { email?: string; role?: string; name?: string }
+    | undefined;
+
   return (
-    <div className="w-full max-w-[400px] bg-white border border-[#e4e2de] rounded-2xl p-[2rem] shadow-sm">
+    <div className="w-full max-w-[420px] bg-white border border-[#e4e2de] rounded-2xl p-[2rem] shadow-sm">
       <div className="mb-[2rem] text-center">
         <h1 className="font-heading font-bold text-[1.75rem] text-[#411f03] mb-[0.25rem]">
           Área Administrativa
@@ -50,6 +66,62 @@ export function LoginForm() {
           Acesse o painel de controle da Vitababy
         </p>
       </div>
+
+      {currentUser && (
+        <div className="mb-[1.5rem] p-[1rem] bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-[0.875rem] space-y-2">
+          {currentUser.role === "admin" ? (
+            <>
+              <p>
+                Você já está conectado como <strong>Administrador</strong> (
+                {currentUser.email}).
+              </p>
+              <div className="flex items-center gap-3 pt-1">
+                <Link
+                  href="/admin"
+                  className="font-semibold text-[#af4d30] underline hover:opacity-80"
+                >
+                  Acessar Painel Admin
+                </Link>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await signOut();
+                    window.location.reload();
+                  }}
+                  className="text-xs text-stone-600 hover:text-stone-900 underline"
+                >
+                  Sair da conta
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p>
+                Você está conectado como <strong>Cliente</strong> (
+                {currentUser.name || currentUser.email}).
+              </p>
+              <div className="flex items-center gap-3 pt-1">
+                <Link
+                  href="/portal"
+                  className="font-semibold text-[#af4d30] underline hover:opacity-80"
+                >
+                  Ir para Área do Cliente
+                </Link>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await signOut();
+                    window.location.reload();
+                  }}
+                  className="text-xs text-stone-600 hover:text-stone-900 underline"
+                >
+                  Sair para Entrar como Admin
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {error && (
         <div className="mb-[1.5rem] p-[1rem] bg-[#fdf2f0] border border-[#f5c6cb] rounded-xl flex items-start gap-[0.75rem] text-[#af4d30] text-[0.875rem]">
@@ -117,7 +189,11 @@ export function LoginForm() {
           disabled={loading}
           className="mt-[0.5rem] w-full rounded-xl h-[3.25rem] bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold flex items-center justify-center transition-all disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Entrar"}
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            "Entrar no Painel Admin"
+          )}
         </button>
       </form>
     </div>
