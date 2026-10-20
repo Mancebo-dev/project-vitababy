@@ -114,7 +114,9 @@ export default async function ContratosPage() {
                     contract.booking?.client ||
                     contract.schedule?.client;
                   const appUrl =
-                    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+                    process.env.NEXT_PUBLIC_APP_URL ||
+                    process.env.BETTER_AUTH_URL ||
+                    "https://vitababy.com.br";
                   const contractUrl = `${appUrl}/contrato/${contract.id}`;
                   const whatsappMessage = `Olá, ${client?.name || "Cliente"}! Segue o link para visualização do seu contrato Vita Baby assinado: ${contractUrl}`;
                   const whatsappUrl = buildWhatsAppLink(
