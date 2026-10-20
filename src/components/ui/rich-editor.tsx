@@ -12,7 +12,7 @@ import {
   ListOrdered,
   Strikethrough,
 } from "lucide-react";
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useState } from "react";
 
 const MenuBar = ({
   editor,
@@ -137,14 +137,15 @@ const MenuBar = ({
   );
 };
 
-export const RichEditor = forwardRef<
-  HTMLDivElement,
-  {
-    value: string;
-    onChange: (val: string) => void;
-    a4Mode?: boolean;
-  }
->(({ value, onChange, a4Mode = true }, ref) => {
+function TipTapInner({
+  value,
+  onChange,
+  a4Mode = true,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  a4Mode?: boolean;
+}) {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -169,7 +170,7 @@ export const RichEditor = forwardRef<
 
   if (a4Mode) {
     return (
-      <div ref={ref} className="w-full flex flex-col items-center">
+      <div className="w-full flex flex-col items-center">
         {/* Folha A4 */}
         <div className="w-full max-w-[210mm] min-h-[297mm] bg-white border border-slate-300 shadow-xl rounded-xs flex flex-col overflow-hidden my-2">
           <MenuBar editor={editor} a4Mode={true} />
@@ -182,12 +183,46 @@ export const RichEditor = forwardRef<
   }
 
   return (
-    <div
-      ref={ref}
-      className="border border-gray-200 rounded-md bg-white overflow-hidden shadow-sm"
-    >
+    <div className="border border-gray-200 rounded-md bg-white overflow-hidden shadow-sm">
       <MenuBar editor={editor} a4Mode={false} />
       <EditorContent editor={editor} className="w-full" />
+    </div>
+  );
+}
+
+export const RichEditor = forwardRef<
+  HTMLDivElement,
+  {
+    value: string;
+    onChange: (val: string) => void;
+    a4Mode?: boolean;
+  }
+>(({ value, onChange, a4Mode = true }, ref) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div ref={ref} className="w-full flex flex-col items-center">
+        <div
+          className={
+            a4Mode
+              ? "w-full max-w-[210mm] min-h-[200px] bg-slate-50 border border-slate-200 rounded-lg p-8 flex items-center justify-center text-slate-400 text-xs font-medium"
+              : "w-full min-h-[150px] bg-slate-50 border border-slate-200 rounded-lg p-4 flex items-center justify-center text-slate-400 text-xs font-medium"
+          }
+        >
+          Carregando editor...
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div ref={ref} className="w-full">
+      <TipTapInner value={value} onChange={onChange} a4Mode={a4Mode} />
     </div>
   );
 });

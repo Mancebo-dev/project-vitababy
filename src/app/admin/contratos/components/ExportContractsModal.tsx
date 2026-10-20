@@ -7,9 +7,6 @@ import {
   parseISO,
   startOfDay,
 } from "date-fns";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import JSZip from "jszip";
 import { Download, FileArchive, Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
@@ -125,8 +122,14 @@ export function ExportContractsModal({
     }
   }, [startDateStr, endDateStr]);
 
-  const generateContractPdf = (contract: ContractItem): ArrayBuffer => {
-    const doc = new jsPDF({
+  const generateContractPdf = (
+    contract: ContractItem,
+    // biome-ignore lint/suspicious/noExplicitAny: dynamic jsPDF import
+    JsPDFClass: any,
+    // biome-ignore lint/suspicious/noExplicitAny: dynamic autoTable import
+    autoTableFn: any,
+  ): ArrayBuffer => {
+    const doc = new JsPDFClass({
       orientation: "portrait",
       unit: "mm",
       format: "a4",
@@ -181,7 +184,7 @@ export function ExportContractsModal({
       .filter(Boolean)
       .join(", ");
 
-    autoTable(doc, {
+    autoTableFn(doc, {
       startY: y,
       margin: { left: margin, right: margin },
       head: [["CONTRATADA", "CONTRATANTE"]],
@@ -229,7 +232,7 @@ export function ExportContractsModal({
     );
 
     if (hasService) {
-      autoTable(doc, {
+      autoTableFn(doc, {
         startY: y,
         margin: { left: margin, right: margin },
         head: [["OBJETO DO CONTRATO", "DETALHES / ESPECIFICAÇÃO", "VALOR"]],
@@ -282,7 +285,7 @@ export function ExportContractsModal({
         summaryRows.push(["Regime de Atendimento", contract.workRegime]);
       }
 
-      autoTable(doc, {
+      autoTableFn(doc, {
         startY: y,
         margin: { left: margin, right: margin },
         head: [["RESUMO FINANCEIRO & VIGÊNCIA", "VALOR / CONDIÇÃO"]],
@@ -360,7 +363,7 @@ export function ExportContractsModal({
     }
 
     // Assinaturas
-    autoTable(doc, {
+    autoTableFn(doc, {
       startY: y,
       margin: { left: margin, right: margin },
       head: [["ASSINATURA DO CONTRATANTE", "PELA CONTRATADA"]],
@@ -419,7 +422,17 @@ export function ExportContractsModal({
     setProgressText("Preparando exportação...");
 
     try {
-      const zip = new JSZip();
+      const [
+        { default: JsPDFClass },
+        { default: autoTableFn },
+        { default: JSZipClass },
+      ] = await Promise.all([
+        import("jspdf"),
+        import("jspdf-autotable"),
+        import("jszip"),
+      ]);
+
+      const zip = new JSZipClass();
       const folderName = `Contratos ${periodLabel}`;
       const folder = zip.folder(folderName) || zip;
 
@@ -441,7 +454,11 @@ export function ExportContractsModal({
         // Small delay to keep UI responsive
         await new Promise((resolve) => setTimeout(resolve, 20));
 
-        const pdfBuffer = generateContractPdf(contract);
+        const pdfBuffer = generateContractPdf(
+          contract,
+          JsPDFClass,
+          autoTableFn,
+        );
         const fileName = `Contrato_${contract.id.slice(-6).toUpperCase()}_${sanitizedClient}.pdf`;
         folder.file(fileName, pdfBuffer);
       }
@@ -479,11 +496,9 @@ export function ExportContractsModal({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        <div className="inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-xs cursor-pointer">
-          <FileArchive className="w-4 h-4 text-[#ae4d30]" />
-          Exportar PDFs por Período
-        </div>
+      <DialogTrigger className="inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-xs cursor-pointer">
+        <FileArchive className="w-4 h-4 text-[#ae4d30]" />
+        Exportar PDFs por Período
       </DialogTrigger>
       <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>

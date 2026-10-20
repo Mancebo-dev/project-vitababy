@@ -75,11 +75,9 @@ export function EditContractModal({ contract }: { contract: Contract }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-xs cursor-pointer">
-          <Edit3 className="w-3.5 h-3.5 text-slate-500" />
-          Editar
-        </div>
+      <DialogTrigger className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-xs cursor-pointer">
+        <Edit3 className="w-3.5 h-3.5 text-slate-500" />
+        Editar
       </DialogTrigger>
       <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>

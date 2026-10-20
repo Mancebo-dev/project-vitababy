@@ -28,19 +28,41 @@ export const metadata: Metadata = {
   title: "Contratos | Vita Baby Dashboard",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ContratosPage() {
-  const templates = await getContractTemplates();
-  const contracts = await getContracts();
-  const pendingBookings = await getPendingBookings();
+  let templates: Awaited<ReturnType<typeof getContractTemplates>> = [];
+  let contracts: Awaited<ReturnType<typeof getContracts>> = [];
+  let pendingBookings: Awaited<ReturnType<typeof getPendingBookings>> = [];
+  let clients: Awaited<
+    ReturnType<typeof prisma.client.findMany<{ orderBy: { name: "asc" } }>>
+  > = [];
+  let clientSchedules: Awaited<
+    ReturnType<
+      typeof prisma.clientSchedule.findMany<{
+        include: { client: true };
+        orderBy: { createdAt: "desc" };
+      }>
+    >
+  > = [];
 
-  const clients = await prisma.client.findMany({
-    orderBy: { name: "asc" },
-  });
-
-  const clientSchedules = await prisma.clientSchedule.findMany({
-    include: { client: true },
-    orderBy: { createdAt: "desc" },
-  });
+  try {
+    [templates, contracts, pendingBookings, clients, clientSchedules] =
+      await Promise.all([
+        getContractTemplates(),
+        getContracts(),
+        getPendingBookings(),
+        prisma.client.findMany({
+          orderBy: { name: "asc" },
+        }),
+        prisma.clientSchedule.findMany({
+          include: { client: true },
+          orderBy: { createdAt: "desc" },
+        }),
+      ]);
+  } catch (error) {
+    console.error("Erro ao carregar dados de contratos:", error);
+  }
 
   return (
     <div className="space-y-6">
