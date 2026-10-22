@@ -149,7 +149,7 @@ export async function signContractWithTokenAction(
 
   if (contract.signTokenExpiresAt && contract.signTokenExpiresAt < new Date()) {
     throw new Error(
-      "Este link de assinatura temporário expirou (validade de 1 hora). Solicite um novo link à equipe da Vita Baby.",
+      "Este link de assinatura temporário expirou (validade de 12 horas). Solicite um novo link à equipe da Vita Baby.",
     );
   }
 

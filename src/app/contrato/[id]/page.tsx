@@ -88,7 +88,7 @@ export default async function ContratoPage({
         if (!token || isExpired) {
           const crypto = await import("node:crypto");
           token = crypto.randomBytes(16).toString("hex");
-          const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1h
+          const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000); // 12h
 
           await prisma.contract.update({
             where: { id: contract.id },

@@ -107,7 +107,7 @@ export default async function AssinarContratoPage({
           hour: "2-digit",
           minute: "2-digit",
         })
-      : "1 hora";
+      : "12 horas";
 
     const whatsappMessage = `Olá! Meu link de assinatura do contrato expirou (expirava às ${expiredAtFormatted}). Poderiam me enviar um novo link de assinatura, por favor?`;
     const whatsappLink = buildWhatsAppLink("5522998632616", whatsappMessage);
@@ -133,7 +133,7 @@ export default async function AssinarContratoPage({
             </h1>
             <p className="text-sm text-slate-600">
               Olá, <strong>{clientName}</strong>! Por motivos de segurança, os
-              links de assinatura temporários têm validade de 1 hora.
+              links de assinatura temporários têm validade de 12 horas.
             </p>
             <p className="text-xs text-slate-500">
               Este link expirou. Por favor, solicite à nossa equipe o envio de
@@ -237,7 +237,7 @@ export default async function AssinarContratoPage({
         hour: "2-digit",
         minute: "2-digit",
       })
-    : "1 hora";
+    : "12 horas";
 
   return (
     <div className="min-h-screen bg-slate-100/90 py-6 sm:py-8 font-sans">

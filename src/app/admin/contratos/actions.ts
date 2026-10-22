@@ -347,7 +347,7 @@ export async function generateSignLink(contractId: string) {
 
   const crypto = await import("node:crypto");
   const token = crypto.randomBytes(16).toString("hex");
-  const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hora de validade
+  const expiresAt = new Date(Date.now() + 12 * 60 * 60 * 1000); // 12 horas de validade
 
   await prisma.contract.update({
     where: { id: contractId },
