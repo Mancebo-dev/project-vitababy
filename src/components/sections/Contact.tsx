@@ -13,25 +13,20 @@ export function Contact() {
   return (
     <section
       id="contato"
-      className="py-[2rem] md:py-[3rem] bg-[#f5f3ef] min-h-[100vh] flex flex-col justify-center scroll-mt-[5rem]"
+      className="py-16 md:py-24 lg:py-28 min-h-[85vh] lg:min-h-screen bg-[#f5f3ef] scroll-mt-20 flex flex-col justify-center"
     >
       <div className="w-full max-w-[1440px] mx-auto px-[1.5rem] lg:px-[7.5rem]">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-[4rem] bg-white border border-[#e4e2de] rounded-2xl p-[2rem] md:p-[4rem] shadow-lg">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 bg-white border border-[#e4e2de] rounded-2xl p-6 sm:p-8 md:p-12 shadow-sm">
           {/* Informações de Contato */}
-          <StaggerContainer className="flex flex-col gap-[2.5rem]">
-            <div className="flex flex-col gap-[1rem]">
+          <StaggerContainer className="flex flex-col gap-8">
+            <div className="flex flex-col gap-3">
               <StaggerItem>
-                <span className="uppercase tracking-widest text-[0.875rem] font-bold text-[#af4d30]">
-                  Fale Conosco
-                </span>
-              </StaggerItem>
-              <StaggerItem>
-                <h2 className="text-[clamp(2rem,3vw,2.5rem)] font-heading text-[#411f03] leading-[1.2]">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading text-[#411f03] leading-tight tracking-tight">
                   Como podemos ajudar?
                 </h2>
               </StaggerItem>
               <StaggerItem>
-                <p className="text-[1.125rem] text-[#444840] leading-[1.6]">
+                <p className="text-sm sm:text-base text-[#444840] leading-relaxed">
                   Entre em contato conosco para tirar dúvidas, agendar um
                   serviço ou saber mais sobre como podemos ajudar.
                 </p>
@@ -223,7 +218,7 @@ export function Contact() {
                 <Button
                   type="submit"
                   disabled={pending}
-                  className="w-full rounded-xl h-[3.5rem] bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold shadow-lg text-[1rem]"
+                  className="w-full rounded-xl h-12 bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold shadow-md text-sm sm:text-base"
                 >
                   {pending ? "Enviando..." : "Enviar Mensagem"}
                 </Button>

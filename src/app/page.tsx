@@ -15,14 +15,9 @@ type ReviewWithClient = Review & { client: Client };
 const About = dynamic(() =>
   import("@/components/sections/About").then((m) => ({ default: m.About })),
 );
-const Services = dynamic(() =>
-  import("@/components/sections/Services").then((m) => ({
-    default: m.Services,
-  })),
-);
-const Pricing = dynamic(() =>
-  import("@/components/sections/Pricing").then((m) => ({
-    default: m.Pricing,
+const ServicesAndPricing = dynamic(() =>
+  import("@/components/sections/ServicesAndPricing").then((m) => ({
+    default: m.ServicesAndPricing,
   })),
 );
 const HowItWorks = dynamic(() =>
@@ -68,7 +63,6 @@ export default async function Home() {
         client: true,
       },
       orderBy: { createdAt: "desc" },
-      take: 6,
     });
   } catch (error) {
     console.error(
@@ -83,8 +77,7 @@ export default async function Home() {
       <Hero />
       <Partners />
       <About />
-      <Services initialServices={services} />
-      <Pricing initialServices={services} />
+      <ServicesAndPricing initialServices={services} />
       <HowItWorks />
       <Testimonials initialReviews={reviews} />
       <Contact />

@@ -36,19 +36,20 @@ export function HowItWorks() {
   return (
     <section
       id="como-funciona"
-      className="py-[5rem] lg:py-[7.5rem] bg-white scroll-mt-[5rem]"
+      className="py-16 md:py-24 lg:py-28 min-h-[85vh] lg:min-h-screen bg-white scroll-mt-20 flex flex-col justify-center"
     >
       <div className="w-full max-w-[1440px] mx-auto px-[1.5rem] lg:px-[7.5rem]">
-        <StaggerContainer className="flex flex-col items-center text-center gap-[1rem] mb-[4rem]">
+        <StaggerContainer className="flex flex-col items-center text-center gap-2 mb-10 md:mb-14">
           <StaggerItem>
-            <span className="uppercase tracking-widest text-[0.875rem] font-bold text-[#af4d30]">
-              Passo a Passo
-            </span>
-          </StaggerItem>
-          <StaggerItem>
-            <h2 className="text-[clamp(2rem,3vw,2.5rem)] font-heading text-[#411f03] leading-[1.2]">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading text-[#411f03] leading-tight tracking-tight">
               Como funciona o nosso atendimento
             </h2>
+          </StaggerItem>
+          <StaggerItem>
+            <p className="text-xs sm:text-sm md:text-base text-[#5c5954] max-w-xl mx-auto mt-1 leading-relaxed">
+              Um processo simples, acolhedor e seguro desde o primeiro contato
+              até o acompanhamento diário.
+            </p>
           </StaggerItem>
         </StaggerContainer>
 
@@ -61,15 +62,17 @@ export function HowItWorks() {
               key={step.number}
               className="relative z-10 flex flex-col items-center text-center group"
             >
-              <div className="w-[7rem] h-[7rem] rounded-full bg-[#fbf9f5] border-[0.5rem] border-white flex items-center justify-center shadow-lg mb-[1.5rem] group-hover:scale-110 group-hover:border-[#f2ede9] transition-all duration-300">
-                <span className="text-[2.5rem] font-heading font-bold text-[#d19a7e]">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#fbf9f5] border-[6px] border-white flex items-center justify-center shadow-md mb-4 group-hover:scale-105 group-hover:border-[#f2ede9] transition-all duration-300">
+                <span className="text-2xl sm:text-3xl font-heading font-bold text-[#d19a7e]">
                   {step.number}
                 </span>
               </div>
-              <h3 className="text-[1.25rem] font-bold text-[#411f03] mb-[1rem]">
+              <h3 className="text-base sm:text-lg font-bold text-[#411f03] mb-2">
                 {step.title}
               </h3>
-              <p className="text-[#444840] leading-[1.6]">{step.description}</p>
+              <p className="text-xs sm:text-sm text-[#444840] leading-relaxed">
+                {step.description}
+              </p>
             </StaggerItem>
           ))}
         </StaggerContainer>

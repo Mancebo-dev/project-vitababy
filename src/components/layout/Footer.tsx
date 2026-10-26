@@ -183,7 +183,7 @@ export function Footer() {
             </ul>
             <div className="flex gap-[1rem] mt-[0.5rem]">
               <Link
-                href="https://instagram.com"
+                href="https://www.instagram.com/vitababyassessoria/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-[2.5rem] h-[2.5rem] bg-[#fbf9f5] hover:bg-[#af4d30] border border-[#e4e2de] hover:border-[#af4d30] rounded-full flex items-center justify-center text-[#411f03] hover:text-white shadow-sm hover:scale-110 transition-all duration-300"
