@@ -30,7 +30,7 @@ export function StaggerContainer({
       variants={container}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, amount: 0.05, margin: "-80px" }}
+      viewport={{ once: true, amount: 0.05, margin: "-10px" }}
       className={className}
       style={{ willChange: "opacity" }}
     >

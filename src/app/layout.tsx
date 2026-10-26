@@ -1,8 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Hanken_Grotesk, Libre_Caslon_Text } from "next/font/google";
 import "./globals.css";
 import { CookieConsent } from "@/components/ui/CookieConsent";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: "#fbf9f5",
+};
 
 const libreCaslon = Libre_Caslon_Text({
   weight: ["400", "700"],
@@ -116,9 +124,7 @@ export default function RootLayout({
       "@type": "Person",
       name: "Rayane",
     },
-    sameAs: [
-      // Aqui entram os links das redes sociais, se houver
-    ],
+    sameAs: ["https://www.instagram.com/vitababyassessoria/"],
   };
 
   return (

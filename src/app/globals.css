@@ -160,4 +160,42 @@
     animation: fade-in-up 0.9s cubic-bezier(0.21, 0.47, 0.32, 0.98) both;
     animation-delay: 0.1s;
   }
+
+  /* Animações de Marquee Bidirecional para Depoimentos */
+  @keyframes marquee-left {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @keyframes marquee-right {
+    from {
+      transform: translate3d(-50%, 0, 0);
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .animate-marquee-left {
+    display: flex;
+    width: max-content;
+    animation: marquee-left 40s linear infinite;
+    will-change: transform;
+  }
+
+  .animate-marquee-right {
+    display: flex;
+    width: max-content;
+    animation: marquee-right 40s linear infinite;
+    will-change: transform;
+  }
+
+  .animate-marquee-left:hover,
+  .animate-marquee-right:hover {
+    animation-play-state: paused;
+  }
 }

@@ -91,7 +91,7 @@ export default async function PublicGaleriaPage() {
               Quer ver mais do nosso dia a dia?
             </p>
             <a
-              href="https://instagram.com/vitababy"
+              href="https://www.instagram.com/vitababyassessoria/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-full bg-[#af4d30] px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-[#8c3d26]"
