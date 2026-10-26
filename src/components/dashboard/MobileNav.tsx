@@ -1,6 +1,7 @@
 "use client";
 
 import { LogOut, Menu, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -20,12 +21,18 @@ export function MobileNav() {
   return (
     <div className="md:hidden">
       {/* Top Bar */}
-      <div className="flex items-center justify-between p-[1rem] bg-white border-b border-[#e4e2de] fixed top-0 w-full z-40 shadow-sm">
-        <div className="flex items-center gap-[0.75rem]">
-          <div className="w-[2rem] h-[2rem] bg-[#af4d30] rounded-lg flex items-center justify-center text-white font-bold font-heading">
-            V
+      <div className="flex items-center justify-between p-3.5 bg-white border-b border-[#e4e2de] fixed top-0 w-full z-40 shadow-xs min-h-[56px]">
+        <div className="flex items-center gap-2.5">
+          <div className="relative w-8 h-8 flex-shrink-0">
+            <Image
+              src="/assets/logo-vita-baby.png"
+              alt="Vitababy"
+              fill
+              sizes="32px"
+              className="object-contain"
+            />
           </div>
-          <span className="font-heading font-bold text-[1.25rem] text-[#411f03]">
+          <span className="font-heading font-bold text-lg text-[#411f03]">
             Vitababy
           </span>
         </div>

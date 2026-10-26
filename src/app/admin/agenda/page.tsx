@@ -200,20 +200,32 @@ export default async function AgendaPage({
       </div>
 
       <Tabs defaultValue={defaultTab} className="w-full">
-        <TabsList className="mb-6 flex flex-wrap gap-1">
-          <TabsTrigger value="planner" className="flex items-center gap-2">
+        <TabsList className="mb-6 w-full max-w-full overflow-x-auto no-scrollbar flex-nowrap sm:flex-wrap justify-start h-auto p-1.5 gap-1.5">
+          <TabsTrigger
+            value="planner"
+            className="flex items-center gap-2 shrink-0 min-h-[38px] text-xs sm:text-sm px-3"
+          >
             <Calendar className="w-4 h-4" />
             Calendário & Planner
           </TabsTrigger>
-          <TabsTrigger value="escalas" className="flex items-center gap-2">
+          <TabsTrigger
+            value="escalas"
+            className="flex items-center gap-2 shrink-0 min-h-[38px] text-xs sm:text-sm px-3"
+          >
             <CalendarRange className="w-4 h-4" />
-            Escalas de Clientes ({schedules.length})
+            Escalas ({schedules.length})
           </TabsTrigger>
-          <TabsTrigger value="agendamentos" className="flex items-center gap-2">
+          <TabsTrigger
+            value="agendamentos"
+            className="flex items-center gap-2 shrink-0 min-h-[38px] text-xs sm:text-sm px-3"
+          >
             <CalendarDays className="w-4 h-4" />
             Agendamentos ({bookings.length})
           </TabsTrigger>
-          <TabsTrigger value="horarios" className="flex items-center gap-2">
+          <TabsTrigger
+            value="horarios"
+            className="flex items-center gap-2 shrink-0 min-h-[38px] text-xs sm:text-sm px-3"
+          >
             <Clock className="w-4 h-4" />
             Horários Disponíveis
           </TabsTrigger>

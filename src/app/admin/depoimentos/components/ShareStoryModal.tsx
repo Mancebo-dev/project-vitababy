@@ -574,7 +574,7 @@ export function ShareStoryModal({
 
     // Copy to clipboard & open Instagram
     await handleCopyImage();
-    window.open("https://instagram.com", "_blank");
+    window.open("https://www.instagram.com/vitababyassessoria/", "_blank");
     showToast("Imagem copiada! Abra o Instagram Stories e cole.");
   };
 

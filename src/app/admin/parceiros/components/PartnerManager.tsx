@@ -62,40 +62,42 @@ export function PartnerManager({ partners }: { partners: Partner[] }) {
         <Dialog open={openUpload} onOpenChange={setOpenUpload}>
           <DialogTrigger
             render={
-              <Button className="bg-[#af4d30] hover:bg-[#8c3d26] text-white" />
+              <Button className="bg-[#af4d30] hover:bg-[#8c3d26] text-white flex items-center" />
             }
           >
-            <Plus className="w-4 h-4 mr-2" />
-            Novo Parceiro
+            <Plus className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Novo Parceiro</span>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Adicionar Parceiro</DialogTitle>
+              <DialogTitle>Adicionar Parceiro / Banner</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleFileUpload} className="space-y-4 pt-4">
               <div className="space-y-2">
-                <Label>Nome da Empresa / Parceiro</Label>
+                <Label>Nome do Parceiro ou Tema</Label>
                 <Input
                   value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  placeholder="Ex: Clínica Pediátrica"
+                  placeholder="Ex: Clínica Pediátrica Macaé"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label>Link do Site / Instagram (Opcional)</Label>
+                <Label>Link do Instagram / Publicação (Opcional)</Label>
                 <Input
                   value={formData.link}
                   onChange={(e) =>
                     setFormData({ ...formData, link: e.target.value })
                   }
-                  placeholder="Ex: https://instagram.com/..."
+                  placeholder="Ex: https://www.instagram.com/p/..."
                 />
               </div>
               <div className="space-y-2 pt-2">
-                <Label>Logomarca (Imagem)</Label>
+                <Label>
+                  Banner / Cartaz da Publicação (Imagem vertical ou quadrada)
+                </Label>
                 <Input
                   type="file"
                   accept="image/*"
@@ -110,7 +112,7 @@ export function PartnerManager({ partners }: { partners: Partner[] }) {
                   disabled={isUploading || !file || !formData.name}
                   className="bg-[#af4d30] hover:bg-[#8c3d26] text-white"
                 >
-                  {isUploading ? "Enviando..." : "Salvar Parceiro"}
+                  {isUploading ? "Enviando..." : "Salvar Publicação"}
                 </Button>
               </div>
             </form>
@@ -118,21 +120,21 @@ export function PartnerManager({ partners }: { partners: Partner[] }) {
         </Dialog>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {partners.map((partner) => (
           <div
             key={partner.id}
-            className="group relative rounded-xl overflow-hidden bg-white border border-slate-200 aspect-video flex items-center justify-center p-4 shadow-sm hover:shadow-md transition-shadow"
+            className="group relative rounded-xl overflow-hidden bg-white border border-slate-200 aspect-[4/5] flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
           >
             <Image
               src={partner.logoUrl}
               alt={partner.name}
               fill
-              className="object-contain p-4"
+              className="object-cover"
             />
-            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
               <div>
-                <p className="text-white font-medium text-sm truncate text-center mt-2">
+                <p className="text-white font-medium text-xs truncate text-center mt-1 bg-black/40 py-1 px-2 rounded-full">
                   {partner.name}
                 </p>
               </div>

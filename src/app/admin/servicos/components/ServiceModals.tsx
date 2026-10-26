@@ -91,8 +91,10 @@ export function CreateServiceDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <div className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-medium gap-2 cursor-pointer">
-          <Plus className="w-4 h-4" /> Novo Serviço
+        <div className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-h-[42px] px-3 sm:px-4 py-2 bg-primary hover:bg-primary/90 text-white font-medium gap-2 cursor-pointer shadow-xs">
+          <Plus className="w-5 h-5 sm:w-4 sm:h-4" />
+          <span className="hidden sm:inline">Novo Serviço</span>
+          <span className="sm:hidden text-xs">Serviço</span>
         </div>
       </DialogTrigger>
       <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-md max-h-[90vh] overflow-y-auto p-4 sm:p-6">
@@ -354,8 +356,10 @@ export function CreatePackageDialog({
         {trigger ? (
           trigger
         ) : (
-          <div className="inline-flex items-center justify-center rounded-xl text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-[#af4d30] hover:bg-[#964228] text-white font-medium gap-2 cursor-pointer shadow-xs">
-            <Plus className="w-4 h-4" /> Novo Pacote ou Plano
+          <div className="inline-flex items-center justify-center rounded-xl text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-h-[42px] px-3 sm:px-4 py-2 bg-[#af4d30] hover:bg-[#964228] text-white font-medium gap-2 cursor-pointer shadow-xs">
+            <Plus className="w-5 h-5 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Novo Pacote ou Plano</span>
+            <span className="sm:hidden text-xs">Novo Pacote</span>
           </div>
         )}
       </DialogTrigger>

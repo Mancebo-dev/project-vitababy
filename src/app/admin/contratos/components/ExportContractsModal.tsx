@@ -496,9 +496,10 @@ export function ExportContractsModal({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-xs cursor-pointer">
+      <DialogTrigger className="inline-flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-xs cursor-pointer min-h-[40px]">
         <FileArchive className="w-4 h-4 text-[#ae4d30]" />
-        Exportar PDFs por Período
+        <span className="hidden sm:inline">Exportar PDFs por Período</span>
+        <span className="sm:hidden">Exportar</span>
       </DialogTrigger>
       <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>

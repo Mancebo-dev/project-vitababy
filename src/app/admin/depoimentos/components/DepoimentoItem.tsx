@@ -99,7 +99,7 @@ export function DepoimentoItem({
             type="button"
             onClick={handleDelete}
             disabled={loading}
-            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-colors cursor-pointer"
+            className="p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-colors cursor-pointer"
             title="Excluir depoimento"
           >
             <Trash2 className="w-4 h-4" />

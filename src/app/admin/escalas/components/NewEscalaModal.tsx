@@ -206,9 +206,10 @@ export function NewEscalaModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <div className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold gap-2 cursor-pointer">
-          <Plus className="w-4 h-4" />
-          Nova Escala Flexível
+        <div className="inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-h-[42px] px-3 sm:px-4 py-2 bg-[#af4d30] hover:bg-[#af4d30]/90 text-white font-semibold gap-2 cursor-pointer shadow-xs">
+          <Plus className="w-5 h-5 sm:w-4 sm:h-4" />
+          <span className="hidden sm:inline">Nova Escala Flexível</span>
+          <span className="sm:hidden text-xs">Nova Escala</span>
         </div>
       </DialogTrigger>
       <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-2xl lg:max-w-3xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">

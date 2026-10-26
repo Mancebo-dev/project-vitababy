@@ -77,17 +77,17 @@ export function CopyLinkButton({
   };
 
   return (
-    <div className="inline-flex flex-wrap items-center gap-1.5">
+    <div className="contents sm:inline-flex sm:flex-wrap sm:items-center gap-1.5">
       {clientPhone && !isSigned && (
         <button
           type="button"
           onClick={handleSendWhatsApp}
           disabled={loading}
           title="Gera o link de 12h e abre diretamente no WhatsApp do cliente"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-xs disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-xs disabled:opacity-50 min-h-[38px] w-full sm:w-auto"
         >
-          <MessageCircle className="w-3.5 h-3.5" />
-          WhatsApp (12h)
+          <MessageCircle className="w-3.5 h-3.5 shrink-0" />
+          <span>WhatsApp (12h)</span>
         </button>
       )}
 
@@ -96,7 +96,7 @@ export function CopyLinkButton({
         onClick={handleCopy}
         disabled={loading}
         title="Gera um link temporário (12h) para o cliente assinar sem login"
-        className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${
+        className={`inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2 sm:py-1.5 rounded-lg border transition-all min-h-[38px] w-full sm:w-auto ${
           copied
             ? "bg-emerald-50 text-emerald-700 border-emerald-300"
             : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:text-slate-900 shadow-xs"

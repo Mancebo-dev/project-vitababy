@@ -22,9 +22,9 @@ export function PDFPreviewModal({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-sm font-medium text-slate-500 hover:text-slate-800"
+        className="inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-xs min-h-[38px] w-full sm:w-auto"
       >
-        Visualizar PDF
+        <span>Visualizar PDF</span>
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>

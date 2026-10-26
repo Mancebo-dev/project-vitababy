@@ -133,9 +133,10 @@ export function CreateContractModal({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-medium cursor-pointer shadow-sm">
-        <Plus className="w-5 h-5" />
-        Novo Contrato de Cliente
+      <DialogTrigger className="inline-flex items-center gap-1.5 bg-primary text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-medium cursor-pointer shadow-xs min-h-[40px]">
+        <Plus className="w-5 h-5 shrink-0" />
+        <span className="hidden sm:inline">Novo Contrato de Cliente</span>
+        <span className="sm:hidden font-medium text-xs">Novo</span>
       </DialogTrigger>
       <DialogContent className="w-full max-w-[calc(100%-1.5rem)] sm:max-w-2xl lg:max-w-3xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>

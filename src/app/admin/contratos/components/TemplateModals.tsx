@@ -66,9 +66,10 @@ export function CreateTemplateModal() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="inline-flex items-center gap-2 bg-primary text-white px-4 py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-medium cursor-pointer shadow-xs">
-        <Plus className="w-4 h-4" />
-        Novo Modelo
+      <DialogTrigger className="inline-flex items-center gap-1.5 bg-primary text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-medium cursor-pointer shadow-xs min-h-[40px]">
+        <Plus className="w-4 h-4 shrink-0" />
+        <span className="hidden sm:inline">Novo Modelo</span>
+        <span className="sm:hidden text-xs font-semibold">Novo</span>
       </DialogTrigger>
       <DialogContent className="w-full sm:max-w-5xl lg:max-w-6xl h-[95vh] flex flex-col p-0 overflow-hidden bg-slate-100 rounded-2xl shadow-2xl">
         <DialogHeader className="px-6 py-4 border-b border-slate-200 bg-white flex flex-row items-center justify-between shrink-0">

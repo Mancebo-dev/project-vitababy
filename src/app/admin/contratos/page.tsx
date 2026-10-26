@@ -127,7 +127,7 @@ export default async function ContratosPage() {
                   return (
                     <div
                       key={contract.id}
-                      className="p-6 flex flex-col md:flex-row md:items-center justify-between hover:bg-slate-50/50 transition-colors gap-4"
+                      className="p-4 sm:p-6 flex flex-col lg:flex-row lg:items-center justify-between hover:bg-slate-50/50 transition-colors gap-4"
                     >
                       <div className="flex items-start gap-4">
                         <div
@@ -222,13 +222,13 @@ export default async function ContratosPage() {
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-2">
+                      <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-2 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-100 w-full lg:w-auto">
                         {contract.signedByClient && whatsappUrl && (
                           <a
                             href={whatsappUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-xs"
+                            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-xs min-h-[38px] w-full sm:w-auto"
                           >
                             <MessageCircle className="w-3.5 h-3.5" />
                             WhatsApp
@@ -282,10 +282,10 @@ export default async function ContratosPage() {
                 {templates.map((template) => (
                   <div
                     key={template.id}
-                    className="p-6 flex items-center justify-between hover:bg-slate-50/50 transition-colors"
+                    className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-slate-50/50 transition-colors gap-3"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-primary/10 text-primary flex items-center justify-center rounded-lg">
+                      <div className="w-10 h-10 bg-primary/10 text-primary flex items-center justify-center rounded-lg shrink-0">
                         <FileText className="w-5 h-5" />
                       </div>
                       <div>
@@ -297,7 +297,7 @@ export default async function ContratosPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto justify-end">
                       <PDFPreviewModal
                         contractId={template.id}
                         title={template.title}

@@ -78,25 +78,28 @@ export default async function ServicosPage({
 
       {/* Tabs */}
       <Tabs defaultValue={defaultTab} className="w-full space-y-6">
-        <TabsList className="bg-slate-100/80 p-1 rounded-xl">
+        <TabsList className="bg-slate-100/80 p-1 rounded-xl w-full max-w-full overflow-x-auto no-scrollbar flex-nowrap sm:flex-wrap justify-start h-auto gap-1">
           <TabsTrigger
             value="estrutura"
-            className="rounded-lg text-xs sm:text-sm"
+            className="rounded-lg text-xs sm:text-sm shrink-0 min-h-[38px] px-3"
           >
             Estrutura Integrada ({services.length})
           </TabsTrigger>
-          <TabsTrigger value="planos" className="rounded-lg text-xs sm:text-sm">
-            Planos de Acompanhamento ({planoPackages.length})
+          <TabsTrigger
+            value="planos"
+            className="rounded-lg text-xs sm:text-sm shrink-0 min-h-[38px] px-3"
+          >
+            Planos ({planoPackages.length})
           </TabsTrigger>
           <TabsTrigger
             value="pacotes"
-            className="rounded-lg text-xs sm:text-sm"
+            className="rounded-lg text-xs sm:text-sm shrink-0 min-h-[38px] px-3"
           >
             Pacotes Avulsos ({avulsoPackages.length})
           </TabsTrigger>
           <TabsTrigger
             value="categorias"
-            className="rounded-lg text-xs sm:text-sm"
+            className="rounded-lg text-xs sm:text-sm shrink-0 min-h-[38px] px-3"
           >
             Categorias ({services.length})
           </TabsTrigger>
