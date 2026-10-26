@@ -7,55 +7,49 @@ export function About() {
   return (
     <section
       id="sobre"
-      className="bg-[#fbf9f5] min-h-[100vh] flex flex-col scroll-mt-[5rem] overflow-hidden relative"
+      className="bg-[#fbf9f5] pt-16 md:pt-20 lg:pt-24 pb-0 flex flex-col justify-end min-h-[85vh] lg:min-h-screen scroll-mt-20 overflow-hidden relative"
     >
-      <div className="w-full max-w-[1440px] mx-auto px-[1.5rem] lg:px-[7.5rem] flex-1 flex flex-col">
-        <StaggerContainer className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-[2.5rem] lg:gap-[4rem]">
+      <div className="w-full max-w-[1440px] mx-auto px-[1.5rem] lg:px-[7.5rem] flex-1 flex flex-col justify-end">
+        <StaggerContainer className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-end">
           {/* Image */}
-          <StaggerItem className="relative w-full min-h-[400px] sm:min-h-[450px] lg:min-h-[500px] xl:min-h-full mx-auto lg:mx-0 order-2 lg:order-1 flex items-end">
+          <StaggerItem className="relative w-full h-[460px] sm:h-[540px] md:h-[600px] lg:h-[640px] xl:h-[700px] 2xl:h-[750px] mx-auto lg:mx-0 order-2 lg:order-1 flex items-end justify-center lg:justify-start self-end">
             <Image
               src="/assets/rayane-about.png"
               alt="Rayane Castro"
               fill
               unoptimized
               loading="lazy"
-              className="object-contain object-bottom scale-[0.9] lg:scale-100 translate-y-[1rem] lg:translate-y-[2rem] origin-bottom"
+              className="object-contain object-bottom translate-y-[2px]"
             />
           </StaggerItem>
 
           {/* Text Content */}
-          <div className="flex flex-col justify-center items-start gap-[1rem] order-1 lg:order-2 pt-[4rem] lg:py-[4rem]">
+          <div className="flex flex-col justify-center items-start gap-4 order-1 lg:order-2 lg:self-center py-8 lg:py-16">
             <StaggerItem>
-              <span className="text-[clamp(0.75rem,1vw,1rem)] font-semibold text-[#d19a7e] tracking-[0.0375rem] uppercase">
-                SOBRE MIM
-              </span>
-            </StaggerItem>
-            <StaggerItem>
-              <h2 className="text-[clamp(2rem,3vw,3rem)] font-heading text-[#411f03] leading-[1.2]">
-                Rayane Castro cuidado com ciência, conhecimento, experiência e
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading text-[#411f03] leading-tight tracking-tight">
+                Rayane Castro: cuidado com ciência, acolhimento e
                 profissionalismo.
               </h2>
             </StaggerItem>
 
-            <StaggerItem className="flex flex-col gap-[1rem] text-[#444840] text-[clamp(1rem,1.5vw,1.25rem)] leading-[1.6] mt-[0.5rem]">
+            <StaggerItem className="flex flex-col gap-3 text-[#444840] text-sm sm:text-base leading-relaxed">
               <p>
-                Na enfermagem, com mais de 9 anos de experiência, sou
+                Com mais de 9 anos de experiência na enfermagem, sou
                 especializada em cuidados humanizados para bebês e famílias.
-                Ofereço assessoria em amamentação, banho humanizado, capacitação
-                em primeiros socorros para bebês, entre outros.
+                Ofereço assessoria em amamentação, banho humanizado e
+                capacitação em primeiros socorros.
               </p>
               <p>
                 Minha missão é proporcionar segurança, vínculo e bem-estar para
-                cada família, com um olhar técnico e um cuidado acolhedor que
-                transforma a experiência da maternidade, paternidade e rede de
-                apoio.
+                cada família, com um olhar técnico e acolhedor que transforma a
+                jornada materna.
               </p>
             </StaggerItem>
 
             <StaggerItem>
               <Link
                 href="#contato"
-                className="group flex items-center gap-[0.5rem] text-[#af4d30] font-bold text-[1rem] mt-[1.5rem] border-b-[0.125rem] border-[#af4d30] pb-[0.25rem] hover:text-[#af4d30]/80 transition-colors"
+                className="group inline-flex items-center gap-2 text-[#af4d30] font-bold text-sm sm:text-base mt-2 border-b-2 border-[#af4d30] pb-1 hover:text-[#af4d30]/80 transition-colors"
               >
                 Fale comigo
                 <Image
