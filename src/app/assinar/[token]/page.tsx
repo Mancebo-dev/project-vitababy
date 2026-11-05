@@ -211,6 +211,31 @@ export default async function AssinarContratoPage({
     viewData.serviceDetails = "Assessoria e Cuidados Materno-Infantil (Escala)";
   }
 
+  // Service Date, Time & Professional
+  if (contract.serviceDate) {
+    viewData.serviceDate = contract.serviceDate;
+  } else if (contract.booking?.scheduleSlot?.date) {
+    const d = new Date(contract.booking.scheduleSlot.date);
+    viewData.serviceDate = d.toLocaleDateString("pt-BR");
+  }
+
+  if (contract.serviceTime) {
+    viewData.serviceTime = contract.serviceTime;
+  } else if (contract.booking?.scheduleSlot?.startTime) {
+    viewData.serviceTime = contract.booking.scheduleSlot.endTime
+      ? `${contract.booking.scheduleSlot.startTime} às ${contract.booking.scheduleSlot.endTime}`
+      : contract.booking.scheduleSlot.startTime;
+  }
+
+  if (contract.serviceProfessional) {
+    viewData.serviceProfessional = contract.serviceProfessional;
+  } else if (contract.booking?.scheduleSlot?.professional?.name) {
+    viewData.serviceProfessional =
+      contract.booking.scheduleSlot.professional.name;
+  } else if (contract.booking?.professional?.name) {
+    viewData.serviceProfessional = contract.booking.professional.name;
+  }
+
   if (contract.booking) {
     const basePrice =
       contract.booking.packages?.reduce((acc, p) => acc + (p.price || 0), 0) ||
@@ -219,16 +244,6 @@ export default async function AssinarContratoPage({
     const total = basePrice + transport;
     if (!viewData.totalValue && total > 0) {
       viewData.totalValue = total;
-    }
-
-    if (contract.booking.scheduleSlot) {
-      const d = new Date(contract.booking.scheduleSlot.date);
-      viewData.serviceDate = d.toLocaleDateString("pt-BR");
-      viewData.serviceTime = contract.booking.scheduleSlot.startTime || "";
-      if (contract.booking.scheduleSlot.professional) {
-        viewData.serviceProfessional =
-          contract.booking.scheduleSlot.professional.name;
-      }
     }
   }
 

@@ -168,6 +168,21 @@ function TipTapInner({
     },
   });
 
+  useEffect(() => {
+    if (!editor) return;
+    const currentHtml = editor.getHTML();
+    if (value !== currentHtml) {
+      // Only update if editor is not focused or if content was cleared/replaced externally
+      if (
+        !editor.isFocused ||
+        !value ||
+        Math.abs(value.length - currentHtml.length) > 15
+      ) {
+        editor.commands.setContent(value || "", { emitUpdate: false });
+      }
+    }
+  }, [value, editor]);
+
   if (a4Mode) {
     return (
       <div className="w-full flex flex-col items-center">

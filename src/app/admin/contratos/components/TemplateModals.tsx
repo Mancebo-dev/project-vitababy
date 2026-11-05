@@ -102,7 +102,7 @@ export function CreateTemplateModal() {
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Ex: Contrato Padrão de Consultoria - Vita Baby"
+                          placeholder="Ex: Contrato Padrão de Assessoria - Vita Baby"
                           className="bg-slate-50"
                           {...field}
                         />

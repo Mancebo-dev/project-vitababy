@@ -37,6 +37,11 @@ export default async function ContratosPage() {
   let clients: Awaited<
     ReturnType<typeof prisma.client.findMany<{ orderBy: { name: "asc" } }>>
   > = [];
+  let professionals: Awaited<
+    ReturnType<
+      typeof prisma.professional.findMany<{ orderBy: { name: "asc" } }>
+    >
+  > = [];
   let clientSchedules: Awaited<
     ReturnType<
       typeof prisma.clientSchedule.findMany<{
@@ -47,19 +52,29 @@ export default async function ContratosPage() {
   > = [];
 
   try {
-    [templates, contracts, pendingBookings, clients, clientSchedules] =
-      await Promise.all([
-        getContractTemplates(),
-        getContracts(),
-        getPendingBookings(),
-        prisma.client.findMany({
-          orderBy: { name: "asc" },
-        }),
-        prisma.clientSchedule.findMany({
-          include: { client: true },
-          orderBy: { createdAt: "desc" },
-        }),
-      ]);
+    [
+      templates,
+      contracts,
+      pendingBookings,
+      clients,
+      professionals,
+      clientSchedules,
+    ] = await Promise.all([
+      getContractTemplates(),
+      getContracts(),
+      getPendingBookings(),
+      prisma.client.findMany({
+        orderBy: { name: "asc" },
+      }),
+      prisma.professional.findMany({
+        where: { active: true },
+        orderBy: { name: "asc" },
+      }),
+      prisma.clientSchedule.findMany({
+        include: { client: true },
+        orderBy: { createdAt: "desc" },
+      }),
+    ]);
   } catch (error) {
     console.error("Erro ao carregar dados de contratos:", error);
   }
@@ -92,6 +107,7 @@ export default async function ContratosPage() {
               templates={templates}
               clients={clients}
               clientSchedules={clientSchedules}
+              professionals={professionals}
             />
           </div>
 
@@ -236,7 +252,28 @@ export default async function ContratosPage() {
                         )}
 
                         {!contract.signedByClient && (
-                          <EditContractModal contract={contract} />
+                          <EditContractModal
+                            contract={contract}
+                            clients={clients}
+                            professionals={professionals}
+                            defaultDate={
+                              contract.booking?.scheduleSlot?.date
+                                ? new Date(
+                                    contract.booking.scheduleSlot.date,
+                                  ).toLocaleDateString("pt-BR")
+                                : undefined
+                            }
+                            defaultTime={
+                              contract.booking?.scheduleSlot?.startTime ||
+                              undefined
+                            }
+                            defaultProfessional={
+                              contract.booking?.scheduleSlot?.professional
+                                ?.name ||
+                              contract.booking?.professional?.name ||
+                              undefined
+                            }
+                          />
                         )}
 
                         <CopyLinkButton

@@ -59,6 +59,22 @@ export function PDFWrapper({ data }: { data: ContractData }) {
   );
   const [successMessage, setSuccessMessage] = useState("");
 
+  const isRealContract = Boolean(data.contractId || data.signToken);
+
+  const cleanField = (val?: string | null) => {
+    if (!val) return "";
+    const trimmed = val.trim();
+    if (isRealContract && trimmed.startsWith("[") && trimmed.endsWith("]")) {
+      return "";
+    }
+    return trimmed;
+  };
+
+  const cleanServiceDate = cleanField(data.serviceDate);
+  const cleanServiceTime = cleanField(data.serviceTime);
+  const cleanServiceProfessional = cleanField(data.serviceProfessional);
+  const cleanServiceDetails = cleanField(data.serviceDetails);
+
   const hasService = Boolean(
     data.serviceName &&
       !data.serviceName.startsWith("[") &&
@@ -392,12 +408,12 @@ export function PDFWrapper({ data }: { data: ContractData }) {
                         <th className="font-semibold px-4 py-3 w-1/3">
                           Serviço
                         </th>
-                        {(data.serviceDate || data.serviceTime) && (
+                        {(cleanServiceDate || cleanServiceTime) && (
                           <th className="font-semibold px-4 py-3">
                             Data e Horário
                           </th>
                         )}
-                        {data.serviceDetails && (
+                        {cleanServiceDetails && (
                           <th className="font-semibold px-4 py-3">Detalhes</th>
                         )}
                         {(data.totalValue || data.serviceValue) && (
@@ -413,29 +429,29 @@ export function PDFWrapper({ data }: { data: ContractData }) {
                           <p className="font-bold text-[12px] text-slate-900">
                             {data.serviceName}
                           </p>
-                          {data.serviceProfessional && (
+                          {cleanServiceProfessional && (
                             <p className="text-[10px] text-[#71717a] mt-1">
-                              Assessora: {data.serviceProfessional}
+                              Assessora: {cleanServiceProfessional}
                             </p>
                           )}
                         </td>
 
-                        {(data.serviceDate || data.serviceTime) && (
+                        {(cleanServiceDate || cleanServiceTime) && (
                           <td className="px-4 py-4 align-top">
                             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#fcfaf7] border border-[#f0ebe1] rounded-md text-[11px] font-medium">
-                              {data.serviceDate}
-                              {data.serviceTime && (
+                              {cleanServiceDate}
+                              {cleanServiceTime && (
                                 <span className="text-[#ae4d30]">
-                                  {data.serviceTime}
+                                  {cleanServiceTime}
                                 </span>
                               )}
                             </div>
                           </td>
                         )}
 
-                        {data.serviceDetails && (
+                        {cleanServiceDetails && (
                           <td className="px-4 py-4 align-top text-[#71717a] leading-relaxed">
-                            {data.serviceDetails}
+                            {cleanServiceDetails}
                           </td>
                         )}
 

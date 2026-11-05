@@ -38,7 +38,7 @@ export default async function ContratoPage({
   const isAdmin = user?.role === "admin";
   const isPreview = query?.preview === "1";
 
-  // Busca contrato emitido
+  // Busca contrato emitido de cliente
   const contract = await prisma.contract.findUnique({
     where: { id },
     include: {
@@ -55,21 +55,20 @@ export default async function ContratoPage({
     },
   });
 
-  // Basic placeholders para templates ou contratos
   const viewData: ContractData = {
-    contractNumber: "[NÚMERO DO CONTRATO]",
-    date: "[DATA DE GERAÇÃO]",
+    contractNumber: "",
+    date: "",
     content: "",
-    clientName: "[NOME DO CLIENTE]",
-    clientEmail: "[EMAIL DO CLIENTE]",
-    clientPhone: "[TELEFONE DO CLIENTE]",
-    clientAddress: "[ENDEREÇO COMPLETO DO CLIENTE]",
-    serviceName: "[NOME DO SERVIÇO/PACOTE]",
-    serviceDetails: "[DETALHES DO SERVIÇO]",
-    serviceDate: "[DATA DO ATENDIMENTO]",
-    serviceTime: "[HORÁRIO DO ATENDIMENTO]",
-    serviceProfessional: "[NOME DA PROFISSIONAL]",
-    serviceValue: "[VALOR DO SERVIÇO]",
+    clientName: "",
+    clientEmail: "",
+    clientPhone: "",
+    clientAddress: "",
+    serviceName: "",
+    serviceDetails: "",
+    serviceDate: "",
+    serviceTime: "",
+    serviceProfessional: "",
+    serviceValue: "",
   };
 
   let isTemplate = false;
@@ -77,8 +76,6 @@ export default async function ContratoPage({
   if (contract) {
     // Se o contrato AINDA NÃO foi assinado pelo cliente:
     if (!contract.signedByClient) {
-      // Se não for admin e não for preview explícito do admin,
-      // redireciona para a página de assinatura direta sem login (/assinar/[token])
       if (!isAdmin && !isPreview) {
         let token = contract.signToken;
         const isExpired =
@@ -168,6 +165,31 @@ export default async function ContratoPage({
       viewData.serviceDetails = "";
     }
 
+    // Service Date, Time & Professional (prioritizing contract fields, then booking fallback)
+    if (contract.serviceDate) {
+      viewData.serviceDate = contract.serviceDate;
+    } else if (contract.booking?.scheduleSlot?.date) {
+      const d = new Date(contract.booking.scheduleSlot.date);
+      viewData.serviceDate = d.toLocaleDateString("pt-BR");
+    }
+
+    if (contract.serviceTime) {
+      viewData.serviceTime = contract.serviceTime;
+    } else if (contract.booking?.scheduleSlot?.startTime) {
+      viewData.serviceTime = contract.booking.scheduleSlot.endTime
+        ? `${contract.booking.scheduleSlot.startTime} às ${contract.booking.scheduleSlot.endTime}`
+        : contract.booking.scheduleSlot.startTime;
+    }
+
+    if (contract.serviceProfessional) {
+      viewData.serviceProfessional = contract.serviceProfessional;
+    } else if (contract.booking?.scheduleSlot?.professional?.name) {
+      viewData.serviceProfessional =
+        contract.booking.scheduleSlot.professional.name;
+    } else if (contract.booking?.professional?.name) {
+      viewData.serviceProfessional = contract.booking.professional.name;
+    }
+
     if (contract.booking) {
       const basePrice =
         contract.booking.packages?.reduce(
@@ -179,24 +201,26 @@ export default async function ContratoPage({
       if (!viewData.totalValue && total > 0) {
         viewData.totalValue = total;
       }
-
-      if (contract.booking.scheduleSlot) {
-        const d = new Date(contract.booking.scheduleSlot.date);
-        viewData.serviceDate = d.toLocaleDateString("pt-BR");
-        viewData.serviceTime = contract.booking.scheduleSlot.startTime || "";
-        if (contract.booking.scheduleSlot.professional) {
-          viewData.serviceProfessional =
-            contract.booking.scheduleSlot.professional.name;
-        }
-      }
     }
   } else {
-    // Se não for contrato emitido, verifica se é pré-visualização de modelo (template)
+    // Se não for contrato de cliente, verifica se é pré-visualização de modelo (template)
     const template = await prisma.contractTemplate.findUnique({
       where: { id },
     });
     if (template) {
       isTemplate = true;
+      viewData.contractNumber = "[NÚMERO DO CONTRATO]";
+      viewData.date = "[DATA DE GERAÇÃO]";
+      viewData.clientName = "[NOME DO CLIENTE]";
+      viewData.clientEmail = "[EMAIL DO CLIENTE]";
+      viewData.clientPhone = "[TELEFONE DO CLIENTE]";
+      viewData.clientAddress = "[ENDEREÇO COMPLETO DO CLIENTE]";
+      viewData.serviceName = "[NOME DO SERVIÇO/PACOTE]";
+      viewData.serviceDetails = "[DETALHES DO SERVIÇO]";
+      viewData.serviceDate = "[DATA DO ATENDIMENTO]";
+      viewData.serviceTime = "[HORÁRIO DO ATENDIMENTO]";
+      viewData.serviceProfessional = "[NOME DA PROFISSIONAL]";
+      viewData.serviceValue = "[VALOR DO SERVIÇO]";
       viewData.content = template.content;
       viewData.isAdmin = isAdmin;
     } else {
