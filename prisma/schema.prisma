@@ -234,6 +234,9 @@ model Contract {
   // Custom Service & Image Clause
   serviceName         String?
   serviceDetails      String?
+  serviceDate         String?
+  serviceTime         String?
+  serviceProfessional String?
   imageUsageAccepted  Boolean?
 
   // New signature fields
@@ -412,4 +415,67 @@ model Partner {
   updatedAt DateTime @updatedAt
 
   @@map("partner")
+}
+
+model Employee {
+  id            String             @id @default(cuid())
+  name          String
+  cpfCnpj       String?
+  rg            String?
+  email         String?
+  phone         String
+  role          String             // Cargo / Função (ex: Babá, Administrativo, Social Media, Limpeza, Enfermeira)
+  serviceType   String?            @db.Text // Tipo de Serviço / Escopo de atuação
+  contractType  String             @default("PJ") // CLT, PJ, MEI, AUTONOMO, DIARISTA, TEMPORARIO
+  workRegime    String?            // Jornada/Escala (ex: 44h semanais, 12x36, Seg a Sex)
+  billingCycle  String             @default("MONTHLY") // SALARY, MONTHLY, WEEKLY, BIWEEKLY, DAILY, PER_SERVICE
+  amount        Float?             // Valor do Salário / Mensal / Semanal / Diária
+  paymentMethod String             @default("PIX") // PIX, TRANSFERENCIA, DINHEIRO, BOLETO, CARTAO
+  pixKey        String?
+  bankDetails   String?            @db.Text // Banco, Agência, Conta, Tipo de Conta
+  paymentDay    String?            // Ex: Todo dia 05, Toda sexta-feira
+  hireDate      DateTime?
+  status        String             @default("ACTIVE") // ACTIVE, INACTIVE, ON_LEAVE
+  zipCode       String?
+  street        String?
+  number        String?
+  complement    String?
+  neighborhood  String?
+  city          String?
+  state         String?
+  notes         String?            @db.Text
+  contracts     EmployeeContract[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  @@map("employee")
+}
+
+model EmployeeContract {
+  id                 String    @id @default(cuid())
+  employeeId         String
+  employee           Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  title              String
+  serviceType        String?
+  serviceDescription String?   @db.Text
+  contractType       String?   // CLT, PJ, MEI, AUTONOMO, DIARISTA, TEMPORARIO
+  billingCycle       String?   // SALARY, MONTHLY, WEEKLY, BIWEEKLY, DAILY, PER_SERVICE
+  amount             Float?
+  paymentMethod      String?
+  paymentDetails     String?   @db.Text // PIX / Dados bancários / Dia de pagamento
+  workRegime         String?
+  startDate          String?
+  validityDescription String?
+  content            String    @db.LongText
+  signedByEmployee   Boolean   @default(false)
+  signedAt           DateTime?
+  employeeIp         String?
+  signedByCompany    Boolean   @default(false)
+  signedByCompanyAt  DateTime?
+  signToken          String?   @unique
+  signTokenExpiresAt DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@map("employee_contract")
 }
