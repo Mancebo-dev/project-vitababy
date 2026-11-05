@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Briefcase,
   Building2,
   Calendar,
   DollarSign,
@@ -30,6 +31,7 @@ export const navItems = [
   { name: "Depoimentos", href: "/admin/depoimentos", icon: MessageSquare },
   { name: "Galeria", href: "/admin/galeria", icon: ImageIcon },
   { name: "Assessoras", href: "/admin/assessoras", icon: Building2 },
+  { name: "Funcionários", href: "/admin/funcionarios", icon: Briefcase },
   { name: "Parceiros", href: "/admin/parceiros", icon: Handshake },
   { name: "Meu Perfil", href: "/admin/perfil", icon: User },
 ];
