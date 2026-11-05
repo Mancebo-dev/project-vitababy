@@ -51,8 +51,8 @@ export function Footer() {
               />
             </Link>
             <p className="text-[#444840] text-[0.875rem] leading-[1.6]">
-              Cuidado materno-infantil humanizado, com apoio em amamentação,
-              banho humanizado e perfuração de lóbulo.
+              Assessoria materno-infantil especializada em cuidados voltados à
+              saúde, recuperação e bem-estar.
             </p>
           </div>
 
@@ -207,8 +207,8 @@ export function Footer() {
         {/* Copyright */}
         <div className="flex flex-col md:flex-row items-center justify-between border-t border-[#e4e2de] pt-[2rem] gap-[1rem]">
           <p className="text-[0.875rem] text-[#444840]/70 text-center md:text-left">
-            © {new Date().getFullYear()} Vita Baby Consultoria. Todos os
-            direitos reservados.
+            © {new Date().getFullYear()} Vita Baby Assessoria Materno-Infantil.
+            Todos os direitos reservados.
           </p>
           <p className="text-[0.75rem] text-[#444840]/50 text-center md:text-right">
             CNPJ: 00.000.000/0000-00

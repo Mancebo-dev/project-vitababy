@@ -60,9 +60,9 @@ export function Hero() {
 
           {/* Description */}
           <p className="text-xs sm:text-sm md:text-base text-[#444840] leading-relaxed max-w-[26rem] sm:max-w-[32rem] mb-1 sm:mb-2">
-            Assessoria especializada em amamentação, banho humanizado e cuidados
-            com o bebê. Apoio dedicado para você e sua família nas fases mais
-            importantes.
+            Assessoria materno-infantil especializada em cuidados voltados à
+            saúde, recuperação e bem-estar. Apoio dedicado para você e sua
+            família nas fases mais importantes.
           </p>
 
           {/* Actions */}

@@ -35,30 +35,26 @@ export const metadata: Metadata = {
   },
   title: {
     default:
-      "Vita Baby | Consultoria em Amamentação e Cuidados com o Bebê em Macaé e Rio das Ostras",
+      "Vita Baby | Assessoria especializada em cuidados voltados à saúde, recuperação e bem-estar",
     template: "%s | Vita Baby Assessoria",
   },
   description:
-    "Assessoria humanizada com enfermeira especialista: amamentação, banho humanizado, laserterapia e primeiros socorros em Macaé e Rio das Ostras. Agende já.",
+    "Assessoria materno-infantil especializada em cuidados voltados à saúde, recuperação e bem-estar.",
   keywords: [
-    "consultoria em amamentação Macaé",
-    "consultoria em amamentação Rio das Ostras",
+    "assessoria materno infantil",
+    "assessoria materno-infantil",
+    "cuidados voltados à saúde recuperação e bem-estar",
     "banho humanizado recém nascido",
-    "banho de ofurô bebê Macaé",
-    "laserterapia fissuras mamilares Macaé",
     "laserterapia pós-parto",
-    "furo de orelhinha humanizado Macaé",
-    "primeiros socorros bebê engasgo",
-    "enfermeira materno infantil Macaé",
-    "enfermeira neonatal Rio das Ostras",
+    "furo de orelhinha humanizado",
+    "primeiros socorros bebê",
+    "enfermeira materno infantil",
+    "enfermeira neonatal",
     "cuidados com recém nascido domiciliar",
     "apoio pós-parto e puerpério",
-    "pega correta amamentação",
-    "assessoria materno infantil",
     "Rayane Castro enfermeira",
-    "Vita Baby Macaé",
+    "Vita Baby",
     "Vitababy assessoria",
-    "consultoria de sono infantil Macaé",
   ],
   category: "Health",
   authors: [
@@ -87,9 +83,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "Vita Baby | Consultoria em Amamentação e Cuidados com o Bebê em Macaé e Rio das Ostras",
+      "Vita Baby | Assessoria especializada em cuidados voltados à saúde, recuperação e bem-estar",
     description:
-      "Assessoria humanizada com enfermeira especialista: amamentação, banho humanizado, laserterapia e primeiros socorros em Macaé e região.",
+      "Assessoria materno-infantil especializada em cuidados voltados à saúde, recuperação e bem-estar.",
     url: "https://vitababy.com.br",
     siteName: "Vita Baby Assessoria Materno-Infantil",
     type: "website",
@@ -99,15 +95,16 @@ export const metadata: Metadata = {
         url: "/assets/hero-img.png",
         width: 1200,
         height: 630,
-        alt: "Vita Baby Assessoria Materno-Infantil em Macaé e Rio das Ostras",
+        alt: "Vita Baby | Assessoria especializada em cuidados voltados à saúde, recuperação e bem-estar",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vita Baby | Consultoria em Amamentação e Cuidados com o Bebê",
+    title:
+      "Vita Baby | Assessoria especializada em cuidados voltados à saúde, recuperação e bem-estar",
     description:
-      "Amamentação, banho humanizado, laserterapia e primeiros socorros para bebês em Macaé e Rio das Ostras.",
+      "Assessoria materno-infantil especializada em cuidados voltados à saúde, recuperação e bem-estar.",
     images: ["/assets/hero-img.png"],
   },
   verification: {
@@ -124,10 +121,10 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": ["MedicalBusiness", "LocalBusiness"],
+        "@type": ["MedicalBusiness", "Organization"],
         "@id": "https://vitababy.com.br/#business",
         name: "Vita Baby Assessoria Materno-Infantil",
-        alternateName: ["Vita Baby", "Vitababy Macaé", "Vitababy"],
+        alternateName: ["Vita Baby", "Vitababy", "Vita Baby Assessoria"],
         image: [
           "https://vitababy.com.br/assets/hero-img.png",
           "https://vitababy.com.br/assets/logo-vita-baby.png",
@@ -135,38 +132,13 @@ export default function RootLayout({
         ],
         logo: "https://vitababy.com.br/assets/logo-vita-baby.png",
         description:
-          "Assessoria especializada em amamentação, banho humanizado, laserterapia mamilar e capacitação em primeiros socorros para bebês em Macaé, Rio das Ostras e Região dos Lagos.",
+          "Assessoria materno-infantil especializada em cuidados voltados à saúde, recuperação e bem-estar.",
         url: "https://vitababy.com.br",
         telephone: "+55-22-99772-8581",
         email: "contato@vitababy.com.br",
         priceRange: "$$",
         currenciesAccepted: "BRL",
         paymentAccepted: "Pix, Cartão de Crédito, Transferência Bancária",
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: "Macaé",
-          addressRegion: "RJ",
-          addressCountry: "BR",
-        },
-        geo: {
-          "@type": "GeoCoordinates",
-          latitude: "-22.3768",
-          longitude: "-41.7869",
-        },
-        areaServed: [
-          {
-            "@type": "City",
-            name: "Macaé",
-          },
-          {
-            "@type": "City",
-            name: "Rio das Ostras",
-          },
-          {
-            "@type": "AdministrativeArea",
-            name: "Região dos Lagos, RJ",
-          },
-        ],
         medicalSpecialty: [
           "https://schema.org/Nursing",
           "https://schema.org/Pediatric",
@@ -175,17 +147,17 @@ export default function RootLayout({
           "@type": "Person",
           "@id": "https://vitababy.com.br/#rayane-castro",
           name: "Rayane Castro",
-          jobTitle: "Enfermeira Especialista em Cuidados Materno-Infantis",
+          jobTitle: "Enfermeira Especialista em Assessoria Materno-Infantil",
           image: "https://vitababy.com.br/assets/rayane-about.png",
           worksFor: {
             "@id": "https://vitababy.com.br/#business",
           },
           knowsAbout: [
-            "Aleitamento Materno",
-            "Consultoria em Amamentação",
+            "Assessoria Materno-Infantil",
+            "Cuidados voltados à saúde, recuperação e bem-estar",
             "Banho Humanizado e Ofurô",
-            "Laserterapia Mamilar e Pós-Parto",
-            "Primeiros Socorros e Desengasgo em Bebês",
+            "Laserterapia Pós-Parto",
+            "Primeiros Socorros para Bebês",
           ],
         },
         aggregateRating: {
@@ -197,15 +169,15 @@ export default function RootLayout({
         },
         hasOfferCatalog: {
           "@type": "OfferCatalog",
-          name: "Serviços e Consultorias Especializadas",
+          name: "Assessoria Materno-Infantil Especializada",
           itemListElement: [
             {
               "@type": "Offer",
               itemOffered: {
                 "@type": "MedicalProcedure",
-                name: "Consultoria em Amamentação",
+                name: "Assessoria Materno-Infantil",
                 description:
-                  "Apoio técnico no manejo da pega, alívio de dor, ingurgitamento e plano personalizado para o aleitamento materno.",
+                  "Assessoria especializada em cuidados voltados à saúde, recuperação e bem-estar da mãe, do bebê e da família.",
               },
             },
             {
@@ -221,9 +193,9 @@ export default function RootLayout({
               "@type": "Offer",
               itemOffered: {
                 "@type": "MedicalProcedure",
-                name: "Laserterapia Pós-Parto e Mamilar",
+                name: "Laserterapia Pós-Parto",
                 description:
-                  "Fotobiomodulação segura para cicatrização acelerada de fissuras mamilares, cesárea e lacerações.",
+                  "Fotobiomodulação segura para recuperação e cicatrização acelerada no pós-parto.",
               },
             },
             {

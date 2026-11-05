@@ -44,11 +44,10 @@ export default function TermosUso() {
             2. Natureza dos Serviços
           </h2>
           <p>
-            A Vita Baby oferece serviços de consultoria e assessoria
-            materno-infantil (como apoio à amamentação, banho humanizado e
-            perfuração de lóbulo auricular). As informações fornecidas através
-            deste site e durante as consultorias têm caráter de apoio,
-            orientação e cuidado humanizado.
+            A Vita Baby oferece serviços de assessoria materno-infantil
+            especializada em cuidados voltados à saúde, recuperação e bem-estar.
+            As informações fornecidas através deste site e durante os
+            atendimentos têm caráter de apoio, orientação e cuidado humanizado.
             <strong>
               Nossos serviços não substituem, de forma alguma, diagnósticos
               médicos ou consultas com o pediatra do bebê.
@@ -83,10 +82,9 @@ export default function TermosUso() {
           <p>
             A Vita Baby se compromete a prestar seus serviços com o mais alto
             nível de dedicação e base técnica. Contudo, resultados associados ao
-            bem-estar e comportamento do bebê (como adaptação à rotina ou
-            amamentação) dependem de múltiplos fatores familiares e biológicos,
-            não sendo possível garantir resultados idênticos para todos os
-            casos.
+            bem-estar e adaptação do bebê dependem de múltiplos fatores
+            familiares e biológicos, não sendo possível garantir resultados
+            idênticos para todos os casos.
           </p>
 
           <h2 className="text-[1.5rem] font-heading font-bold text-[#411f03] mt-[2rem] mb-[1rem]">

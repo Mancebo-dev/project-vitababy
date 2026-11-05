@@ -6,9 +6,9 @@ import { BackToTop } from "@/components/ui/BackToTop";
 import { prisma } from "@/infrastructure/db/prisma";
 
 export const metadata: Metadata = {
-  title: "Agendamento de Consultoria | Vita Baby",
+  title: "Agendamento de Atendimento | Vita Baby",
   description:
-    "Agende sua consultoria em amamentação, banho humanizado ou assistência pós-parto com as especialistas da Vita Baby.",
+    "Agende seu atendimento de assessoria materno-infantil com as especialistas da Vita Baby.",
 };
 
 // Horários disponíveis mudam a todo momento: renderizar a cada requisição

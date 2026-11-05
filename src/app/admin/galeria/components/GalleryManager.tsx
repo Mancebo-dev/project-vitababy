@@ -117,7 +117,7 @@ export function GalleryManager({
                     onChange={(e) =>
                       setFormData({ ...formData, title: e.target.value })
                     }
-                    placeholder="Ex: Consultoria em casa"
+                    placeholder="Ex: Atendimento domiciliar"
                   />
                 </div>
                 <div className="space-y-2">

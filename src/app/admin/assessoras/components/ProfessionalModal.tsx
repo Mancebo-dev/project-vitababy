@@ -481,7 +481,7 @@ export function ProfessionalModal({
               <Label htmlFor="prof-city">Região / Cidade de Atendimento</Label>
               <Input
                 id="prof-city"
-                placeholder="Ex: Brasília - DF e Entorno"
+                placeholder="Ex: Atendimento Domiciliar"
                 value={formData.city}
                 onChange={(e) =>
                   setFormData({ ...formData, city: e.target.value })

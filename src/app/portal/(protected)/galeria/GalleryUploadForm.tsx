@@ -73,7 +73,7 @@ export function GalleryUploadForm({ clientId }: { clientId: string }) {
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ex: Consultoria de amamentação"
+              placeholder="Ex: Assessoria materno-infantil"
             />
           </div>
 

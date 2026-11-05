@@ -35,9 +35,9 @@ export function About() {
             <StaggerItem className="flex flex-col gap-3 text-[#444840] text-sm sm:text-base leading-relaxed">
               <p>
                 Com mais de 9 anos de experiência na enfermagem, sou
-                especializada em cuidados humanizados para bebês e famílias.
-                Ofereço assessoria em amamentação, banho humanizado e
-                capacitação em primeiros socorros.
+                especializada em assessoria materno-infantil e cuidados
+                humanizados voltados à saúde, recuperação e bem-estar para bebês
+                e famílias.
               </p>
               <p>
                 Minha missão é proporcionar segurança, vínculo e bem-estar para

@@ -302,7 +302,7 @@ export function StepClientInfo({
             <textarea
               id="additionalInfo"
               rows={4}
-              placeholder="Conte-nos o que for relevante para o atendimento: idade ou data prevista de nascimento do bebê, se já nasceu, principais dificuldades na amamentação, alergias ou dúvidas específicas..."
+              placeholder="Conte-nos o que for relevante para o atendimento: idade ou data prevista de nascimento do bebê, se já nasceu, necessidades de cuidado, alergias ou dúvidas específicas..."
               value={formData.additionalInfo}
               onChange={(e) => onChangeField("additionalInfo", e.target.value)}
               className="w-full p-[1rem] border border-[#e4e2de] rounded-xl text-[0.875rem] focus:border-[#af4d30] focus:ring-1 focus:ring-[#af4d30] outline-none resize-y"

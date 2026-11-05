@@ -43,9 +43,7 @@ export function EmailLayout({ previewText, children }: EmailLayoutProps) {
               Vitababy.
             </Text>
             <Text style={footerText}>
-              Vitababy Consultoria em Amamentação e Cuidados Materno-Infantil.
-              <br />
-              Brasília, DF, Brasil
+              Vita Baby | Assessoria Materno-Infantil
             </Text>
           </Section>
         </Container>

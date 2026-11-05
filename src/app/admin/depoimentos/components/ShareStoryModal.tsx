@@ -453,11 +453,7 @@ export function ShareStoryModal({
       ctx.font =
         "400 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       ctx.fillStyle = theme.footerText;
-      ctx.fillText(
-        "Consultoria de Amamentação & Cuidados com o Bebê",
-        540,
-        1800,
-      );
+      ctx.fillText("Assessoria Materno-Infantil", 540, 1800);
 
       // Generate Image data
       const dataUrl = canvas.toDataURL("image/png", 1.0);

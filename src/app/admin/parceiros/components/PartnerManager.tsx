@@ -80,7 +80,7 @@ export function PartnerManager({ partners }: { partners: Partner[] }) {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  placeholder="Ex: Clínica Pediátrica Macaé"
+                  placeholder="Ex: Clínica Pediátrica"
                   required
                 />
               </div>

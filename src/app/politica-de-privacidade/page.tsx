@@ -39,8 +39,8 @@ export default function PoliticaPrivacidade() {
             proteger os seus dados pessoais. Esta Política de Privacidade
             explica como coletamos, usamos, divulgamos e salvaguardamos suas
             informações quando você visita nosso site ou utiliza nossos serviços
-            de consultoria em amamentação, banho humanizado e perfuração de
-            lóbulo.
+            de assessoria materno-infantil e cuidados voltados à saúde,
+            recuperação e bem-estar.
           </p>
 
           <h2 className="text-[1.5rem] font-heading font-bold text-[#411f03] mt-[2rem] mb-[1rem]">

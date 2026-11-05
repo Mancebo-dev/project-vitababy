@@ -8,11 +8,11 @@ import { prisma } from "@/infrastructure/db/prisma";
 export const metadata: Metadata = {
   title: "Nossa Galeria de Histórias | Fotos e Momentos",
   description:
-    "Explore a galeria de fotos da Vita Baby Assessoria Materno-Infantil. Veja momentos reais de cuidados com amamentação, banho humanizado e acolhimento.",
+    "Explore a galeria de fotos da Vita Baby Assessoria Materno-Infantil. Veja momentos reais de cuidados voltados à saúde, recuperação e bem-estar.",
   keywords: [
     "galeria vitababy",
+    "assessoria materno infantil",
     "fotos recém nascido",
-    "fotos banho humanizado",
     "depoimentos de mães",
     "cuidados materno infantil",
   ],
